@@ -1,0 +1,5 @@
+ok one more thing. which is can we move the builder project file structure in a better way, cause it's too big rn. make it proper so that then i'll test it out for local first
+
+---
+
+wait wdym local only mode. no no dont add anything else please. just keep it like normal please just the files were too big.
