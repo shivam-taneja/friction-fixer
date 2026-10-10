@@ -13,7 +13,7 @@ export function Brand({ className }: { className?: string }) {
       )}
     >
       <Image
-        src="/logo-bg.svg"
+        src="/logo.svg"
         alt="Friction Fixer"
         width={32}
         height={32}

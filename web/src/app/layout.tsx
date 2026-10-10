@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
 import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
+import { rootMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 const dmSans = DM_Sans({
@@ -13,23 +13,7 @@ const manrope = Manrope({
   variable: "--font-manrope",
 });
 
-export const metadata: Metadata = {
-  title: "Friction Fixer — A website that gets better, by itself",
-  description:
-    "Meet the AI agent that finds visitor friction, improves your website, and measures what works.",
-  openGraph: {
-    title: "Friction Fixer",
-    description:
-      "Turn visitor behavior into better website experiences, automatically.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-  },
-  icons: {
-    icon: { url: "/logo-bg.svg", type: "image/svg+xml" },
-  },
-};
+export const metadata = rootMetadata;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
