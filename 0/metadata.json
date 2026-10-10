@@ -1,0 +1,197 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4JTZFSDQZHG8H99R4E6DE08",
+  "session_id": "09ccfc71-4f94-4f5b-b9ac-adfa9f692acc",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-10T12:00:37.532389Z",
+  "branch": "main",
+  "checkpoints_count": 7,
+  "save_step_count": 7,
+  "files_touched": [
+    "package.json",
+    "pnpm-lock.yaml",
+    "web/package.json",
+    "web/pnpm-lock.yaml",
+    "web/public/file.svg",
+    "web/public/globe.svg",
+    "web/public/logo-bg.svg",
+    "web/public/logo.png",
+    "web/public/logo.svg",
+    "web/public/next.svg",
+    "web/public/vercel.svg",
+    "web/public/window.svg",
+    "web/src/app/dashboard/page.tsx",
+    "web/src/app/error.tsx",
+    "web/src/app/favicon.ico",
+    "web/src/app/globals.css",
+    "web/src/app/layout.tsx",
+    "web/src/app/not-found.tsx",
+    "web/src/app/page.tsx",
+    "web/src/components/agent/agent-preview.tsx",
+    "web/src/components/home/faq-section.tsx",
+    "web/src/components/home/faqs.ts",
+    "web/src/components/home/final-cta.tsx",
+    "web/src/components/home/hero-section.tsx",
+    "web/src/components/home/home-page.tsx",
+    "web/src/components/home/integrations-section.tsx",
+    "web/src/components/home/safety-section.tsx",
+    "web/src/components/home/workflow-section.tsx",
+    "web/src/components/layout/brand.tsx",
+    "web/src/components/layout/page-container.tsx",
+    "web/src/components/layout/site-footer.tsx",
+    "web/src/components/layout/site-header.tsx",
+    "web/src/components/ui/button.tsx"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "2a0dc26b44ef",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 182902,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 4472320,
+    "output_tokens": 83750,
+    "api_call_count": 6
+  },
+  "session_metrics": {
+    "turn_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-10T12:00:37.486525Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 2557,
+    "human_modified": 113,
+    "human_removed": 0,
+    "total_committed": 2557,
+    "total_lines_changed": 2670,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1,
+      "user_lines_removed": 5,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "web/public/favicon.svg": 1
+      },
+      "user_removed_per_file": {
+        "web/public/file.svg": 1,
+        "web/public/globe.svg": 1,
+        "web/public/next.svg": 1,
+        "web/public/vercel.svg": 1,
+        "web/public/window.svg": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 854,
+      "agent_lines_removed": 19
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 854,
+      "agent_lines_removed": 19
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 2033,
+      "user_lines_removed": 59,
+      "agent_lines_added": 1518,
+      "agent_lines_removed": 97,
+      "user_added_per_file": {
+        "web/components.json": 25,
+        "web/package.json": 6,
+        "web/pnpm-lock.yaml": 1846,
+        "web/src/app/globals.css": 96,
+        "web/src/app/layout.tsx": 5,
+        "web/src/components/home/integrations-section.tsx": 2,
+        "web/src/components/ui/button.tsx": 52,
+        "web/src/lib/utils.ts": 1
+      },
+      "user_removed_per_file": {
+        "web/package.json": 1,
+        "web/src/app/globals.css": 20,
+        "web/src/app/layout.tsx": 2,
+        "web/src/components/home/integrations-section.tsx": 2,
+        "web/src/components/ui/button.tsx": 34
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 103,
+      "user_lines_removed": 28,
+      "agent_lines_added": 3490,
+      "agent_lines_removed": 98,
+      "user_added_per_file": {
+        "web/components.json": 25,
+        "web/src/components/agent/agent-preview.tsx": 19,
+        "web/src/components/home/final-cta.tsx": 6,
+        "web/src/components/home/hero-section.tsx": 21,
+        "web/src/components/home/integrations-section.tsx": 2,
+        "web/src/components/home/safety-section.tsx": 8,
+        "web/src/components/home/workflow-section.tsx": 11,
+        "web/src/components/layout/brand.tsx": 4,
+        "web/src/components/layout/site-footer.tsx": 1,
+        "web/src/components/layout/site-header.tsx": 5,
+        "web/src/lib/utils.ts": 1
+      },
+      "user_removed_per_file": {
+        "web/src/components/agent/agent-preview.tsx": 5,
+        "web/src/components/home/final-cta.tsx": 1,
+        "web/src/components/home/hero-section.tsx": 6,
+        "web/src/components/home/integrations-section.tsx": 2,
+        "web/src/components/home/safety-section.tsx": 7,
+        "web/src/components/home/workflow-section.tsx": 4,
+        "web/src/components/layout/brand.tsx": 1,
+        "web/src/components/layout/site-footer.tsx": 1,
+        "web/src/components/layout/site-header.tsx": 1
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 78,
+      "user_lines_removed": 21,
+      "agent_lines_added": 3498,
+      "agent_lines_removed": 98,
+      "user_added_per_file": {
+        "web/components.json": 25,
+        "web/src/components/agent/agent-preview.tsx": 19,
+        "web/src/components/home/final-cta.tsx": 6,
+        "web/src/components/home/integrations-section.tsx": 2,
+        "web/src/components/home/safety-section.tsx": 8,
+        "web/src/components/home/workflow-section.tsx": 11,
+        "web/src/components/layout/site-footer.tsx": 1,
+        "web/src/components/layout/site-header.tsx": 5,
+        "web/src/lib/utils.ts": 1
+      },
+      "user_removed_per_file": {
+        "web/src/components/agent/agent-preview.tsx": 5,
+        "web/src/components/home/final-cta.tsx": 1,
+        "web/src/components/home/integrations-section.tsx": 2,
+        "web/src/components/home/safety-section.tsx": 7,
+        "web/src/components/home/workflow-section.tsx": 4,
+        "web/src/components/layout/site-footer.tsx": 1,
+        "web/src/components/layout/site-header.tsx": 1
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 26,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2836,
+      "agent_lines_removed": 97,
+      "user_added_per_file": {
+        "web/components.json": 25,
+        "web/src/lib/utils.ts": 1
+      }
+    }
+  ]
+}

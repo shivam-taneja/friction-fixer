@@ -1,0 +1,427 @@
+take this css from some other project and covert it to this one
+
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
+@theme inline {
+ --font-sans: 'DM Sans', sans-serif;
+ --font-display: 'Manrope', sans-serif;
+ --color-background: var(--background); --color-foreground: var(--foreground);
+ --color-primary: var(--primary); --color-primary-foreground: var(--primary-foreground);
+ --color-secondary: var(--secondary); --color-secondary-foreground: var(--foreground);
+ --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground);
+ --color-accent: var(--accent); --color-accent-foreground: var(--foreground);
+ --color-border: var(--border); --color-input: var(--border); --color-ring: var(--primary);
+ --color-card: var(--background); --color-card-foreground: var(--foreground);
+ --color-popover: var(--background); --color-popover-foreground: var(--foreground);
+ --color-destructive: var(--destructive);
+ --color-success: var(--success); --color-signal: var(--signal);
+ --radius-md: 6px; --radius-lg: 8px; --radius-sm: 4px;
+}
+:root {
+ --background: oklch(.992 .004 155); --foreground: oklch(.21 .024 160);
+ --primary: oklch(.88 .205 123); --primary-foreground: oklch(.2 .03 150);
+ --secondary: oklch(.96 .012 150); --muted: oklch(.96 .012 150);
+ --muted-foreground: oklch(.49 .02 155); --accent: oklch(.94 .025 150);
+ --border: oklch(.89 .014 150); --success: oklch(.46 .11 155);
+ --signal: oklch(.61 .12 255); --destructive: oklch(.58 .2 28);
+ --hero-surface: oklch(.975 .012 155); --ink: oklch(.2 .023 155);
+ --ink-text: oklch(.97 .009 150); --ink-muted: oklch(.68 .027 155);
+ --panel: oklch(.26 .024 155); --panel-border: oklch(.35 .025 155);
+ --shadow-float: 0 12px 40px oklch(.2 .03 150 / .07);
+}
+.dark { --background: oklch(.2 .023 155); --foreground: oklch(.97 .009 150); --secondary: oklch(.26 .024 155); --muted: oklch(.26 .024 155); --muted-foreground: oklch(.72 .025 155); --accent: oklch(.32 .03 155); --border: oklch(.35 .025 155); --success: oklch(.77 .15 155); --hero-surface: oklch(.23 .025 155); }
+* { border-color: var(--border); }
+html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+body { margin: 0; background: var(--background); color: var(--foreground); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+h1,h2,h3 { font-family: var(--font-display); letter-spacing: 0; }
+button,a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+.container-page { width: min(1140px, calc(100% - 80px)); margin-inline: auto; }
+.navbar { height: 88px; display:flex; align-items:center; justify-content:space-between; }
+.brand { display:flex; align-items:center; gap:10px; font-size:21px; font-weight:750; text-decoration:none; color:var(--foreground); }
+.brand-mark { display:grid; place-items:center; width:32px; height:36px; }
+.brand-mark svg { width:32px; height:36px; }
+.nav-links { display:flex; gap:34px; align-items:center; font-size:13px; }
+.nav-links a { text-decoration:none; color:var(--muted-foreground); transition:color .2s; }
+.nav-links a:hover { color:var(--foreground); }
+.hero { position:relative; isolation:isolate; min-height:650px; background:var(--hero-surface); overflow:hidden; border-bottom:1px solid var(--border); }
+.hero-art { position:absolute; z-index:-1; inset:0; width:100%; height:100%; object-fit:cover; object-position:center 62%; }
+.hero-content { text-align:center; padding-top:49px; position:relative; }
+.eyebrow { font-size:11px; font-weight:650; letter-spacing:1.5px; text-transform:uppercase; display:flex; align-items:center; gap:8px; }
+.hero .eyebrow { justify-content:center; font-size:10px; margin-bottom:23px; }
+.status-dot { width:6px; height:6px; border-radius:50%; background:var(--success); box-shadow:0 0 0 4px color-mix(in oklab,var(--success) 9%,transparent); }
+h1 { font-size:68px; font-weight:650; line-height:1.12; margin:0; }
+.highlight-word { position:relative; display:inline-block; }
+.highlight-word:after { content:''; position:absolute; left:0; right:0; height:5px; bottom:0; background:var(--primary); transform:rotate(-1deg); }
+.hero-copy { color:var(--muted-foreground); font-size:16px; line-height:1.7; margin:24px auto 23px; max-width:520px; }
+.hero-actions { display:flex; gap:13px; justify-content:center; }
+.hero-note { font-size:11px; color:var(--muted-foreground); margin-top:14px; }
+.activity-float { position:absolute; bottom:31px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:18px; padding:15px 20px; border:1px solid var(--border); border-radius:7px; background:var(--background); box-shadow:var(--shadow-float); min-width:460px; }
+.activity-icon { background:var(--secondary); color:var(--success); width:34px; height:34px; display:grid; place-items:center; border-radius:5px; }
+.activity-float p { margin:0; font-size:12px; font-weight:600; }
+.activity-float small { font-size:10px; color:var(--muted-foreground); }
+.activity-float .lift { margin-left:auto; font-size:13px; color:var(--success); }
+.integrations { text-align:center; padding:35px 0 39px; border-bottom:1px solid var(--border); }
+.integrations p { font-size:11px; color:var(--muted-foreground); margin:0 0 25px; }
+.integration-logos { display:flex; justify-content:center; gap:65px; align-items:center; }
+.integration-logo { display:flex; align-items:center; gap:7px; font-weight:700; font-size:21px; }
+.integration-logo svg { width:24px; height:24px; }
+.integration-logo.mixpanel { font-weight:500; }
+.section { padding:92px 0; }
+.section-heading { display:flex; justify-content:space-between; gap:50px; align-items:end; margin-bottom:46px; }
+.section-heading h2 { margin:15px 0 0; font-size:39px; line-height:1.25; font-weight:600; }
+.section-heading > p { color:var(--muted-foreground); font-size:14px; line-height:1.8; max-width:305px; margin:0 0 3px; }
+.workflow { display:grid; grid-template-columns: .85fr 1.15fr; gap:66px; align-items:start; }
+.flow-step { display:flex; align-items:start; gap:21px; width:100%; padding:20px 0; border-radius:0; border-bottom:1px solid var(--border); text-align:left; white-space:normal; height:auto; justify-content:start; color:var(--muted-foreground); }
+.flow-step:hover { background:transparent; color:var(--foreground); }
+.flow-step.active { color:var(--foreground); }
+.step-number { font-family:monospace; font-size:11px; padding-top:5px; color:var(--muted-foreground); }
+.flow-step.active .step-number { color:var(--success); }
+.step-text strong { display:block; font-size:17px; font-weight:550; }
+.step-text p { font-size:12px; line-height:1.8; margin:9px 0 0; font-weight:400; color:var(--muted-foreground); }
+.step-arrow { margin-left:auto; margin-top:4px; opacity:0; }
+.active .step-arrow { opacity:1; }
+.agent-panel { background:var(--ink); color:var(--ink-text); border-radius:7px; overflow:hidden; min-height:373px; box-shadow:var(--shadow-float); }
+.panel-top { display:flex; align-items:center; gap:7px; padding:17px 21px; border-bottom:1px solid var(--panel-border); font-size:11px; }
+.panel-top > span:last-child { margin-left:auto; color:var(--ink-muted); font-size:9px; }
+.panel-content { padding:26px; }
+.panel-eyebrow { color:var(--ink-muted); font-family:monospace; font-size:10px; }
+.panel-content h3 { font-size:22px; font-weight:500; margin:15px 0 8px; }
+.panel-content > p { color:var(--ink-muted); font-size:12px; line-height:1.8; }
+.event-row { display:flex; align-items:center; gap:10px; font-size:11px; padding:15px 0; border-bottom:1px solid var(--panel-border); }
+.event-row svg { color:var(--primary); width:15px; height:15px; }
+.event-row span:last-child { margin-left:auto; color:var(--ink-muted); font-size:10px; }
+.panel-result { display:flex; justify-content:space-between; align-items:center; padding-top:23px; font-size:11px; color:var(--ink-muted); }
+.panel-result strong { color:var(--primary); font-size:14px; font-weight:500; }
+.loop-footnote { display:flex; align-items:center; justify-content:center; gap:9px; margin-top:35px; font-size:11px; color:var(--muted-foreground); }
+.safety-section { background:var(--secondary); border-block:1px solid var(--border); }
+.safety-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:55px; margin-top:40px; }
+.safety-item > svg { color:var(--success); width:23px; height:23px; margin-bottom:15px; }
+.safety-item h3 { font-size:17px; margin:0 0 12px; font-weight:600; }
+.safety-item p { color:var(--muted-foreground); font-size:13px; line-height:1.9; margin:0; }
+.faq-layout { display:grid; grid-template-columns:1fr 1.2fr; gap:70px; }
+.faq-layout h2 { font-size:36px; font-weight:600; line-height:1.25; margin:16px 0 0; }
+.faq-item { border-bottom:1px solid var(--border); }
+.faq-trigger { width:100%; display:flex; justify-content:space-between; text-align:left; white-space:normal; padding:22px 0; height:auto; border-radius:0; font-size:14px; }
+.faq-trigger:hover { background:transparent; }
+.faq-answer { margin:0; padding:0 35px 23px 0; color:var(--muted-foreground); font-size:13px; line-height:1.9; }
+.final-cta { text-align:center; padding:70px 20px; background:var(--primary); color:var(--primary-foreground); }
+.final-cta h2 { font-size:40px; line-height:1.2; font-weight:600; margin:0 0 17px; }
+.final-cta p { font-size:14px; margin-bottom:27px; }
+.footer { display:flex; justify-content:space-between; align-items:center; padding-block:30px; }
+.footer .brand { font-size:16px; }
+.footer > p { font-size:11px; color:var(--muted-foreground); }
+.dialog-description { color:var(--muted-foreground); font-size:13px; line-height:1.8; }
+.demo-controls { display:flex; justify-content:space-between; align-items:center; margin-top:17px; gap:10px; }
+.demo-controls > span { color:var(--muted-foreground); font-size:11px; }
+.mobile-menu { display:none; }
+.dark .hero-art { opacity:.1; }
+@media(min-width:1600px) { .hero-art { object-position:center 59%; } }
+@media(max-width:800px) { .container-page { width:calc(100% - 40px); } .navbar { height:75px; } .nav-links { gap:20px; } .nav-links a { display:none; } h1 { font-size:48px; } .hero { min-height:650px; } .hero-content { padding-top:58px; } .hero-copy { max-width:450px; padding:0 15px; } .integration-logos { gap:30px; flex-wrap:wrap; } .integration-logo { font-size:18px; } .section { padding:65px 0; } .section-heading { gap:25px; } .section-heading h2 { font-size:32px; } .workflow { gap:30px; } .safety-grid { gap:25px; } .faq-layout { gap:30px; } }
+@media(max-width:600px) { .brand { font-size:18px; } .navbar .nav-links > button { font-size:11px; padding-inline:12px; } h1 { font-size:41px; line-height:1.18; } .hero { min-height:625px; } .hero-content { padding-top:41px; } .hero .eyebrow { font-size:9px; } .hero-copy { font-size:14px; max-width:340px; } .hero-art { object-position:center bottom; } .hero-actions { gap:8px; } .hero-actions button { padding-inline:16px; font-size:12px; } .activity-float { min-width:0; width:calc(100% - 40px); gap:10px; padding:13px; bottom:24px; } .activity-float p { font-size:11px; } .activity-float .lift { font-size:11px; } .integrations { padding:29px 0; } .integration-logos { gap:24px; } .integration-logo { font-size:16px; } .integration-logo svg { width:19px; } .section-heading { display:block; margin-bottom:23px; } .section-heading h2 { font-size:31px; } .section-heading > p { margin-top:20px; } .workflow { grid-template-columns:1fr; gap:25px; } .flow-step { padding:17px 0; } .safety-grid { grid-template-columns:1fr; gap:32px; } .safety-item { padding-left:43px; position:relative; } .safety-item > svg { position:absolute; left:0; top:0; } .faq-layout { grid-template-columns:1fr; gap:25px; } .faq-layout h2 { font-size:31px; } .final-cta h2 { font-size:31px; } .footer { align-items:start; gap:15px; } .footer > p { max-width:125px; text-align:right; line-height:1.7; } }
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } * { animation:none!important; transition:none!important; } } 
+
+dont fuck anything else or change it
+
+---
+
+now convert my next js to match this ui
+
+import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
+import { ArrowDown, ArrowRight, ArrowUpRight, ChartNoAxesCombined, Check, ChevronRight, Github, GitPullRequest, Globe, Layers, Minus, Play, Plus, RotateCcw, ShieldCheck, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { AgentPreview, steps } from '@/components/agent-preview';
+import loopImage from '@/assets/optimization-loop.jpg';
+
+export const Route = createFileRoute('/')({
+  head: () => ({ meta: [
+    { title: 'Friction Fixer — Your website, better by itself' },
+    { name: 'description', content: 'An AI agent that finds what drives visitors away, fixes your website through GitHub, and keeps only the changes that work.' },
+    { property: 'og:title', content: 'Friction Fixer — Your website, better by itself' },
+    { property: 'og:description', content: 'Observe. Fix. Verify. Repeat. Turn your visitor analytics into a website that improves itself.' },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+  ] }),
+  component: Index,
+});
+
+const faqs = [
+  { question: 'How is this different from an analytics tool?', answer: 'Analytics tells you what happened. Friction Fixer closes the loop: it finds a likely cause, makes a focused code change, and checks the result in your analytics. Insights become improvements, not another dashboard to monitor.' },
+  { question: 'What does the agent need to get started?', answer: 'Your website, access to its analytics, and the matching GitHub repository. Visitor behavior provides the signal; your repository is where the agent proposes the fix.' },
+  { question: 'Do I stay in control of my website?', answer: 'Yes. Changes are traceable in GitHub, with a clear hypothesis and a focused pull request. The workflow is designed around reviewable changes, measurable results, and reversibility—not unexplained edits.' },
+  { question: 'What if a change makes things worse?', answer: 'A fix is only a win if the results support it. When a change does not improve the goal, the agent rolls it back, uses what it learned, and tries another approach.' },
+];
+
+function Brand() {
+  return <a className="brand" href="#" aria-label="Friction Fixer home"><span className="brand-mark" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><path d="M12 4h23l-5 8H18l-4 7h16l-5 8H10L5 36 12 4Z" fill="currentColor" /></svg></span><span>friction fixer<span className="text-success">.</span></span></a>;
+}
+
+function Index() {
+  const [step, setStep] = useState(0);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [demoOpen, setDemoOpen] = useState(false);
+  const [demoStep, setDemoStep] = useState(0);
+  const openDemo = () => { setDemoStep(0); setDemoOpen(true); };
+  return <>
+    <header className="container-page navbar"><Brand /><nav className="nav-links" aria-label="Main navigation"><a href="#how-it-works">How it works</a><a href="#built-for-you">Why Friction Fixer</a><a href="#faq">FAQs</a><Button variant="ink" onClick={openDemo}>Meet your agent <ArrowUpRight /></Button></nav></header>
+    <main>
+      <section className="hero">
+        <img src={loopImage} width={1600} height={1008} className="hero-art" alt="A continuous lime-green ribbon loop flowing through glass checkpoints" fetchPriority="high" />
+        <div className="container-page hero-content">
+          <div className="eyebrow"><span className="status-dot" /> LESS FRICTION. MORE FORWARD.</div>
+          <h1>Friction Fixer.<br />Your website, <span className="highlight-word">better by itself.</span></h1>
+          <p className="hero-copy">The AI agent that finds what’s driving visitors away,<br className="hidden sm:block" /> fixes it, and checks that the fix actually worked.</p>
+          <div className="hero-actions"><Button variant="hero" size="lg" onClick={openDemo}>Meet your agent <ArrowUpRight /></Button><Button variant="quiet" size="lg" asChild><a href="#how-it-works"><Play size={13} /> See how it works</a></Button></div>
+          <p className="hero-note">Your analytics. Your code. A continuous loop of better.</p>
+        </div>
+        <div className="activity-float"><div className="activity-icon"><Check size={18} /></div><div><p>Less friction. One fix at a time.</p><small>Pricing page improvement verified</small></div><span className="lift">+18.7% <ArrowUpRight size={13} className="inline" /></span></div>
+      </section>
+      <section className="integrations" aria-label="Analytics and code ecosystem"><div className="container-page"><p>Built around the tools you already use. Not another dashboard.</p><div className="integration-logos"><span className="integration-logo"><ChartNoAxesCombined />PostHog</span><span className="integration-logo mixpanel"><span aria-hidden="true">Ⅲ</span> mixpanel</span><span className="integration-logo"><Layers />Amplitude</span><span className="integration-logo"><Github />GitHub</span></div></div></section>
+      <section id="how-it-works" className="container-page section">
+        <div className="section-heading"><div><div className="eyebrow"><span className="text-success">01 —</span> THE FEEDBACK LOOP</div><h2>From “why are they leaving?”<br />to “already fixed.”</h2></div><p>No more guessing, endless dashboards,<br className="hidden sm:block" /> or a backlog of “we should fix that.”<br className="hidden sm:block" /> Just a website that keeps getting better.</p></div>
+        <div className="workflow"><div role="tablist" aria-label="Agent workflow">{steps.map((item, i) => <Button key={item.title} variant="ghost" className={`flow-step ${step === i ? 'active' : ''}`} role="tab" aria-selected={step === i} aria-controls="workflow-preview" id={`step-${i}`} onClick={() => setStep(i)}><span className="step-number">0{i + 1}</span><span className="step-text"><strong>{item.title}</strong>{step === i && <p>{item.description}</p>}</span><ArrowRight className="step-arrow" /></Button>)}</div><div id="workflow-preview" role="tabpanel" aria-labelledby={`step-${step}`}><AgentPreview step={step} /></div></div>
+        <div className="loop-footnote"><RotateCcw size={13} /> Not a one-time audit. A continuous improvement loop.</div>
+      </section>
+      <section id="built-for-you" className="safety-section"><div className="container-page section"><div className="section-heading"><div><div className="eyebrow"><span className="text-success">02 —</span> AUTONOMOUS, NOT UNACCOUNTABLE</div><h2>Works on its own.<br />Still on your terms.</h2></div><p>Let the agent do the heavy lifting.<br />Keep the visibility and control.</p></div><div className="safety-grid"><div className="safety-item"><GitPullRequest /><h3>Real fixes. In your code.</h3><p>Focused pull requests in your own repository. Every change has a reason, and every line is yours to review.</p></div><div className="safety-item"><ShieldCheck /><h3>Evidence over intuition.</h3><p>The agent measures against your goals. A prettier page isn’t enough—the visitor experience needs to improve.</p></div><div className="safety-item"><RotateCcw /><h3>Nothing is irreversible.</h3><p>Changes that don’t help get undone. No sunk-cost fixes. Just learning that makes the next attempt better.</p></div></div></div></section>
+      <section id="faq" className="container-page section faq-layout"><div><div className="eyebrow"><span className="text-success">03 —</span> A FEW GOOD QUESTIONS</div><h2>Curious? Good.<br />So is the agent.</h2></div><div>{faqs.map((faq, i) => <div className="faq-item" key={faq.question}><Button className="faq-trigger" variant="ghost" onClick={() => setOpenFaq(openFaq === i ? null : i)} aria-expanded={openFaq === i} aria-controls={`faq-${i}`}>{faq.question}{openFaq === i ? <Minus /> : <Plus />}</Button>{openFaq === i && <p className="faq-answer" id={`faq-${i}`}>{faq.answer}</p>}</div>)}</div></section>
+      <section className="final-cta"><h2>Your next improvement<br />shouldn’t wait on your to-do list.</h2><p>Give your website an agent that closes the loop.</p><Button variant="ink" size="lg" onClick={openDemo}>Meet Friction Fixer <ArrowUpRight /></Button></section>
+    </main>
+    <footer className="container-page footer"><Brand /><p>© {new Date().getFullYear()} Friction Fixer. Always improving.</p></footer>
+    <Dialog open={demoOpen} onOpenChange={setDemoOpen}><DialogContent className="max-w-xl w-[calc(100%-32px)] rounded-lg"><DialogHeader><DialogTitle className="font-display text-xl">Meet your next website improvement.</DialogTitle><DialogDescription className="dialog-description">Follow the agent from the first signal to a verified fix.</DialogDescription></DialogHeader><AgentPreview step={demoStep} /><div className="demo-controls"><span>0{demoStep + 1} / 04 · {['Observe', 'Fix', 'Verify', 'Learn'][demoStep]}</span><Button variant="hero" onClick={() => setDemoStep((demoStep + 1) % 4)}>{demoStep === 3 ? 'Run it again' : 'Next step'}{demoStep === 3 ? <RotateCcw /> : <ArrowRight />}</Button></div></DialogContent></Dialog>
+  </>;
+}
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  Outlet,
+  Link,
+  createRootRouteWithContext,
+  useRouter,
+  HeadContent,
+  Scripts,
+  type ErrorComponentProps,
+} from "@tanstack/react-router";
+import { useEffect, type ReactNode } from "react";
+
+import appCss from "../styles.css?url";
+import { reportLovableError } from "../lib/lovable-error-reporting";
+
+function NotFoundComponent() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="max-w-md text-center">
+        <h1 className="text-7xl font-bold text-foreground">404</h1>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          The page you're looking for doesn't exist or has been moved.
+        </p>
+        <div className="mt-6">
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Go home
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
+  console.error(error);
+  const router = useRouter();
+  useEffect(() => {
+    reportLovableError(error, { boundary: "tanstack_root_error_component" });
+  }, [error]);
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="max-w-md text-center">
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">
+          This page didn't load
+        </h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Something went wrong on our end. You can try refreshing or head back home.
+        </p>
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
+          <button
+            onClick={() => {
+              router.invalidate();
+              reset();
+            }}
+            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            Try again
+          </button>
+          <a
+            href="/"
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            Go home
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Friction Fixer — A website that gets better, by itself" },
+      { name: "description", content: "Meet the AI agent that finds visitor friction, improves your website, and measures what works." },
+      { property: "og:title", content: "Friction Fixer" },
+      { property: "og:description", content: "Turn visitor behavior into better website experiences, automatically." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: appCss,
+      },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@400;500;600;650;700;750;800&display=swap" },
+    ],
+  }),
+  shellComponent: RootShell,
+  component: RootComponent,
+  notFoundComponent: NotFoundComponent,
+  errorComponent: ErrorComponent,
+});
+
+function RootShell({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        {children}
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+function RootComponent() {
+  const { queryClient } = Route.useRouteContext();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <Outlet />
+    </QueryClientProvider>
+  );
+} 
+
+in terms of components. the naming should be "some-component.tsx" and it should have proper folder structure also, dont have eveyrthing in 1 component! thanks!
+
+---
+
+if there are components missing just add the placeholders, and i'll give them to u
+
+---
+
+dont want meet ur agent to open popup or anything like that. it should take to /dashboard please! but here is the data for the feedback loop section
+
+export const steps = [
+  {
+    title: "See where visitors get stuck.",
+    description:
+      "Your analytics tell a story. The agent finds the drop-offs, dead clicks, and moments that make people leave.",
+  },
+  {
+    title: "Turn the insight into a fix.",
+    description:
+      "It pinpoints the friction and creates a focused change in your GitHub repository. Real code. Not another recommendation.",
+  },
+  {
+    title: "Let the results do the talking.",
+    description:
+      "After the change goes live, the agent watches the same goal to see whether the experience actually improved.",
+  },
+  {
+    title: "Keep the wins. Undo the rest.",
+    description:
+      "If a change doesn’t help, it gets rolled back. The agent learns from the result and tries a different approach.",
+  },
+];
+
+const panels = [
+  {
+    label: "01 / OBSERVE",
+    title: "A little friction. A lot of lost visitors.",
+    description: "Visitors are reaching your pricing page, but the next step isn’t clear.",
+    events: [
+      { icon: Activity, label: "Pricing page analyzed", value: "2,418 sessions" },
+      { icon: MousePointer2, label: "Visitors leaving before signup", value: "68.4%" },
+      { icon: ScanLine, label: "Primary CTA below the fold", value: "Friction found" },
+    ],
+    result: "Next up",
+    resultValue: "Create a focused fix →",
+  },
+  {
+    label: "02 / FIX",
+    title: "An insight becomes a pull request.",
+    description: "Move the primary call to action into view and make the next step clearer.",
+    events: [
+      { icon: Sparkles, label: "Hypothesis created", value: "CTA visibility" },
+      { icon: GitPullRequest, label: "fix/pricing-page-cta", value: "PR #42" },
+      { icon: Check, label: "Checks passed", value: "Ready to review" },
+    ],
+    result: "Change scope",
+    resultValue: "One page. One hypothesis.",
+  },
+  {
+    label: "03 / VERIFY",
+    title: "Better is a number. Not a guess.",
+    description:
+      "Compare signup conversion before and after the change, using your connected analytics.",
+    events: [
+      { icon: Activity, label: "Baseline conversion", value: "3.2%" },
+      { icon: Activity, label: "Conversion after change", value: "3.8%" },
+      { icon: Check, label: "Measurement window", value: "Complete" },
+    ],
+    result: "Relative conversion lift",
+    resultValue: "+18.7% ↗",
+  },
+  {
+    label: "04 / LEARN",
+    title: "Every result makes the next fix smarter.",
+    description:
+      "Keep the change when it helps. Revert it when it doesn’t. Then start the next cycle.",
+    events: [
+      { icon: Check, label: "Pricing CTA improvement", value: "Kept" },
+      { icon: RotateCcw, label: "Longer signup form", value: "Reverted" },
+      { icon: Sparkles, label: "Next hypothesis", value: "Form clarity" },
+    ],
+    result: "Agent status",
+    resultValue: "Learning. Improving. Repeating.",
+  },
+];
+
+and also i added the png which was the optimization-loop, also for the button i removed it and added shadcn component. now if u need to add any just ask me and i'll add it. 
+
+also regarding the css, have u optmized it? or u have just copied it?
+
+---
+
+the image is called this. optimization-loop.jpg the logo is already there
+
+---
+
+dude also please clean up everything which was added as temp or something!
+
+and the css/styling is still a little here and there like i see u have used quite alot of custom variables, i have tailwind installed so use those no! it's better and the theme of the site should be in variables so that it can be re-used, u get me?
+
+---
+
+Export Github doesn't exist in target module for integrations section.... !!
