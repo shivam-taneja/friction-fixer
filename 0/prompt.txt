@@ -1,0 +1,1 @@
+add in the readme the setup for this, like python version is req, and for mac/windows waht is req etc etc
