@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 import { rootMetadata } from "@/lib/seo";
@@ -26,7 +27,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       )}
       data-scroll-behavior="smooth"
     >
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
