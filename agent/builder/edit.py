@@ -1,4 +1,4 @@
-"""Asks Groq for one edit and writes it inside demo-site/."""
+"""Asks the configured model for one edit and writes it inside demo-site/."""
 
 import json
 import os
@@ -13,20 +13,40 @@ from agent.config import DEMO_SITE_DIR, REPO_ROOT
 from agent.schemas import Plan
 
 TEXT_SUFFIXES = {".html", ".css", ".js", ".svg", ".txt", ".md"}
-GROQ_BASE_URL = "https://api.groq.com/openai/v1"
-MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
+PROVIDERS = {
+    "litellm": {
+        "base_url": "https://litellm.vision.aivar.app/v1",
+        "api_key_env": "LITELLM_API_KEY",
+        "model": "claude-sonnet-4.6",
+    },
+    "groq": {
+        "base_url": "https://api.groq.com/openai/v1",
+        "api_key_env": "GROQ_API_KEY",
+        "model": "openai/gpt-oss-120b",
+    },
+}
+
+
+def provider_settings() -> tuple[str, str, str]:
+    """Return the API key, base URL, and model for LLM_PROVIDER."""
+    name = os.getenv("LLM_PROVIDER", "litellm").strip().lower()
+    spec = PROVIDERS.get(name)
+    if spec is None:
+        known = ", ".join(sorted(PROVIDERS))
+        raise RuntimeError(f"LLM_PROVIDER must be one of: {known}.")
+    key = os.getenv(spec["api_key_env"], "").strip()
+    if not key:
+        raise RuntimeError(f"Set {spec['api_key_env']} in .env for the {name} provider.")
+    model = os.getenv("LLM_MODEL", spec["model"]).strip()
+    return key, spec["base_url"], model
 
 
 def edit_site(plan: Plan) -> list[Path]:
     current = _read_site()
-    client = neatlogs.wrap(
-        OpenAI(
-            api_key=os.environ["GROQ_API_KEY"].strip(),
-            base_url=GROQ_BASE_URL,
-        )
-    )
+    api_key, base_url, model = provider_settings()
+    client = neatlogs.wrap(OpenAI(api_key=api_key, base_url=base_url))
     response = client.chat.completions.create(
-        model=MODEL,
+        model=model,
         temperature=0.2,
         response_format={"type": "json_object"},
         messages=[

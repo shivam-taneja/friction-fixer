@@ -6,7 +6,7 @@ from pathlib import Path
 import neatlogs
 
 from agent.builder import git
-from agent.builder.edit import edit_site
+from agent.builder.edit import edit_site, provider_settings
 from agent.builder.text import plan_text, subject
 from agent.schemas import Plan
 
@@ -26,6 +26,7 @@ def apply_plan(plan: Plan) -> str:
     committed = False
 
     git.checkout_new_branch(branch)
+
     try:
         written = edit_site(plan)
         git.commit_files(written, subject(plan.change), plan_text(plan))
@@ -44,7 +45,7 @@ def apply_plan(plan: Plan) -> str:
 
 
 def _require_keys() -> None:
-    if not os.getenv("GROQ_API_KEY", "").strip():
-        raise RuntimeError("Set GROQ_API_KEY in .env before running the Builder.")
+    provider_settings()
+
     if not os.getenv("GITHUB_TOKEN", "").strip():
         raise RuntimeError("Set GITHUB_TOKEN in .env before running the Builder.")

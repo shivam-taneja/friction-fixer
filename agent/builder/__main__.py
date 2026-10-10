@@ -16,7 +16,9 @@ def main() -> None:
         help='One change, for example: "Make the pricing button large and green"',
     )
     args = parser.parse_args()
+
     init_tracing()
+
     try:
         print(_open_test_pr(args.change))
     finally:
@@ -31,6 +33,7 @@ def _open_test_pr(change: str) -> str:
         file="demo-site/",
         expected_effect="The page shows the requested change.",
     )
+
     return apply_plan(plan)
 
 

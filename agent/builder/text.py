@@ -19,6 +19,8 @@ def plan_text(plan: Plan) -> str:
 
 def subject(change: str) -> str:
     title = re.sub(r"\s+", " ", change).strip()
+
     if len(title) > 72:
         return title[:69].rstrip() + "..."
+
     return title

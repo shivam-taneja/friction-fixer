@@ -28,9 +28,11 @@ def branch_name(change: str) -> str:
     base = f"builder/{slug}"
     name = base
     number = 2
+
     while _branch_exists(name):
         name = f"{base}-{number}"
         number += 1
+
     return name
 
 
@@ -45,8 +47,10 @@ def checkout(name: str) -> None:
 def commit_files(paths: list[Path], title: str, body: str) -> None:
     relative = [str(path.relative_to(REPO_ROOT)) for path in paths]
     run(["git", "add", "--", *relative])
+
     if not run(["git", "diff", "--cached", "--name-only"]):
         raise RuntimeError("The model made no visible change.")
+
     run(["git", "commit", "-m", title, "-m", body])
 
 
@@ -65,6 +69,7 @@ def push(branch: str) -> None:
     env["GITHUB_TOKEN"] = token
     env["GH_TOKEN"] = token
     env["GIT_TERMINAL_PROMPT"] = "0"
+
     run(
         [
             "git",
@@ -86,6 +91,7 @@ def open_pr(branch: str, title: str, body: str) -> str:
     env = os.environ.copy()
     env["GITHUB_TOKEN"] = token
     env["GH_TOKEN"] = token
+
     return run(
         [
             "gh",
@@ -129,9 +135,11 @@ def run(cmd: list[str], env: dict[str, str] | None = None) -> str:
         text=True,
         capture_output=True,
     )
+
     if result.returncode != 0:
         detail = (result.stderr or result.stdout).strip()
         raise RuntimeError(f"{cmd[0]} failed: {detail}")
+
     return result.stdout.strip()
 
 
@@ -140,4 +148,5 @@ def _branch_exists(name: str) -> bool:
         ["git", "show-ref", "--verify", "--quiet", f"refs/heads/{name}"],
         cwd=REPO_ROOT,
     )
+
     return result.returncode == 0
