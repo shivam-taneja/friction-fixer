@@ -2,7 +2,7 @@
 
 Python code for the Friction Fixer loop. The full loop is described in [FLOW.md](../FLOW.md).
 
-These files are placeholders. Each function raises `NotImplementedError`.
+The Analyst, Reviewer, simulator, and loop are still placeholders. The Builder can already edit `demo-site/` and open a pull request.
 
 ## Files
 
@@ -27,10 +27,16 @@ From the repo root, with `venv` activated and `.env` filled in:
 python -m agent
 ```
 
-`.env` holds `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, and `OPENAI_API_KEY`. It is never committed.
+To test the Builder on its own, commit `demo-site/` on `main` first, then ask for one change. This pushes a branch and opens a pull request:
+
+```bash
+python -m agent.builder "Make the pricing button large and green"
+```
+
+`.env` holds `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, and `GROQ_API_KEY`. It is never committed.
 
 ## What this folder uses
 
-This folder only imports **neatlogs**, and only once `tracing.py` is filled in. You can write the loop before that key exists.
+This folder imports **neatlogs** for traces. The Builder calls Groq through the OpenAI client library.
 
 **Entire** and **cfo.ai** are not imported here. Entire is a CLI on the repo that records why a code change was made. cfo.ai is the business plan, written outside this loop.

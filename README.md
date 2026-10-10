@@ -38,7 +38,7 @@ Python **3.13** is required. `neatlogs` does not install on 3.14. The `.python-v
 
 You also need git, and a virtualenv named `venv` in the repo root. `venv/` is gitignored.
 
-Fill in `.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, and `OPENAI_API_KEY`.
+Fill in `.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, and `GROQ_API_KEY`.
 
 Run the loop from the repo root, with the virtualenv activated:
 
