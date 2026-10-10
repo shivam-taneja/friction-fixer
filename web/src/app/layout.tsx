@@ -38,8 +38,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={cn(
         dmSans.variable,
         manrope.variable,
-        "scroll-smooth scroll-pt-[100px] font-sans motion-reduce:scroll-auto",
+        "scroll-smooth scroll-pt-25 font-sans motion-reduce:scroll-auto",
       )}
+      data-scroll-behavior="smooth"
     >
       <body>{children}</body>
     </html>

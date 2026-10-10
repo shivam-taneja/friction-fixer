@@ -22,30 +22,35 @@ const items = [
 export function SafetySection() {
   return (
     <section id="built-for-you" className="border-y border-border bg-secondary">
-      <PageContainer className="py-[92px] max-md:py-[65px]">
-        <div className="flex items-end justify-between gap-[50px] max-md:gap-[25px] max-sm:block">
+      <PageContainer className="py-23 max-md:py-16.25">
+        <div className="flex items-end justify-between gap-12.5 max-md:gap-6.25 max-sm:block">
           <div>
             <div className="flex items-center gap-2 text-[11px] font-[650] tracking-[1.5px] uppercase">
-              <span className="text-success">02 —</span> Autonomous, not unaccountable
+              <span className="text-success">02 —</span> Autonomous, not
+              unaccountable
             </div>
-            <h2 className="mt-[15px] font-display text-[39px] leading-[1.25] font-semibold max-md:text-[32px] max-sm:text-[31px]">
+            <h2 className="mt-3.75 font-display text-[39px] leading-tight font-semibold max-md:text-[32px] max-sm:text-[31px]">
               Works on its own.
               <br />
               Still on your terms.
             </h2>
           </div>
-          <p className="mb-[3px] max-w-[305px] text-sm leading-[1.8] text-muted-foreground max-sm:mt-5">
+          <p className="mb-0.75 max-w-76.25 text-sm leading-[1.8] text-muted-foreground max-sm:mt-5">
             Let the agent do the heavy lifting.
             <br />
             Keep the visibility and control.
           </p>
         </div>
-        <div className="mt-10 grid grid-cols-3 gap-[55px] max-md:gap-[25px] max-sm:grid-cols-1 max-sm:gap-8">
+        <div className="mt-10 grid grid-cols-3 gap-13.75 max-md:gap-6.25 max-sm:grid-cols-1 max-sm:gap-8">
           {items.map((item) => (
-            <div key={item.title} className="max-sm:relative max-sm:pl-[43px]">
-              <item.icon className="mb-[15px] size-[23px] text-success max-sm:absolute max-sm:top-0 max-sm:left-0 max-sm:mb-0" />
-              <h3 className="mb-3 font-display text-[17px] font-semibold">{item.title}</h3>
-              <p className="text-[13px] leading-[1.9] text-muted-foreground">{item.body}</p>
+            <div key={item.title} className="max-sm:relative max-sm:pl-10.75">
+              <item.icon className="mb-3.75 size-5.75 text-success max-sm:absolute max-sm:top-0 max-sm:left-0 max-sm:mb-0" />
+              <h3 className="mb-3 font-display text-[17px] font-semibold">
+                {item.title}
+              </h3>
+              <p className="text-[13px] leading-[1.9] text-muted-foreground">
+                {item.body}
+              </p>
             </div>
           ))}
         </div>

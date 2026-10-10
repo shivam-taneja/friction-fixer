@@ -6,12 +6,15 @@ const logoClass =
 
 export function IntegrationsSection() {
   return (
-    <section className="border-b border-border py-[35px] pb-[39px] text-center max-sm:py-[29px]" aria-label="Analytics and code ecosystem">
+    <section
+      className="border-b border-border py-8.75 pb-9.75 text-center max-sm:py-7.25"
+      aria-label="Analytics and code ecosystem"
+    >
       <PageContainer>
-        <p className="mb-[25px] text-[11px] text-muted-foreground">
+        <p className="mb-6.25 text-[11px] text-muted-foreground">
           Built around the tools you already use. Not another dashboard.
         </p>
-        <div className="flex items-center justify-center gap-[65px] max-md:flex-wrap max-md:gap-[30px] max-sm:gap-6">
+        <div className="flex items-center justify-center gap-16.25 max-md:flex-wrap max-md:gap-7.5 max-sm:gap-6">
           <span className={logoClass}>
             <ChartNoAxesCombined />
             PostHog

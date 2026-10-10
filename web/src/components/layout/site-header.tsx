@@ -13,11 +13,14 @@ export function SiteHeader() {
     <header
       className={cn(
         pageContainerClass,
-        "flex h-[88px] items-center justify-between max-md:h-[75px]",
+        "flex h-22 items-center justify-between max-md:h-18.75",
       )}
     >
       <Brand />
-      <nav className="flex items-center gap-[34px] text-[13px] max-md:gap-5" aria-label="Main navigation">
+      <nav
+        className="flex items-center gap-8.5 text-[13px] max-md:gap-5"
+        aria-label="Main navigation"
+      >
         <a className={navLinkClass} href="#how-it-works">
           How it works
         </a>

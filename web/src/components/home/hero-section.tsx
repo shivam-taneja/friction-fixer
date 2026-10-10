@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function HeroSection() {
   return (
-    <section className="relative isolate min-h-[650px] overflow-hidden border-b border-border bg-hero max-sm:min-h-[625px]">
+    <section className="relative isolate min-h-162.5 overflow-hidden border-b border-border bg-hero max-sm:min-h-156.25">
       <Image
         src="/optimization-loop.jpg"
         width={1600}
@@ -15,8 +15,8 @@ export function HeroSection() {
         className="absolute inset-0 -z-10 size-full object-cover object-[center_62%] min-[1600px]:object-[center_59%] max-sm:object-bottom dark:opacity-10"
         alt="A continuous lime-green ribbon loop flowing through glass checkpoints"
       />
-      <PageContainer className="relative pt-[49px] text-center max-md:pt-[58px] max-sm:pt-[41px]">
-        <div className="mb-[23px] flex items-center justify-center gap-2 text-[10px] font-[650] tracking-[1.5px] uppercase max-sm:text-[9px]">
+      <PageContainer className="relative pt-12.25 text-center max-md:pt-14.5 max-sm:pt-10.25">
+        <div className="mb-5.75 flex items-center justify-center gap-2 text-[10px] font-[650] tracking-[1.5px] uppercase max-sm:text-[9px]">
           <span className="size-1.5 rounded-full bg-success ring-4 ring-success/10" />
           Less friction. More forward.
         </div>
@@ -24,15 +24,16 @@ export function HeroSection() {
           Friction Fixer.
           <br />
           Your website,{" "}
-          <span className="relative inline-block after:absolute after:inset-x-0 after:bottom-0 after:h-[5px] after:-rotate-1 after:bg-primary after:content-['']">
+          <span className="relative inline-block after:absolute after:inset-x-0 after:bottom-0 after:h-1.25 after:-rotate-1 after:bg-primary after:content-['']">
             better by itself.
           </span>
         </h1>
-        <p className="mx-auto mt-6 mb-[23px] max-w-[520px] text-base leading-[1.7] text-muted-foreground max-md:max-w-[450px] max-md:px-[15px] max-sm:max-w-[340px] max-sm:text-sm">
+        <p className="mx-auto mt-6 mb-5.75 max-w-130 text-base leading-[1.7] text-muted-foreground max-md:max-w-112.5 max-md:px-3.75 max-sm:max-w-85 max-sm:text-sm">
           The AI agent that finds what’s driving visitors away,
-          <br className="hidden sm:block" /> fixes it, and checks that the fix actually worked.
+          <br className="hidden sm:block" /> fixes it, and checks that the fix
+          actually worked.
         </p>
-        <div className="flex justify-center gap-[13px] max-sm:gap-2">
+        <div className="flex justify-center gap-3.25 max-sm:gap-2">
           <Button
             nativeButton={false}
             render={<Link href="/dashboard" />}
@@ -56,8 +57,8 @@ export function HeroSection() {
           Your analytics. Your code. A continuous loop of better.
         </p>
       </PageContainer>
-      <div className="absolute bottom-[31px] left-1/2 flex min-w-[460px] -translate-x-1/2 items-center gap-[18px] rounded-[7px] border border-border bg-background px-5 py-[15px] shadow-float max-sm:bottom-6 max-sm:w-[calc(100%-2.5rem)] max-sm:min-w-0 max-sm:gap-2.5 max-sm:p-[13px]">
-        <div className="grid size-[34px] place-items-center rounded-[5px] bg-secondary text-success">
+      <div className="absolute bottom-7.75 left-1/2 flex min-w-115 -translate-x-1/2 items-center gap-4.5 rounded-[7px] border border-border bg-background px-5 py-3.75 shadow-float max-sm:bottom-6 max-sm:w-[calc(100%-2.5rem)] max-sm:min-w-0 max-sm:gap-2.5 max-sm:p-3.25">
+        <div className="grid size-8.5 place-items-center rounded-[5px] bg-secondary text-success">
           <Check size={18} />
         </div>
         <div>
