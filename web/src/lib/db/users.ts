@@ -41,7 +41,7 @@ export async function upsertUser(input: {
       updatedAt: FieldValue.serverTimestamp(),
       onboarding: {
         status: OnboardingStatus.not_started,
-        step: "site",
+        projectId: null,
         completedAt: null,
       },
     });

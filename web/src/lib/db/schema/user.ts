@@ -1,14 +1,3 @@
-export const onboardingSteps = [
-  "site",
-  "verify",
-  "github",
-  "analytics",
-  "goal",
-  "done",
-] as const;
-
-export type OnboardingStep = (typeof onboardingSteps)[number];
-
 export enum OnboardingStatus {
   not_started = "not_started",
   in_progress = "in_progress",
@@ -31,7 +20,7 @@ export type UserRecord = {
   updatedAt: unknown;
   onboarding: {
     status: OnboardingStatus;
-    step: OnboardingStep;
+    projectId: string | null;
     completedAt: unknown | null;
   };
 };

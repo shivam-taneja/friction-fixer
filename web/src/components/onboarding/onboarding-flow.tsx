@@ -7,33 +7,39 @@ import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { OnboardingProgress } from "@/components/onboarding/onboarding-progress";
 import {
   isRepoName,
-  markOnboardingComplete,
   onboardingSteps,
   parseWebsite,
-  verificationToken,
-  type AnalyticsChoice,
-  type GoalChoice,
+  uiStepIndex,
+  type AnalyticsProvider,
   type OwnershipMethod,
+  type ProjectGoal,
 } from "@/components/onboarding/logic";
+import { postOnboarding } from "@/components/onboarding/save";
 import { AnalyticsStep } from "@/components/onboarding/steps/analytics-step";
 import { GithubStep } from "@/components/onboarding/steps/github-step";
 import { GoalStep } from "@/components/onboarding/steps/goal-step";
 import { WebsiteStep } from "@/components/onboarding/steps/website-step";
 import { Button } from "@/components/ui/button";
+import type { OnboardingDraft } from "@/lib/onboarding/draft";
 
-export function OnboardingFlow() {
+export function OnboardingFlow({ initial }: { initial: OnboardingDraft }) {
   const router = useRouter();
-  const [step, setStep] = useState(0);
-  const [site, setSite] = useState("");
-  const [method, setMethod] = useState<OwnershipMethod>("file");
-  const [verified, setVerified] = useState(false);
+  const [step, setStep] = useState(() => uiStepIndex(initial.step));
+  const [site, setSite] = useState(initial.site);
+  const [method, setMethod] = useState<OwnershipMethod>(initial.method);
+  const [verified, setVerified] = useState(initial.verified);
+  const [token, setToken] = useState(initial.token);
+  const [savedDomain, setSavedDomain] = useState(initial.domain);
   const [checking, setChecking] = useState(false);
-  const [analytics, setAnalytics] = useState<AnalyticsChoice>("PostHog");
-  const [repo, setRepo] = useState("");
-  const [goal, setGoal] = useState<GoalChoice>("Signup conversion");
+  const [saving, setSaving] = useState(false);
+  const [analytics, setAnalytics] = useState<AnalyticsProvider>(initial.analytics);
+  const [repo, setRepo] = useState(initial.repo);
+  const [goal, setGoal] = useState<ProjectGoal>(initial.goal);
   const [error, setError] = useState("");
-  const verifyTimer = useRef<number | null>(null);
   const siteRef = useRef(site);
+  const tokenRef = useRef(token);
+  const savedKey = useRef(`${initial.site}:${initial.method}`);
+  tokenRef.current = token;
   const parsed = parseWebsite(site);
   const current = onboardingSteps[step];
 
@@ -42,35 +48,83 @@ export function OnboardingFlow() {
   }, [site]);
 
   useEffect(() => {
-    return () => {
-      if (verifyTimer.current) window.clearTimeout(verifyTimer.current);
-    };
-  }, []);
+    if (!parsed) return;
+    const origin = parsed.origin;
+    const domain = parsed.domain;
+    const nextMethod = method;
+    const key = `${origin}:${nextMethod}`;
+    if (savedKey.current === key && tokenRef.current) return;
+
+    const timer = window.setTimeout(() => {
+      void postOnboarding({ action: "site", url: origin, method: nextMethod })
+        .then((draft) => {
+          if (parseWebsite(siteRef.current)?.domain !== domain) return;
+          savedKey.current = `${draft.site}:${draft.method}`;
+          setToken(draft.token);
+          setSavedDomain(draft.domain);
+          setVerified(draft.verified);
+        })
+        .catch((caught: unknown) => {
+          if (parseWebsite(siteRef.current)?.domain !== domain) return;
+          const failure = caught as Error & { draft?: OnboardingDraft };
+          if (failure.draft) {
+            setToken(failure.draft.token);
+            setSavedDomain(failure.draft.domain);
+            setVerified(failure.draft.verified);
+          }
+          setError(failure.message);
+        });
+    }, 400);
+
+    return () => window.clearTimeout(timer);
+  }, [parsed?.domain, parsed?.origin, method]);
 
   function updateSite(value: string) {
-    if (verifyTimer.current) window.clearTimeout(verifyTimer.current);
     setSite(value);
-    setVerified(false);
-    setChecking(false);
     setError("");
+    const next = parseWebsite(value);
+    if (next?.domain !== savedDomain) {
+      setVerified(false);
+      setToken("");
+    }
   }
 
-  function verifyDomain() {
+  function applyDraft(draft: OnboardingDraft) {
+    savedKey.current = `${draft.site}:${draft.method}`;
+    setToken(draft.token);
+    setSavedDomain(draft.domain);
+    setVerified(draft.verified);
+    setMethod(draft.method);
+    setAnalytics(draft.analytics);
+    setRepo(draft.repo);
+    setGoal(draft.goal);
+    if (draft.site) setSite(draft.site);
+  }
+
+  async function verifyDomain() {
     if (!parsed) {
       setError("Enter a valid website address, like acme.so.");
       return;
     }
-    setError("");
     setChecking(true);
-    if (verifyTimer.current) window.clearTimeout(verifyTimer.current);
-    const domain = parsed.domain;
-    verifyTimer.current = window.setTimeout(() => {
+    setError("");
+    try {
+      const draft = await postOnboarding({
+        action: "verify",
+        url: parsed.origin,
+        method,
+      });
+      applyDraft(draft);
+    } catch (caught) {
+      const failure = caught as Error & { draft?: OnboardingDraft };
+      if (failure.draft) applyDraft(failure.draft);
+      setError(failure.message);
+    } finally {
       setChecking(false);
-      if (parseWebsite(siteRef.current)?.domain === domain) setVerified(true);
-    }, 700);
+    }
   }
 
-  function next() {
+  async function next() {
     setError("");
     if (step === 0) {
       if (!parsed) {
@@ -82,17 +136,38 @@ export function OnboardingFlow() {
         return;
       }
       setSite(parsed.origin);
+      setStep(1);
+      return;
     }
+
     if (step === 2 && !isRepoName(repo)) {
       setError("Enter a repository as owner/repository.");
       return;
     }
-    if (step < onboardingSteps.length - 1) {
-      setStep(step + 1);
-      return;
+
+    setSaving(true);
+    try {
+      if (step === 1) {
+        applyDraft(
+          await postOnboarding({ action: "analytics", provider: analytics }),
+        );
+        setStep(2);
+        return;
+      }
+      if (step === 2) {
+        applyDraft(await postOnboarding({ action: "github", repo }));
+        setStep(3);
+        return;
+      }
+      await postOnboarding({ action: "goal", goal });
+      router.push("/dashboard");
+    } catch (caught) {
+      const failure = caught as Error & { draft?: OnboardingDraft };
+      if (failure.draft) applyDraft(failure.draft);
+      setError(failure.message);
+    } finally {
+      setSaving(false);
     }
-    markOnboardingComplete();
-    router.push("/dashboard");
   }
 
   return (
@@ -112,7 +187,7 @@ export function OnboardingFlow() {
         <form
           onSubmit={(event) => {
             event.preventDefault();
-            next();
+            void next();
           }}
         >
           {step === 0 && (
@@ -122,10 +197,10 @@ export function OnboardingFlow() {
               domain={parsed?.domain ?? null}
               method={method}
               onMethodChange={setMethod}
-              token={parsed ? verificationToken(parsed.domain) : ""}
+              token={token}
               verified={verified}
               checking={checking}
-              onVerify={verifyDomain}
+              onVerify={() => void verifyDomain()}
             />
           )}
           {step === 1 && (
@@ -157,6 +232,7 @@ export function OnboardingFlow() {
               <Button
                 variant="ghost"
                 type="button"
+                disabled={saving}
                 onClick={() => {
                   setStep(step - 1);
                   setError("");
@@ -175,10 +251,13 @@ export function OnboardingFlow() {
               type="submit"
               size="lg"
               className="h-11 px-4"
+              disabled={saving || checking}
             >
-              {step === onboardingSteps.length - 1
-                ? "Start my agent"
-                : "Continue"}
+              {saving
+                ? "Saving…"
+                : step === onboardingSteps.length - 1
+                  ? "Start my agent"
+                  : "Continue"}
               {step === onboardingSteps.length - 1 ? (
                 <Sparkles />
               ) : (

@@ -1,28 +1,32 @@
 import { ChartNoAxesCombined, Check, Layers } from "lucide-react";
-import type { AnalyticsChoice } from "@/components/onboarding/logic";
+import {
+  analyticsChoices,
+  type AnalyticsProvider,
+} from "@/components/onboarding/logic";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const providers: { name: AnalyticsChoice; icon: typeof Layers }[] = [
-  { name: "PostHog", icon: ChartNoAxesCombined },
-  { name: "Mixpanel", icon: ChartNoAxesCombined },
-  { name: "Amplitude", icon: Layers },
-];
+const icons = {
+  posthog: ChartNoAxesCombined,
+  mixpanel: ChartNoAxesCombined,
+  amplitude: Layers,
+} as const;
 
 export function AnalyticsStep({
   analytics,
   onAnalyticsChange,
 }: {
-  analytics: AnalyticsChoice;
-  onAnalyticsChange: (value: AnalyticsChoice) => void;
+  analytics: AnalyticsProvider;
+  onAnalyticsChange: (value: AnalyticsProvider) => void;
 }) {
   return (
     <div className="grid gap-3">
-      {providers.map((provider) => {
-        const selected = analytics === provider.name;
+      {analyticsChoices.map((provider) => {
+        const selected = analytics === provider.id;
+        const Icon = icons[provider.id];
         return (
           <Button
-            key={provider.name}
+            key={provider.id}
             type="button"
             variant="outline"
             aria-pressed={selected}
@@ -30,16 +34,17 @@ export function AnalyticsStep({
               "h-14 w-full justify-start px-4",
               selected && "border-foreground bg-secondary",
             )}
-            onClick={() => onAnalyticsChange(provider.name)}
+            onClick={() => onAnalyticsChange(provider.id)}
           >
-            <provider.icon />
-            {provider.name}
+            <Icon />
+            {provider.label}
             {selected && <Check className="ml-auto" />}
           </Button>
         );
       })}
       <p className="text-xs text-muted-foreground">
-        The connection is simulated for now. Pick the platform you use.
+        Your choice is saved on this project. Connecting the account comes
+        later.
       </p>
     </div>
   );

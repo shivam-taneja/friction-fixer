@@ -49,7 +49,7 @@ export function WebsiteStep({
         <div className="rounded-lg border border-border p-4">
           <p className="text-sm font-medium">Prove you own {domain}</p>
           <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-            Add a file or a DNS record. This check is simulated for now.
+            Add a file or a DNS record. We check it from our server.
           </p>
           <div className="mt-4 grid grid-cols-2 gap-2">
             {(
@@ -79,12 +79,14 @@ export function WebsiteStep({
               <li>
                 Upload a text file to{" "}
                 <code className="text-foreground">
-                  {domain}/.well-known/friction-fixer.txt
+                  https://{domain}/.well-known/friction-fixer.txt
                 </code>
               </li>
               <li>
-                Put this token in the file:{" "}
-                <code className="text-foreground">{token}</code>
+                Put only this token in the file:{" "}
+                <code className="text-foreground">
+                  {token || "Preparing a token…"}
+                </code>
               </li>
             </ol>
           ) : (
@@ -97,7 +99,9 @@ export function WebsiteStep({
               </li>
               <li>
                 Set the value to{" "}
-                <code className="text-foreground">{token}</code>
+                <code className="text-foreground">
+                  {token || "Preparing a token…"}
+                </code>
               </li>
             </ol>
           )}
@@ -115,7 +119,7 @@ export function WebsiteStep({
             <Button
               type="button"
               variant="outline"
-              disabled={checking || verified}
+              disabled={checking || verified || !token}
               onClick={onVerify}
             >
               {checking ? "Checking…" : verified ? "Verified" : "Verify domain"}

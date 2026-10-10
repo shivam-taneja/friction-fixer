@@ -1,3 +1,14 @@
+import type {
+  AnalyticsProvider,
+  OwnershipMethod,
+  ProjectGoal,
+  ProjectStep,
+} from "@/lib/db/schema/project";
+import { parseWebsite, isRepoName } from "@/lib/onboarding/website";
+
+export { parseWebsite, isRepoName };
+export type { AnalyticsProvider, OwnershipMethod, ProjectGoal };
+
 export const onboardingSteps = [
   {
     id: "website",
@@ -25,46 +36,25 @@ export const onboardingSteps = [
   },
 ] as const;
 
-export const analyticsChoices = ["PostHog", "Mixpanel", "Amplitude"] as const;
-export const goalChoices = [
-  "Signup conversion",
-  "Checkout completion",
-  "Contact form submissions",
-] as const;
+export const analyticsChoices: { id: AnalyticsProvider; label: string }[] = [
+  { id: "posthog", label: "PostHog" },
+  { id: "mixpanel", label: "Mixpanel" },
+  { id: "amplitude", label: "Amplitude" },
+];
 
-export type AnalyticsChoice = (typeof analyticsChoices)[number];
-export type GoalChoice = (typeof goalChoices)[number];
-export type OwnershipMethod = "file" | "dns";
+export const goalChoices: { id: ProjectGoal; label: string }[] = [
+  { id: "signup_conversion", label: "Signup conversion" },
+  { id: "checkout_completion", label: "Checkout completion" },
+  { id: "contact_form", label: "Contact form submissions" },
+];
 
-const completeKey = "ff-onboarding-mock-complete";
-
-export function parseWebsite(value: string) {
-  try {
-    const url = new URL(value.includes("://") ? value : `https://${value}`);
-    if (
-      !url.hostname.includes(".") ||
-      !["http:", "https:"].includes(url.protocol)
-    ) {
-      return null;
-    }
-    return { origin: url.origin, domain: url.hostname.replace(/^www\./, "") };
-  } catch {
-    return null;
-  }
+export function uiStepIndex(step: ProjectStep) {
+  if (step === "analytics") return 1;
+  if (step === "github") return 2;
+  if (step === "goal" || step === "done") return 3;
+  return 0;
 }
 
-export function verificationToken(domain: string) {
-  return `ff_${domain.replace(/\./g, "_")}`;
-}
-
-export function isRepoName(value: string) {
-  return /^[\w.-]+\/[\w.-]+$/.test(value.trim());
-}
-
-export function markOnboardingComplete() {
-  localStorage.setItem(completeKey, "1");
-}
-
-export function isOnboardingComplete() {
-  return localStorage.getItem(completeKey) === "1";
+export function analyticsLabel(id: AnalyticsProvider) {
+  return analyticsChoices.find((choice) => choice.id === id)?.label ?? id;
 }

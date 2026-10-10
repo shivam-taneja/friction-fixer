@@ -24,7 +24,7 @@ function AuthShell({ notice }: { notice?: ReactNode }) {
           Sign in
         </h1>
         <p className="mb-7 text-sm leading-relaxed text-muted-foreground">
-          Use Google or GitHub. The same email links both to one account.
+          Set up the agent for your website.
         </p>
         {notice}
         <AuthForm />

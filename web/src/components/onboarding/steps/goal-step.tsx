@@ -1,8 +1,9 @@
-import type {
-  AnalyticsChoice,
-  GoalChoice,
+import {
+  analyticsLabel,
+  goalChoices,
+  type AnalyticsProvider,
+  type ProjectGoal,
 } from "@/components/onboarding/logic";
-import { goalChoices } from "@/components/onboarding/logic";
 
 const inputClass =
   "mt-2 h-11 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
@@ -14,10 +15,10 @@ export function GoalStep({
   analytics,
   repo,
 }: {
-  goal: GoalChoice;
-  onGoalChange: (value: GoalChoice) => void;
+  goal: ProjectGoal;
+  onGoalChange: (value: ProjectGoal) => void;
   site: string;
-  analytics: AnalyticsChoice;
+  analytics: AnalyticsProvider;
   repo: string;
 }) {
   return (
@@ -27,10 +28,12 @@ export function GoalStep({
         <select
           className={inputClass}
           value={goal}
-          onChange={(event) => onGoalChange(event.target.value as GoalChoice)}
+          onChange={(event) => onGoalChange(event.target.value as ProjectGoal)}
         >
           {goalChoices.map((choice) => (
-            <option key={choice}>{choice}</option>
+            <option key={choice.id} value={choice.id}>
+              {choice.label}
+            </option>
           ))}
         </select>
       </label>
@@ -38,7 +41,7 @@ export function GoalStep({
         {(
           [
             ["Website", site],
-            ["Analytics", analytics],
+            ["Analytics", analyticsLabel(analytics)],
             ["Repository", repo],
             ["Change approval", "Review before publishing"],
           ] as const

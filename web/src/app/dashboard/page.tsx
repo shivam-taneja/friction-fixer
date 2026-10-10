@@ -1,11 +1,17 @@
 import { PageContainer } from "@/components/layout/page-container";
+import { LogoutButton } from "./logout-button";
 import { SignedInAs } from "./signed-in-as";
 
 export default function DashboardPage() {
   return (
     <PageContainer className="py-24">
-      <h1 className="font-display text-4xl font-semibold">Dashboard</h1>
-      <SignedInAs />
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-4xl font-semibold">Dashboard</h1>
+          <SignedInAs />
+        </div>
+        <LogoutButton />
+      </div>
     </PageContainer>
   );
 }

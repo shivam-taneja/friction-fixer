@@ -10,7 +10,6 @@ import {
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { GithubIcon } from "@/components/icons/github-icon";
-import { isOnboardingComplete } from "@/components/onboarding/logic";
 import { Button } from "@/components/ui/button";
 import { getFirebaseAuth } from "@/lib/firebase/client-app";
 import { mapFirebaseError } from "@/lib/firebase/errors";
@@ -64,7 +63,7 @@ export function AuthForm() {
       });
 
       router.refresh();
-      router.replace(isOnboardingComplete() ? "/dashboard" : "/onboarding");
+      router.replace("/onboarding");
     } catch (e) {
       const err = e as AuthError;
       setError(mapFirebaseError(err));
