@@ -1,0 +1,82 @@
+ok wow perfect! it worked, create the branch and did everything!! soo this worked for how did it work? how did the agent worked?
+
+---
+
+soo this worked locally, now talk to me how this would work for some random website/project? and rn we did the change using local system....
+
+---
+
+ok so tell me one thing. this is fine for now, but in future i would want to make a site/github bot or something which can be integrated easily. so the logic for this app is that im thinking of making a dashboard where u can drop ur website and websites analytics (maybe posthog or some other provider connectiong logic) and the github repo for the same site. 
+
+then it'll just work on itself. so that's the end goal right? talk to me
+
+---
+
+ok so i meant like when the product would be live then i meant. so the builder would have to clone the repo and make changes and push it right? that would be the idea logic?
+
+---
+
+ok so i'll start setting that up also cause why not. and we have aws credits so i can use ec2 to pull users codebase and have the agent running in that ec2? or how do u suggest i go about this?
+
+---
+
+dude tell me the github setup also, and how would i get the posthog and or other platform integration added? also how would i verify the website is owned by that user only?
+
+---
+
+ok also one more thing. this dashboard/landing site should be in this repo right?
+
+---
+
+okk sooo good news
+neatHack builders: get Nova & Claude access through LiteLLM :Zila_Hile_la_dance: 
+
+Make your first call
+Save your key privately
+Set LITELLM_API_KEY in your backend’s process environment. If you use a .env file, load it in your app and exclude it from Git.
+
+Point your client here
+API base URL
+CopyAPI base URL
+https://litellm.vision.aivar.app/v1
+Use your key as the Bearer token. With Python, install openai and use the example below.
+
+Choose a model
+nova-micro
+nova-lite
+nova-pro
+nova-2-lite
+claude-haiku
+claude-sonnet-4.6
+claude-opus-4.6
+Python
+CopyPython
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://litellm.vision.aivar.app/v1",
+    api_key=os.environ["LITELLM_API_KEY"],
+)
+
+response = client.chat.completions.create(
+    model="claude-haiku",
+    messages=[{"role": "user", "content": "Hello!"}],
+)
+print(response.choices[0].message.content)
+cURL example & model list
+cURL
+CopycURL
+curl https://litellm.vision.aivar.app/v1/chat/completions \
+  -H "Authorization: Bearer $LITELLM_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"model":"claude-haiku","messages":[{"role":"user","content":"Hello!"}]}'
+List models
+CopyList models
+curl https://litellm.vision.aivar.app/v1/models -H "Authorization: Bearer $LITELLM_API_KEY"
+
+so i should use this right? like have it so that i have to set the provider in env and it uses that. does that work?
+
+---
+
+ok soo now let's start working on the other agents whcih are left. like rn we need the agent which will take the telemetry/posthog, etc data and figure out why users aren't coming. or basically it'll be given a set of instrcutions which is to be followed. like if i want more stay rate that would be plan 1, if i want something else that will be plan 2. users will have to set the custom plan/as to what they want to be solved. that's the plan right? cause we got the builder working, we just need the planner in place now right? and the one agent checking that after pushing its working or not. but i think planner agent can do that. right?
