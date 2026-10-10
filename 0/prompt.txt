@@ -1,0 +1,1 @@
+add vercel analytics to this web project please! only that /web project!
