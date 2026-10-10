@@ -19,17 +19,12 @@ These files are placeholders. Each function raises `NotImplementedError`.
 
 ## Run
 
-From the repo root, once the placeholders are filled in:
+Python 3.13 is required. Mac and Windows setup, including pyenv and the virtualenv, is in the [root README](../README.md#setup).
+
+From the repo root, with `venv` activated and `.env` filled in:
 
 ```bash
 python -m agent
-```
-
-Install the dependency and copy the env file first:
-
-```bash
-pip install -r agent/requirements.txt
-cp .env.example .env
 ```
 
 `.env` holds `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, and `OPENAI_API_KEY`. It is never committed.

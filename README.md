@@ -30,6 +30,73 @@ The goal right now is a complete, working loop. Because real traffic takes too l
 - `demo-site/` — the site the Builder is allowed to edit.
 - `FLOW.md` — what each agent receives and hands on.
 - `.env` — API keys and the GitHub token. Copy from `.env.example`. Never commit this file.
+- `.python-version` — tells pyenv to use Python 3.13 in this folder only.
+
+## Setup
+
+Python **3.13** is required. `neatlogs` does not install on 3.14. The `.python-version` file in this repo is set to `3.13`, so this project uses 3.13 and the rest of your machine stays on whatever global version you already have.
+
+You also need git, and a virtualenv named `venv` in the repo root. `venv/` is gitignored.
+
+Fill in `.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, and `OPENAI_API_KEY`.
+
+Run the loop from the repo root, with the virtualenv activated:
+
+```bash
+python -m agent
+```
+
+### Mac
+
+Install [Homebrew](https://brew.sh), then pyenv:
+
+```bash
+brew install pyenv
+```
+
+Add this to `~/.zshrc`, then open a new terminal:
+
+```bash
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
+```
+
+From the repo root:
+
+```bash
+pyenv install 3.13
+python --version
+python -m venv venv
+source venv/bin/activate
+pip install -r agent/requirements.txt
+cp .env.example .env
+```
+
+`python --version` should print `3.13.x`.
+
+### Windows
+
+Install [pyenv-win](https://github.com/pyenv-win/pyenv-win) in PowerShell:
+
+```powershell
+Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
+```
+
+Close the terminal and open a new one. pyenv-win needs a full version number, so install one and write that exact version into `.python-version` (for example `3.13.2`):
+
+```powershell
+pyenv install -l
+pyenv install 3.13.2
+cd path\to\friction-fixer
+python --version
+python -m venv venv
+venv\Scripts\activate
+pip install -r agent/requirements.txt
+copy .env.example .env
+```
+
+`python --version` should print `3.13.x`.
 
 ## Tools used
 
