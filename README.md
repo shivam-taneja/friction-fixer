@@ -28,6 +28,7 @@ The goal right now is a complete, working loop. Because real traffic takes too l
 
 - `agent/` — Python agents that run the loop. Files are placeholders.
 - `demo-site/` — the site the Builder is allowed to edit.
+- `web/` — the marketing site and the dashboard. How to run it is in [web/README.md](web/README.md).
 - `FLOW.md` — what each agent receives and hands on.
 - `.env` — API keys and the GitHub token. Copy from `.env.example`. Never commit this file.
 - `.python-version` — tells pyenv to use Python 3.13 in this folder only.
