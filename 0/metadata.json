@@ -1,0 +1,70 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4JHGDPFXX7S65M43BHHSGRD",
+  "session_id": "7403cb40-9568-4e7b-a91b-e6a6a31a022a",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-10T09:15:06.495929Z",
+  "branch": "main",
+  "checkpoints_count": 10,
+  "save_step_count": 4,
+  "files_touched": [
+    ".gitignore",
+    ".python-version",
+    "agent/requirements.txt"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "ae10b6894c5c",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 2311,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 343808,
+    "output_tokens": 1271,
+    "api_call_count": 2
+  },
+  "session_metrics": {
+    "turn_count": 16
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-10T09:15:06.48418Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 72,
+    "human_modified": 1,
+    "human_removed": 0,
+    "total_committed": 73,
+    "total_lines_changed": 73,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 1,
+      "user_lines_removed": 1,
+      "agent_lines_added": 1,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".gitignore": 1
+      },
+      "user_removed_per_file": {
+        ".gitignore": 1
+      }
+    }
+  ]
+}
