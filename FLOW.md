@@ -101,7 +101,7 @@ reason:           why this decision was made
 - Every change is its own commit and its own PR, so undoing is one revert.
 - The Builder only touches `demo-site/`.
 - The loop stops after a set number of rounds (pick one, for example 5) or when the goal number is reached.
-- API keys and the GitHub token live in `.env` and are never committed.
+- API keys and the GitHub token live in `agent/.env` and are never committed. The site's secrets live in `web/.env`.
 
 ## Mock data
 

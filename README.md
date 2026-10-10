@@ -30,7 +30,8 @@ The goal right now is a complete, working loop. Because real traffic takes too l
 - `demo-site/` — the site the Builder is allowed to edit.
 - `web/` — the marketing site and the dashboard. How to run it is in [web/README.md](web/README.md).
 - `FLOW.md` — what each agent receives and hands on.
-- `.env` — API keys and the GitHub token. Copy from `.env.example`. Never commit this file.
+- `agent/.env` — agent API keys and the GitHub token. Copy from `agent/.env.example`. Never commit this file.
+- `web/.env` — Firebase and cookie secrets for the site. Copy from `web/.env.example`. Never commit this file.
 - `.python-version` — tells pyenv to use Python 3.13 in this folder only.
 
 ## Setup
@@ -39,7 +40,7 @@ Python **3.13** is required. `neatlogs` does not install on 3.14. The `.python-v
 
 You also need git, and a virtualenv named `venv` in the repo root. `venv/` is gitignored.
 
-Fill in `.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, `LLM_PROVIDER`, and that provider's API key.
+Fill in `agent/.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, `LLM_PROVIDER`, and that provider's API key. The site uses its own file, `web/.env`.
 
 Run the loop from the repo root, with the virtualenv activated:
 
@@ -71,7 +72,7 @@ python --version
 python -m venv venv
 source venv/bin/activate
 pip install -r agent/requirements.txt
-cp .env.example .env
+cp agent/.env.example agent/.env
 ```
 
 `python --version` should print `3.13.x`.
@@ -94,7 +95,7 @@ python --version
 python -m venv venv
 venv\Scripts\activate
 pip install -r agent/requirements.txt
-copy .env.example .env
+copy agent\.env.example agent\.env
 ```
 
 `python --version` should print `3.13.x`.

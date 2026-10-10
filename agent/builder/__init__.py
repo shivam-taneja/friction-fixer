@@ -48,4 +48,4 @@ def _require_keys() -> None:
     provider_settings()
 
     if not os.getenv("GITHUB_TOKEN", "").strip():
-        raise RuntimeError("Set GITHUB_TOKEN in .env before running the Builder.")
+        raise RuntimeError("Set GITHUB_TOKEN in agent/.env before running the Builder.")

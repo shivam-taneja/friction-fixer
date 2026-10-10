@@ -36,9 +36,10 @@ npm install -g pnpm@10.33.0
 
 ## Run
 
-From this folder:
+From this folder, copy `.env.example` to `.env` and fill it in. It holds the Firebase keys and `COOKIE_SECRET_KEY`. It is never committed. The agent uses a separate file, `agent/.env`.
 
 ```bash
+cp .env.example .env
 pnpm install
 pnpm dev
 ```

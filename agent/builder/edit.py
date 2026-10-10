@@ -36,7 +36,9 @@ def provider_settings() -> tuple[str, str, str]:
         raise RuntimeError(f"LLM_PROVIDER must be one of: {known}.")
     key = os.getenv(spec["api_key_env"], "").strip()
     if not key:
-        raise RuntimeError(f"Set {spec['api_key_env']} in .env for the {name} provider.")
+        raise RuntimeError(
+            f"Set {spec['api_key_env']} in agent/.env for the {name} provider."
+        )
     model = os.getenv("LLM_MODEL", spec["model"]).strip()
     return key, spec["base_url"], model
 

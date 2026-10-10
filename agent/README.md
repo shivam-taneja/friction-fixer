@@ -21,7 +21,7 @@ The Analyst, Reviewer, simulator, and loop are still placeholders. The Builder c
 
 Python 3.13 is required. Mac and Windows setup, including pyenv and the virtualenv, is in the [root README](../README.md#setup).
 
-From the repo root, with `venv` activated and `.env` filled in:
+From the repo root, with `venv` activated and `agent/.env` filled in:
 
 ```bash
 python -m agent
@@ -33,7 +33,7 @@ To test the Builder on its own, commit `demo-site/` on `main` first, then ask fo
 python -m agent.builder "Make the pricing button large and green"
 ```
 
-`.env` holds `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, `LLM_PROVIDER`, and that provider's API key. It is never committed.
+`agent/.env` holds `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, `LLM_PROVIDER`, and that provider's API key. Copy it from `agent/.env.example`. It is never committed. The site keeps its own secrets in `web/.env`.
 
 ## What this folder uses
 
