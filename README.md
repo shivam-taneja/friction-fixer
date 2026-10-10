@@ -26,7 +26,10 @@ The goal right now is a complete, working loop. Because real traffic takes too l
 
 ## Project structure
 
-<!-- TODO -->
+- `agent/` — Python agents that run the loop. Files are placeholders.
+- `demo-site/` — the site the Builder is allowed to edit.
+- `FLOW.md` — what each agent receives and hands on.
+- `.env` — API keys and the GitHub token. Copy from `.env.example`. Never commit this file.
 
 ## Tools used
 
