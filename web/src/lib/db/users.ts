@@ -1,5 +1,5 @@
 import { FieldValue } from "firebase-admin/firestore";
-import type { AuthProviderName } from "@/lib/db/schema";
+import type { AuthProviderName } from "@/lib/db/schema/user";
 import { db } from "@/lib/db/firebase";
 
 export function userDocId(
@@ -48,5 +48,6 @@ export async function upsertUser(input: {
     [`providers.${input.provider}`]: providerLink,
     updatedAt: FieldValue.serverTimestamp(),
   });
+
   return id;
 }

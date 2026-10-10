@@ -14,6 +14,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth", request.url));
   }
 
+  if (
+    request.nextUrl.pathname === AUTH_API_PATHS.login ||
+    request.nextUrl.pathname === AUTH_API_PATHS.logout
+  ) {
+    return NextResponse.next();
+  }
+
   return authMiddleware(request, {
     loginPath: AUTH_API_PATHS.login,
     logoutPath: AUTH_API_PATHS.logout,
