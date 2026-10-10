@@ -6,16 +6,16 @@ The Analyst, Reviewer, simulator, and loop are still placeholders. The Builder c
 
 ## Files
 
-| File           | Job                                                                                                   |
-| -------------- | ----------------------------------------------------------------------------------------------------- |
-| `loop.py`      | Runs Analyst, Builder, merge, then Reviewer. Stops after 5 rounds, or when bounce rate hits the goal. |
-| `analyst.py`   | Reads visitor data and past verdicts. Writes one plan.                                                |
-| `builder.py`   | Makes that one change inside `demo-site/`, commits, and opens a pull request.                         |
-| `reviewer.py`  | Checks the live page and the new numbers. Returns KEEP or UNDO.                                       |
-| `simulator.py` | Mock visitor numbers. They must change when the page changes.                                         |
-| `schemas.py`   | The plan and the verdict the agents pass to each other.                                               |
-| `tracing.py`   | neatlogs. One round is one trace.                                                                     |
-| `config.py`    | Round limit (5) and the keep margin (bounce rate down by at least 5 percentage points).               |
+| File           | Job                                                                                                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `loop.py`      | Runs Analyst, Builder, merge, then Reviewer. Stops after 5 rounds, or when bounce rate hits the goal.                                  |
+| `analyst.py`   | Reads visitor data and past verdicts. Writes one plan.                                                                                 |
+| `builder/`     | Makes that one change inside `demo-site/`, commits, and opens a pull request. `edit.py` calls Groq. `git.py` commits and opens the PR. |
+| `reviewer.py`  | Checks the live page and the new numbers. Returns KEEP or UNDO.                                                                        |
+| `simulator.py` | Mock visitor numbers. They must change when the page changes.                                                                          |
+| `schemas.py`   | The plan and the verdict the agents pass to each other.                                                                                |
+| `tracing.py`   | neatlogs. One round is one trace.                                                                                                      |
+| `config.py`    | Round limit (5) and the keep margin (bounce rate down by at least 5 percentage points).                                                |
 
 ## Run
 
