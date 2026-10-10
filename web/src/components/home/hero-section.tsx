@@ -4,7 +4,7 @@ import { ArrowUpRight, Check, Play } from "lucide-react";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
 
-export function HeroSection() {
+export function HeroSection({ signedIn }: { signedIn: boolean }) {
   return (
     <section className="relative isolate min-h-162.5 overflow-hidden border-b border-border bg-hero max-sm:min-h-156.25">
       <Image
@@ -36,12 +36,12 @@ export function HeroSection() {
         <div className="flex justify-center gap-3.25 max-sm:gap-2">
           <Button
             nativeButton={false}
-            render={<Link href="/dashboard" />}
+            render={<Link href={signedIn ? "/dashboard" : "/auth"} />}
             variant="hero"
             size="lg"
             className="max-sm:px-4 max-sm:text-xs"
           >
-            Meet your agent <ArrowUpRight />
+            {signedIn ? "Go to dashboard" : "Meet your agent"} <ArrowUpRight />
           </Button>
           <Button
             nativeButton={false}

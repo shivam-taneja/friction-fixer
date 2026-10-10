@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import { rootMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       data-scroll-behavior="smooth"
     >
       <body>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
         <Analytics />
       </body>
     </html>

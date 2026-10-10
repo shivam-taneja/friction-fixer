@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function FinalCta() {
+export function FinalCta({ signedIn }: { signedIn: boolean }) {
   return (
     <section className="bg-primary px-5 py-17.5 text-center text-primary-foreground">
       <h2 className="mb-4.25 font-display text-[40px] leading-[1.2] font-semibold max-sm:text-[31px]">
@@ -15,11 +15,11 @@ export function FinalCta() {
       </p>
       <Button
         nativeButton={false}
-        render={<Link href="/dashboard" />}
+        render={<Link href={signedIn ? "/dashboard" : "/auth"} />}
         variant="ink"
         size="lg"
       >
-        Meet Friction Fixer <ArrowUpRight />
+        {signedIn ? "Go to dashboard" : "Meet Friction Fixer"} <ArrowUpRight />
       </Button>
     </section>
   );

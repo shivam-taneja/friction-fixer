@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const navLinkClass =
   "text-muted-foreground no-underline transition-colors hover:text-foreground max-md:hidden";
 
-export function SiteHeader() {
+export function SiteHeader({ signedIn }: { signedIn: boolean }) {
   return (
     <header
       className={cn(
@@ -32,11 +32,11 @@ export function SiteHeader() {
         </a>
         <Button
           nativeButton={false}
-          render={<Link href="/dashboard" />}
+          render={<Link href={signedIn ? "/dashboard" : "/auth"} />}
           variant="ink"
           className="max-sm:px-3 max-sm:text-[11px]"
         >
-          Meet your agent <ArrowUpRight />
+          {signedIn ? "Go to dashboard" : "Meet your agent"} <ArrowUpRight />
         </Button>
       </nav>
     </header>
