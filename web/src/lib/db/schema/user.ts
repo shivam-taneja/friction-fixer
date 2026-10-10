@@ -9,12 +9,17 @@ export const onboardingSteps = [
 
 export type OnboardingStep = (typeof onboardingSteps)[number];
 
-export type OnboardingStatus = "not_started" | "in_progress" | "complete";
+export enum OnboardingStatus {
+  not_started = "not_started",
+  in_progress = "in_progress",
+  complete = "complete",
+}
 
 export type AuthProviderName = "google" | "github";
 
 export type ProviderLink = {
   accountId: string;
+  connectedAt: unknown;
 };
 
 export type UserRecord = {

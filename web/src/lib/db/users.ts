@@ -1,6 +1,7 @@
 import { FieldValue } from "firebase-admin/firestore";
 import type { AuthProviderName } from "@/lib/db/schema/user";
 import { db } from "@/lib/db/firebase";
+import { OnboardingStatus } from "@/lib/db/schema/user";
 
 export function userDocId(
   email: string | null | undefined,
@@ -22,7 +23,13 @@ export async function upsertUser(input: {
   const id = userDocId(input.email, input.provider, input.accountId);
   const ref = db().collection("users").doc(id);
   const snap = await ref.get();
-  const providerLink = { accountId: input.accountId };
+  const existing = snap.get(`providers.${input.provider}`) as
+    | { connectedAt?: unknown }
+    | undefined;
+  const providerLink = {
+    accountId: input.accountId,
+    connectedAt: existing?.connectedAt ?? FieldValue.serverTimestamp(),
+  };
 
   if (!snap.exists) {
     await ref.set({
@@ -33,7 +40,7 @@ export async function upsertUser(input: {
       createdAt: FieldValue.serverTimestamp(),
       updatedAt: FieldValue.serverTimestamp(),
       onboarding: {
-        status: "not_started",
+        status: OnboardingStatus.not_started,
         step: "site",
         completedAt: null,
       },
