@@ -29,7 +29,7 @@ export async function proxy(request: NextRequest) {
     cookieSignatureKeys: authConfig.cookieSignatureKeys,
     cookieSerializeOptions: authConfig.cookieSerializeOptions,
     serviceAccount: authConfig.serviceAccount,
-    handleValidToken: async ({ decodedToken }, headers) => {
+    handleValidToken: async (_token, headers) => {
       if (
         PUBLIC_PATHS.includes(request.nextUrl.pathname) &&
         request.nextUrl.pathname === LOGIN_PATH
@@ -40,10 +40,8 @@ export async function proxy(request: NextRequest) {
       }
 
       const requestHeaders = new Headers(headers);
+      requestHeaders.delete("x-user-email");
       requestHeaders.set("x-signed-in", "1");
-      if (decodedToken.email) {
-        requestHeaders.set("x-user-email", decodedToken.email);
-      }
 
       return NextResponse.next({
         request: {
