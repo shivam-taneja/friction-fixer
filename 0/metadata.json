@@ -1,0 +1,98 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4N8T5F1KF5WQ206RZF9P6AX",
+  "session_id": "12dfed51-9f6e-428d-962a-37cc19d804c1",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T10:40:51.948597Z",
+  "branch": "main",
+  "checkpoints_count": 5,
+  "save_step_count": 5,
+  "files_touched": [
+    "web/src/components/onboarding/onboarding-flow.tsx"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "c7172910a974",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 131671,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1105408,
+    "output_tokens": 7341,
+    "api_call_count": 3
+  },
+  "session_metrics": {
+    "turn_count": 5
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 675,
+      "user_lines_removed": 533,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "web/src/app/api/github/connection/route.ts": 31,
+        "web/src/app/onboarding/github/connected/github-connected.tsx": 3,
+        "web/src/components/github/github-account.tsx": 56,
+        "web/src/components/github/github-branch-select.tsx": 60,
+        "web/src/components/github/github-connect-prompt.tsx": 26,
+        "web/src/components/github/github-connection-skeleton.tsx": 17,
+        "web/src/components/github/github-connection.tsx": 307,
+        "web/src/components/github/github-repo-select.tsx": 96,
+        "web/src/components/github/install-result.ts": 37,
+        "web/src/components/onboarding/onboarding-flow.tsx": 12,
+        "web/src/components/ui/select.tsx": 2,
+        "web/src/lib/github/app.ts": 28
+      },
+      "user_removed_per_file": {
+        "web/src/app/api/github/connection/route.ts": 1,
+        "web/src/app/onboarding/github/connected/github-connected.tsx": 4,
+        "web/src/components/onboarding/onboarding-flow.tsx": 25,
+        "web/src/components/onboarding/steps/github-step.tsx": 270,
+        "web/src/components/onboarding/steps/github/github-account.tsx": 41,
+        "web/src/components/onboarding/steps/github/github-branch-select.tsx": 57,
+        "web/src/components/onboarding/steps/github/github-connect-prompt.tsx": 26,
+        "web/src/components/onboarding/steps/github/github-repo-select.tsx": 96,
+        "web/src/components/ui/select.tsx": 2,
+        "web/src/lib/github/app.ts": 11
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 685,
+      "agent_lines_removed": 533
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 685,
+      "agent_lines_removed": 533
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 7,
+      "user_lines_removed": 2,
+      "agent_lines_added": 1219,
+      "agent_lines_removed": 622,
+      "user_added_per_file": {
+        "web/src/components/github/github-connection-helpers.ts": 3,
+        "web/src/components/github/github-project-setup.tsx": 4
+      },
+      "user_removed_per_file": {
+        "web/src/components/github/github-connection-helpers.ts": 1,
+        "web/src/components/github/github-project-setup.tsx": 1
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

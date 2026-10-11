@@ -1,0 +1,32 @@
+@web/src/components/onboarding/onboarding-flow.tsx to persist this thingie, please create a zustand store! and use that instead of manually doing it. and why are we having this logic tho?
+
+---
+
+it's fine i can use browser storage instead of session man... no need to worry too much, honestly i dont event want persistencase. please remov eit
+
+---
+
+remove the persistance logic please! just remove it
+
+---
+
+For the code present, we get this error:
+```
+Error: Cannot access refs during render
+
+React refs are values that are not needed for rendering. Refs should only be accessed outside of render, such as in event handlers or effects. Accessing a ref value (the `current` property) during render can cause your component not to update as expected (https://react.dev/reference/react/useRef).
+
+/Users/shivamtaneja/projects/neat-hack/friction-fixer/web/src/components/github/github-project-setup.tsx:40:3
+  38 |   const [error, setError] = useState("");
+  39 |   const onResolvedRef = useRef(onResolved);
+> 40 |   onResolvedRef.current = onResolved;
+     |   ^^^^^^^^^^^^^^^^^^^^^ Cannot update ref during render
+  41 |
+  42 |   useEffect(() => {
+  43 |     let cancelled = false;
+```
+Fix it, verify, and then give a concise explanation. @web/src/components/github/github-project-setup.tsx:39-42
+
+---
+
+@web/src/components/onboarding/onboarding-flow.tsx we have to check if the website is added or not, otherwise we can't move fwd. no other logic for now, just the url
