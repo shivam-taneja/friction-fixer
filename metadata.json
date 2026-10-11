@@ -1,0 +1,42 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PE5NBDPR8MJCAFE8BRS4ZK",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    ".gitignore",
+    "README.md",
+    "web/src/app/(dashboard)/dashboard/settings/page.tsx",
+    "web/src/app/(dashboard)/layout.tsx",
+    "web/src/app/auth/page.tsx",
+    "web/src/app/not-found.tsx",
+    "web/src/app/onboarding/layout.tsx",
+    "web/src/app/privacy/page.tsx",
+    "web/src/app/sitemap.ts",
+    "web/src/app/terms/page.tsx",
+    "web/src/components/home/faq-section.tsx",
+    "web/src/components/home/home-page.tsx",
+    "web/src/components/home/workflow-section.tsx",
+    "web/src/components/legal/legal-page.tsx",
+    "web/src/config/routes.ts",
+    "web/src/lib/seo.ts",
+    "web/src/proxy.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 138915,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1784832,
+    "output_tokens": 28078,
+    "api_call_count": 1
+  }
+}

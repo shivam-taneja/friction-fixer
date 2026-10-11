@@ -1,0 +1,77 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PE5NBDPR8MJCAFE8BRS4ZK",
+  "session_id": "1a19ee66-6784-4f89-a958-fef8c9d77a85",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T21:33:45.947314Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    ".gitignore",
+    "README.md",
+    "web/src/app/(dashboard)/dashboard/settings/page.tsx",
+    "web/src/app/(dashboard)/layout.tsx",
+    "web/src/app/auth/page.tsx",
+    "web/src/app/not-found.tsx",
+    "web/src/app/onboarding/layout.tsx",
+    "web/src/app/privacy/page.tsx",
+    "web/src/app/sitemap.ts",
+    "web/src/app/terms/page.tsx",
+    "web/src/components/home/faq-section.tsx",
+    "web/src/components/home/home-page.tsx",
+    "web/src/components/home/workflow-section.tsx",
+    "web/src/components/legal/legal-page.tsx",
+    "web/src/config/routes.ts",
+    "web/src/lib/seo.ts",
+    "web/src/proxy.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "46d2c5080f07",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 138915,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1784832,
+    "output_tokens": 28078,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T21:33:45.934898Z",
+    "agent_lines": 160,
+    "agent_removed": 62,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 1,
+    "total_committed": 160,
+    "total_lines_changed": 223,
+    "agent_percentage": 99.55156950672645,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 2,
+      "user_lines_removed": 1,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".gitignore": 2
+      },
+      "user_removed_per_file": {
+        ".gitignore": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 163,
+      "agent_lines_removed": 63
+    }
+  ]
+}
