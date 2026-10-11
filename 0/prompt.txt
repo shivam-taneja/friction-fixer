@@ -1,0 +1,20 @@
+For the code present, we get this error:
+```
+Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/shivamtaneja/projects/neat-hack/friction-fixer/web/src/components/posthog/posthog-connect.tsx:28:11
+  26 |         const parsed = JSON.parse(raw) as { error?: unknown };
+  27 |         if (typeof parsed.error === "string" && parsed.error)
+> 28 |           setError(parsed.error);
+     |           ^^^^^^^^ Avoid calling setState() directly within an effect
+  29 |       } catch {
+  30 |         setError("");
+  31 |       }
+```
+Fix it, verify, and then give a concise explanation. @web/src/components/posthog/posthog-connect.tsx:27-30

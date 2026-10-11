@@ -1,0 +1,89 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4P37E8K93S5A85D6J6XEY1W",
+  "session_id": "057385b5-fa39-4b45-b524-5b9dc0652590",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T18:22:29.835378Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "agent/analyst/plan.py",
+    "agent/history.py",
+    "agent/loop.py",
+    "agent/schemas.py",
+    "web/src/app/onboarding/actions.ts",
+    "web/src/components/onboarding/logic.ts",
+    "web/src/components/onboarding/onboarding-flow.tsx",
+    "web/src/components/onboarding/steps/analytics-step.tsx",
+    "web/src/components/settings/settings-page.tsx",
+    "web/src/lib/db/collections.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "349c305a1e57",
+  "checkpoint_transcript_start": 31,
+  "transcript_lines_at_start": 31,
+  "compact_transcript_start": 4,
+  "session_metrics": {
+    "duration_ms": 2839704,
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T18:22:29.827886Z",
+    "agent_lines": 0,
+    "agent_removed": 6,
+    "human_added": 169,
+    "human_modified": 61,
+    "human_removed": 0,
+    "total_committed": 212,
+    "total_lines_changed": 244,
+    "agent_percentage": 2.459016393442623,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1009,
+      "user_lines_removed": 61,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "agent/analyst/plan.py": 1,
+        "agent/history.py": 1,
+        "agent/loop.py": 9,
+        "agent/posthog.py": 169,
+        "agent/schemas.py": 16,
+        "web/src/app/api/posthog/callback/route.ts": 75,
+        "web/src/app/api/posthog/client/route.ts": 32,
+        "web/src/app/api/posthog/connect/route.ts": 59,
+        "web/src/app/api/posthog/connection/route.ts": 34,
+        "web/src/app/onboarding/actions.ts": 11,
+        "web/src/app/onboarding/posthog/connected/page.tsx": 22,
+        "web/src/app/onboarding/posthog/connected/posthog-connected.tsx": 32,
+        "web/src/components/onboarding/logic.ts": 8,
+        "web/src/components/onboarding/onboarding-flow.tsx": 8,
+        "web/src/components/onboarding/steps/analytics-step.tsx": 27,
+        "web/src/components/posthog/posthog-connect.tsx": 202,
+        "web/src/components/settings/settings-page.tsx": 3,
+        "web/src/lib/db/collections.ts": 1,
+        "web/src/lib/db/posthog-connections.ts": 75,
+        "web/src/lib/db/schema/posthog-connection.ts": 13,
+        "web/src/lib/posthog/config.ts": 47,
+        "web/src/lib/posthog/oauth.ts": 82,
+        "web/src/lib/posthog/pkce.ts": 9,
+        "web/src/lib/posthog/state.ts": 73
+      },
+      "user_removed_per_file": {
+        "agent/analyst/plan.py": 6,
+        "agent/loop.py": 7,
+        "agent/schemas.py": 2,
+        "web/src/app/onboarding/actions.ts": 2,
+        "web/src/components/onboarding/logic.ts": 4,
+        "web/src/components/onboarding/onboarding-flow.tsx": 6,
+        "web/src/components/onboarding/steps/analytics-step.tsx": 27,
+        "web/src/components/settings/settings-page.tsx": 7
+      }
+    }
+  ]
+}
