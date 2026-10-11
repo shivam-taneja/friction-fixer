@@ -28,7 +28,15 @@ const items = [
   { title: "Settings", to: "/dashboard/settings", icon: Settings2 },
 ] as const;
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  user,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & {
+  user: {
+    email: string;
+    avatar: string;
+  };
+}) {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const pathname = usePathname();
   const reviewCount = useWorkspace(
@@ -85,12 +93,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarSeparator />
 
       <SidebarFooter>
-        <NavUser
-          user={{
-            email: "test@test.com",
-            avatar: "https://github.com/shadcn.png",
-          }}
-        />
+        <NavUser user={user} />
       </SidebarFooter>
 
       <SidebarRail />

@@ -1,6 +1,5 @@
 export enum OnboardingStatus {
   not_started = "not_started",
-  in_progress = "in_progress",
   complete = "complete",
 }
 

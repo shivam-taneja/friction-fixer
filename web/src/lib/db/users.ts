@@ -76,13 +76,6 @@ export async function upsertUser(input: {
   }
 }
 
-export async function markOnboardingInProgress(userId: string) {
-  await db().collection(COLLECTIONS.USERS).doc(userId).update({
-    "onboarding.status": OnboardingStatus.in_progress,
-    updatedAt: FieldValue.serverTimestamp(),
-  });
-}
-
 export async function getUserProfile(uid: string): Promise<UserRecord | null> {
   const snap = await db().collection(COLLECTIONS.USERS).doc(uid).get();
 

@@ -20,6 +20,19 @@ import {
 import { LogoutButton } from "../auth/logout-button";
 import Link from "next/link";
 
+function UserAvatar({ email, avatar }: { email: string; avatar: string }) {
+  const initials = email.slice(0, 2).toUpperCase() || "?";
+
+  return (
+    <Avatar className="h-8 w-8 rounded-lg">
+      {avatar ? (
+        <AvatarImage src={avatar} alt={email} referrerPolicy="no-referrer" />
+      ) : null}
+      <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+    </Avatar>
+  );
+}
+
 export function NavUser({
   user,
 }: {
@@ -42,12 +55,7 @@ export function NavUser({
               />
             }
           >
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={user.avatar} alt={user.email} />
-              <AvatarFallback className="rounded-lg">
-                {user.email.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <UserAvatar email={user.email} avatar={user.avatar} />
 
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate text-xs">{user.email}</span>
@@ -65,12 +73,7 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage src={user.avatar} alt={user.email} />
-                    <AvatarFallback className="rounded-lg">
-                      {user.email.slice(0, 2).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  <UserAvatar email={user.email} avatar={user.avatar} />
 
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate text-xs">{user.email}</span>
