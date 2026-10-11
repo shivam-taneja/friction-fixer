@@ -1,0 +1,1 @@
+for now remove the checks and all these thigns for the onboarding flow please! just update this file and inside  connected components dont say anything about mock or whatever please! no checks are req no nothing just at the end we'll update the onboarding status for the user, we'll just mark the onboarding status to in progress. please do that
