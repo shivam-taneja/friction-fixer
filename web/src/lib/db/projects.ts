@@ -1,5 +1,8 @@
 import { FieldValue } from "firebase-admin/firestore";
-import type { AnalyticsProvider, ProjectGoal } from "@/components/onboarding/logic";
+import type {
+  AnalyticsProvider,
+  ProjectGoal,
+} from "@/components/onboarding/logic";
 import { db } from "@/lib/db/firebase";
 import { COLLECTIONS } from "@/lib/db/collections";
 import { OnboardingStatus } from "@/lib/db/schema/user";
@@ -35,8 +38,9 @@ export async function createProject(input: {
   });
 
   batch.update(userRef, {
-    "onboarding.status": OnboardingStatus.in_progress,
+    "onboarding.status": OnboardingStatus.complete,
     "onboarding.projectId": projectRef.id,
+    "onboarding.completedAt": FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   });
 

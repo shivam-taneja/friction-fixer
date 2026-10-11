@@ -52,6 +52,7 @@ export async function finishOnboarding(input: {
       fullName: input.github.fullName,
       branch: input.github.branch,
     });
+
     await assertRepoFolder({
       installationId: installation.installationId,
       fullName: input.github.fullName,
