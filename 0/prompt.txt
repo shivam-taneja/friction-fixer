@@ -1,0 +1,5 @@
+update the readme now please! dont add anything random which isn't req!
+
+---
+
+it's actually the dashboard and the marketing site.... and for pnpm also mention that this project requires pnpm how to download/seutp for mac windows all those things also!
