@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { ArrowRight, Pause, Play } from "lucide-react";
 import Link from "next/link";
 import { ChangeList } from "@/components/dashboard/change-list";
@@ -9,10 +8,12 @@ import { CurrentCycle } from "@/components/dashboard/current-cycle";
 import { MetricsStrip } from "@/components/dashboard/metrics-strip";
 import { PageHeading } from "@/components/dashboard/page-heading";
 import { SectionTitle } from "@/components/dashboard/section-title";
+import { useWorkspace } from "@/components/dashboard/use-workspace";
 import { Button } from "@/components/ui/button";
 
 export function DashboardOverview() {
-  const [paused, setPaused] = useState(false);
+  const paused = useWorkspace((state) => state.paused);
+  const setPaused = useWorkspace((state) => state.setPaused);
 
   return (
     <main className="flex flex-1 flex-col gap-10 px-6 pt-2 pb-12 md:px-8">
@@ -23,7 +24,7 @@ export function DashboardOverview() {
         action={
           <Button
             variant="outline"
-            onClick={() => setPaused((value) => !value)}
+            onClick={() => setPaused(!paused)}
           >
             {paused ? <Play /> : <Pause />}
             {paused ? "Resume agent" : "Pause agent"}

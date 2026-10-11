@@ -18,7 +18,7 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { reviewCount } from "@/components/dashboard/workspace";
+import { useWorkspace } from "@/components/dashboard/use-workspace";
 import { Brand } from "./brand";
 import { NavUser } from "./nav-user";
 
@@ -31,6 +31,10 @@ const items = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const pathname = usePathname();
+  const reviewCount = useWorkspace(
+    (workspace) =>
+      workspace.changes.filter((change) => change.status === "Review").length,
+  );
 
   const compact = state === "collapsed" && !isMobile;
   const normalizedPath = pathname.replace(/\/+$/, "") || "/";

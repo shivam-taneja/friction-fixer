@@ -1,17 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Check } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { GithubIcon } from "@/components/icons/github-icon";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { GithubAccount } from "@/components/onboarding/steps/github/github-account";
+import { GithubBranchSelect } from "@/components/onboarding/steps/github/github-branch-select";
+import { GithubConnectPrompt } from "@/components/onboarding/steps/github/github-connect-prompt";
+import { GithubRepoSelect } from "@/components/onboarding/steps/github/github-repo-select";
 import {
   GITHUB_INSTALL_MESSAGE,
   type GithubConnection,
@@ -27,99 +22,76 @@ export function GithubStep({
   onSelectionChange: (value: GithubSelection | null) => void;
 }) {
   const [connection, setConnection] = useState<GithubConnection | null>(null);
-  const [branches, setBranches] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const [branchesLoading, setBranchesLoading] = useState(false);
   const [authorizing, setAuthorizing] = useState(false);
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
+  const selectionRef = useRef(selection);
+  selectionRef.current = selection;
+
+  const selectedRepo = selection?.fullName ?? "";
+  const [branchLoad, setBranchLoad] = useState<{
+    repo: string;
+    branches: string[];
+    loading: boolean;
+  }>({ repo: "", branches: [], loading: false });
+
+  if (branchLoad.repo !== selectedRepo) {
+    setBranchLoad({
+      repo: selectedRepo,
+      branches: [],
+      loading: selectedRepo.length > 0,
+    });
+  }
 
   useEffect(() => {
     let cancelled = false;
 
-    async function load() {
-      setLoading(true);
-      setError("");
-      try {
-        const next = await readJson<GithubConnection>("/api/github/connection");
-        if (!cancelled) setConnection(next);
-      } catch (loadError) {
-        if (!cancelled) {
-          setConnection({ connected: false });
-          setError(messageFrom(loadError));
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
+    readJson<GithubConnection>("/api/github/connection")
+      .then((next) => {
+        if (cancelled) return;
+        setConnection(next);
+        setLoading(false);
+        reconcileSelection(next, selectionRef.current, onSelectionChange);
+      })
+      .catch((loadError) => {
+        if (cancelled) return;
+        setConnection({ connected: false });
+        setError(messageFrom(loadError));
+        setLoading(false);
+      });
 
-    void load();
     return () => {
       cancelled = true;
     };
-  }, [refreshKey]);
+  }, [onSelectionChange, refreshKey]);
 
   useEffect(() => {
-    if (!connection?.connected) return;
-
-    const match = selection
-      ? connection.repos.find((repo) => repo.fullName === selection.fullName)
-      : undefined;
-
-    if (selection && !match) {
-      onSelectionChange(null);
-      return;
-    }
-
-    if (
-      selection &&
-      match &&
-      selection.installationId !== connection.installationId
-    ) {
-      onSelectionChange({
-        ...selection,
-        installationId: connection.installationId,
-        defaultBranch: match.defaultBranch,
-      });
-    }
-
-    if (!selection && connection.repos.length === 1) {
-      const repo = connection.repos[0];
-      onSelectionChange({
-        installationId: connection.installationId,
-        fullName: repo.fullName,
-        defaultBranch: repo.defaultBranch,
-        branch: repo.defaultBranch,
-      });
-    }
-  }, [connection, onSelectionChange, selection]);
-
-  useEffect(() => {
-    if (!selection?.fullName) {
-      setBranches([]);
-      return;
-    }
+    if (!selectedRepo) return;
 
     let cancelled = false;
-    setBranchesLoading(true);
 
     readJson<{ branches: string[] }>(
-      `/api/github/branches?repo=${encodeURIComponent(selection.fullName)}`,
+      `/api/github/branches?repo=${encodeURIComponent(selectedRepo)}`,
     )
       .then((body) => {
-        if (!cancelled) setBranches(body.branches);
+        if (cancelled) return;
+        setBranchLoad({
+          repo: selectedRepo,
+          branches: body.branches,
+          loading: false,
+        });
       })
       .catch((branchError) => {
-        if (!cancelled) setError(messageFrom(branchError));
-      })
-      .finally(() => {
-        if (!cancelled) setBranchesLoading(false);
+        if (cancelled) return;
+        setBranchLoad({ repo: selectedRepo, branches: [], loading: false });
+        setError(messageFrom(branchError));
       });
 
     return () => {
       cancelled = true;
     };
-  }, [selection?.fullName]);
+  }, [selectedRepo]);
 
   function connect() {
     setError("");
@@ -130,7 +102,8 @@ export function GithubStep({
     );
 
     if (!popup) {
-      window.location.assign("/api/github/install");
+      const destination = new URL("/api/github/install", window.location.href);
+      window.location.assign(destination.href);
       return;
     }
 
@@ -147,6 +120,7 @@ export function GithubStep({
       }
       onSelectionChange(null);
       setConnection(null);
+      setLoading(true);
       setRefreshKey((value) => value + 1);
     };
 
@@ -164,13 +138,10 @@ export function GithubStep({
   }
 
   const repos = connection?.connected ? connection.repos : [];
-  const selectedRepo = repos.find(
-    (repo) => repo.fullName === selection?.fullName,
-  );
-  const branchNames =
-    selection && !branches.includes(selection.branch)
-      ? [selection.branch, ...branches]
-      : branches;
+  const branches =
+    branchLoad.repo === selectedRepo ? branchLoad.branches : [];
+  const branchesLoading =
+    branchLoad.repo === selectedRepo ? branchLoad.loading : false;
 
   return (
     <div className="grid gap-6">
@@ -180,23 +151,11 @@ export function GithubStep({
 
       {connection?.connected ? (
         <div className="grid gap-5">
-          <div className="flex items-center justify-between gap-4 rounded-lg border border-border px-4 py-3">
-            <div>
-              <p className="text-sm font-semibold">{connection.accountLogin}</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                GitHub App connected
-              </p>
-            </div>
-            <Button
-              type="button"
-              variant="ghost"
-              disabled={authorizing}
-              onClick={connect}
-              className="cursor-pointer"
-            >
-              {authorizing ? "Waiting…" : "Change"}
-            </Button>
-          </div>
+          <GithubAccount
+            login={connection.accountLogin}
+            authorizing={authorizing}
+            onChange={connect}
+          />
 
           {repos.length === 0 ? (
             <div className="grid gap-3">
@@ -211,94 +170,27 @@ export function GithubStep({
             </div>
           ) : (
             <>
-              <div className="grid gap-2">
-                <Label htmlFor="github-repo">Repository</Label>
-                <Select
-                  value={selection?.fullName ?? ""}
-                  onValueChange={(value) => {
-                    if (!value) return;
-                    const repo = repos.find((item) => item.fullName === value);
-                    if (!repo || !connection.connected) return;
-                    onSelectionChange({
-                      installationId: connection.installationId,
-                      fullName: repo.fullName,
-                      defaultBranch: repo.defaultBranch,
-                      branch: repo.defaultBranch,
-                    });
-                  }}
-                >
-                  <SelectTrigger id="github-repo" className="h-11 w-full">
-                    <SelectValue placeholder="Choose a repository">
-                      {selectedRepo
-                        ? repoLabel(selectedRepo.fullName, selectedRepo.private)
-                        : "Choose a repository"}
-                    </SelectValue>
-                  </SelectTrigger>
-                  <SelectContent>
-                    {repos.map((repo) => (
-                      <SelectItem key={repo.id} value={repo.fullName}>
-                        {repoLabel(repo.fullName, repo.private)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-xs text-muted-foreground">
-                  The agent opens pull requests in this repository.
-                </p>
-              </div>
-
+              <GithubRepoSelect
+                repos={repos}
+                installationId={connection.installationId}
+                selection={selection}
+                onSelectionChange={onSelectionChange}
+              />
               {selection ? (
-                <div className="grid gap-2">
-                  <Label htmlFor="github-branch">Branch</Label>
-                  <Select
-                    value={selection.branch}
-                    onValueChange={(branch) => {
-                      if (!branch) return;
-                      onSelectionChange({ ...selection, branch });
-                    }}
-                  >
-                    <SelectTrigger id="github-branch" className="h-11 w-full">
-                      <SelectValue placeholder="Choose a branch">
-                        {selection.branch}
-                      </SelectValue>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {branchNames.map((branch) => (
-                        <SelectItem key={branch} value={branch}>
-                          {branch}
-                          {branch === selection.defaultBranch
-                            ? " · default"
-                            : ""}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    {branchesLoading
-                      ? "Loading branches…"
-                      : "Pull requests open against this branch."}
-                  </p>
-                </div>
+                <GithubBranchSelect
+                  selection={selection}
+                  branches={branches}
+                  loading={branchesLoading}
+                  onBranchChange={(branch) =>
+                    onSelectionChange({ ...selection, branch })
+                  }
+                />
               ) : null}
             </>
           )}
         </div>
       ) : loading ? null : (
-        <div className="grid gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            className="h-14 w-full justify-start px-4 cursor-pointer"
-            disabled={authorizing}
-            onClick={connect}
-          >
-            <GithubIcon />
-            {authorizing ? "Waiting for GitHub…" : "Connect GitHub"}
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Install the Friction Fixer app on one repository.
-          </p>
-        </div>
+        <GithubConnectPrompt authorizing={authorizing} onConnect={connect} />
       )}
 
       {error ? (
@@ -313,8 +205,44 @@ export function GithubStep({
   );
 }
 
-function repoLabel(fullName: string, isPrivate: boolean) {
-  return isPrivate ? `${fullName} (private)` : fullName;
+function reconcileSelection(
+  connection: GithubConnection,
+  selection: GithubSelection | null,
+  onSelectionChange: (value: GithubSelection | null) => void,
+) {
+  if (!connection.connected) return;
+
+  const match = selection
+    ? connection.repos.find((repo) => repo.fullName === selection.fullName)
+    : undefined;
+
+  if (selection && !match) {
+    onSelectionChange(null);
+    return;
+  }
+
+  if (
+    selection &&
+    match &&
+    selection.installationId !== connection.installationId
+  ) {
+    onSelectionChange({
+      ...selection,
+      installationId: connection.installationId,
+      defaultBranch: match.defaultBranch,
+    });
+    return;
+  }
+
+  if (!selection && connection.repos.length === 1) {
+    const repo = connection.repos[0];
+    onSelectionChange({
+      installationId: connection.installationId,
+      fullName: repo.fullName,
+      defaultBranch: repo.defaultBranch,
+      branch: repo.defaultBranch,
+    });
+  }
 }
 
 function isInstallMessage(value: unknown): value is GithubInstallMessage {

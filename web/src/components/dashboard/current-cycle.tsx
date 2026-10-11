@@ -1,9 +1,15 @@
+"use client";
+
 import { Check, GitPullRequest, ScanLine, type LucideIcon } from "lucide-react";
 import { SectionTitle } from "@/components/dashboard/section-title";
-import { reviewCount } from "@/components/dashboard/workspace";
+import { useWorkspace } from "@/components/dashboard/use-workspace";
 import { cn } from "@/lib/utils";
 
 export function CurrentCycle({ paused }: { paused: boolean }) {
+  const reviewCount = useWorkspace(
+    (state) =>
+      state.changes.filter((change) => change.status === "Review").length,
+  );
   const steps: {
     icon: LucideIcon;
     title: string;

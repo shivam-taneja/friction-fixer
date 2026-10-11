@@ -1,27 +1,34 @@
-import { goal, reviewCount } from "@/components/dashboard/workspace";
+"use client";
 
-const metrics = [
-  {
-    label: goal,
-    value: "3.8%",
-    detail: "↑ 18.7% from baseline",
-    tone: "success" as const,
-  },
-  {
-    label: "Visitors analyzed",
-    value: "2,418",
-    detail: "Last 14 days",
-    tone: "muted" as const,
-  },
-  {
-    label: "Changes to review",
-    value: reviewCount.toString().padStart(2, "0"),
-    detail: reviewCount ? "Your approval needed" : "All caught up",
-    tone: "muted" as const,
-  },
-];
+import { goal } from "@/components/dashboard/workspace";
+import { useWorkspace } from "@/components/dashboard/use-workspace";
 
 export function MetricsStrip() {
+  const changes = useWorkspace((state) => state.changes);
+  const reviewCount = changes.filter(
+    (change) => change.status === "Review",
+  ).length;
+  const metrics = [
+    {
+      label: goal,
+      value: "3.8%",
+      detail: "↑ 18.7% from baseline",
+      tone: "success" as const,
+    },
+    {
+      label: "Visitors analyzed",
+      value: "2,418",
+      detail: "Last 14 days",
+      tone: "muted" as const,
+    },
+    {
+      label: "Changes to review",
+      value: reviewCount.toString().padStart(2, "0"),
+      detail: reviewCount ? "Your approval needed" : "All caught up",
+      tone: "muted" as const,
+    },
+  ];
+
   return (
     <div className="grid divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
       {metrics.map((metric) => (
