@@ -45,7 +45,7 @@ export async function GET(request: Request) {
       redirectUri: saved.redirectUri,
       verifier: saved.verifier,
     });
-    const project = await findPosthogProject(tokens.accessToken);
+    const project = await findPosthogProject(tokens);
     await savePosthogConnection({
       userId: user.userId,
       projectId: project.projectId,
