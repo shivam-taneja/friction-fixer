@@ -45,9 +45,10 @@ export function savedCheckAfterHours(value: unknown) {
 }
 
 export function formatCheckAfter(hours: number) {
-  if (hours % 24 === 0) {
-    const days = hours / 24;
-    return days === 1 ? "1 day" : `${days} days`;
-  }
-  return hours === 1 ? "1 hour" : `${hours} hours`;
+  const days = Math.floor(hours / 24);
+  const rest = hours % 24;
+  const parts: string[] = [];
+  if (days > 0) parts.push(days === 1 ? "1 day" : `${days} days`);
+  if (rest > 0) parts.push(rest === 1 ? "1 hour" : `${rest} hours`);
+  return parts.join(", ") || "1 hour";
 }

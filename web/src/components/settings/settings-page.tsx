@@ -17,6 +17,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { folderLabel, frameworkLabel } from "@/lib/github/framework";
 import {
@@ -182,66 +189,127 @@ function CheckWait({
   saving: boolean;
   onSave: (hours: number) => Promise<void>;
 }) {
-  const [value, setValue] = useState(String(hours));
+  const [draft, setDraft] = useState(hours);
   const [syncedHours, setSyncedHours] = useState(hours);
   if (hours !== syncedHours) {
     setSyncedHours(hours);
-    setValue(String(hours));
+    setDraft(hours);
   }
 
-  const parsed = Number(value);
-  const valid = isCheckAfterHours(parsed);
-  const unchanged = valid && parsed === hours;
+  const days = Math.floor(draft / 24);
+  const hoursPart = draft % 24;
+  const hourOptions = hourChoices(days);
+  const unchanged = draft === hours;
 
   return (
     <section className="overflow-hidden rounded-xl border bg-card">
       <header className="grid gap-1 border-b bg-muted px-4 py-3.5">
         <h2 className="text-sm font-semibold">Check wait</h2>
         <p className="text-xs leading-relaxed text-muted-foreground">
-          After a live change is merged, PostHog is read again this many hours
-          later. The shortest wait is 1 hour. The longest is 14 days. A run that
-          is already scheduled keeps its current check time.
+          After a live change is merged, PostHog is read again after this wait.
+          A run that is already scheduled keeps its current check time.
         </p>
       </header>
       <form
         className="grid gap-3 px-4 py-3"
         onSubmit={(event) => {
           event.preventDefault();
-          if (!valid || unchanged || saving) return;
-          void onSave(parsed);
+          if (!isCheckAfterHours(draft) || unchanged || saving) return;
+          void onSave(draft);
         }}
       >
-        <div className="grid gap-2">
-          <Label htmlFor="check-after-hours">Hours</Label>
-          <div className="flex items-center gap-3">
-            <Input
-              id="check-after-hours"
-              className="w-28"
-              type="number"
-              inputMode="numeric"
-              min={CHECK_AFTER_MIN_HOURS}
-              max={CHECK_AFTER_MAX_HOURS}
-              step={1}
-              value={value}
+        <div className="flex flex-wrap items-end gap-3">
+          <div className="grid gap-2">
+            <Label htmlFor="check-after-days">Days</Label>
+            <Select
+              value={String(days)}
               disabled={saving}
-              onChange={(event) => setValue(event.target.value)}
-            />
-            <span className="text-sm text-muted-foreground">
-              {valid ? formatCheckAfter(parsed) : "1 hour to 14 days"}
-            </span>
+              onValueChange={(next) => {
+                const picked = Number(next);
+                if (!Number.isInteger(picked)) return;
+                setDraft(clampWait(picked, hoursPart));
+              }}
+            >
+              <SelectTrigger id="check-after-days" className="w-32">
+                <SelectValue>{unitLabel(days, "day")}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {dayChoices.map((day) => (
+                  <SelectItem key={day} value={String(day)}>
+                    {unitLabel(day, "day")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
+          <div className="grid gap-2">
+            <Label htmlFor="check-after-hours">Hours</Label>
+            <Select
+              value={String(hoursPart)}
+              disabled={saving || hourOptions.length === 1}
+              onValueChange={(next) => {
+                const picked = Number(next);
+                if (!Number.isInteger(picked)) return;
+                setDraft(clampWait(days, picked));
+              }}
+            >
+              <SelectTrigger id="check-after-hours" className="w-32">
+                <SelectValue>{unitLabel(hoursPart, "hour")}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {hourOptions.map((hour) => (
+                  <SelectItem key={hour} value={String(hour)}>
+                    {unitLabel(hour, "hour")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {days > 0 && hoursPart > 0 ? (
+            <p className="pb-1.5 text-sm text-muted-foreground">
+              {formatCheckAfter(draft)}
+            </p>
+          ) : null}
         </div>
+        <p className="text-xs text-muted-foreground">
+          Shortest is 1 hour. Longest is 14 days.
+        </p>
         <Button
           type="submit"
           variant="outline"
           className="w-fit cursor-pointer"
-          disabled={saving || !valid || unchanged}
+          disabled={saving || unchanged || !isCheckAfterHours(draft)}
         >
           {saving ? "Saving…" : "Save"}
         </Button>
       </form>
     </section>
   );
+}
+
+const dayChoices = Array.from(
+  { length: CHECK_AFTER_MAX_HOURS / 24 + 1 },
+  (_, day) => day,
+);
+
+function hourChoices(days: number) {
+  if (days >= CHECK_AFTER_MAX_HOURS / 24) return [0];
+  if (days <= 0) return Array.from({ length: 23 }, (_, hour) => hour + 1);
+  return Array.from({ length: 24 }, (_, hour) => hour);
+}
+
+function clampWait(days: number, hoursPart: number) {
+  if (days <= 0)
+    return Math.min(23, Math.max(CHECK_AFTER_MIN_HOURS, hoursPart));
+  if (days >= CHECK_AFTER_MAX_HOURS / 24) return CHECK_AFTER_MAX_HOURS;
+  return Math.min(
+    CHECK_AFTER_MAX_HOURS,
+    Math.max(CHECK_AFTER_MIN_HOURS, days * 24 + hoursPart),
+  );
+}
+
+function unitLabel(count: number, unit: "day" | "hour") {
+  return count === 1 ? `1 ${unit}` : `${count} ${unit}s`;
 }
 
 function RemoveConnectionDialog({
