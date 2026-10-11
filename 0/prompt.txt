@@ -1,0 +1,5 @@
+for the auth screen please add last used @web/src/components/auth/auth-form.tsx
+
+---
+
+bro use zustand and persist it please! lmao
