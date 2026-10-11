@@ -74,11 +74,11 @@ class RepoSandbox:
         """Upload the edited files, commit them on a new branch, and push that branch."""
         repo = repo.resolve()
         relative = [path.resolve().relative_to(repo).as_posix() for path in files]
-        for path, name in zip(files, relative):
-            self.sandbox.fs.upload_file(path.read_bytes(), f"{self.path}/{name}")
         branch = self._fresh_branch(_slug(title), token)
         self.sandbox.git.create_branch(self.path, branch)
         self.sandbox.git.checkout_branch(self.path, branch)
+        for path, name in zip(files, relative):
+            self.sandbox.fs.upload_file(path.read_bytes(), f"{self.path}/{name}")
         self.sandbox.git.add(self.path, relative)
         if not _staged(self.sandbox.git.status(self.path)):
             raise RuntimeError("The model made no visible change.")
