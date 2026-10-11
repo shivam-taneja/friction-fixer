@@ -1,0 +1,127 @@
+@web/src/app/(dashboard)/dashboard/page.tsx convert this into the following. like copy from below and update this component. split the sutff into proper components!
+
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowRight, Check, GitPullRequest, Pause, Play, ScanLine } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { PageHeading } from "@/components/workspace/shell";
+import { useWorkspace } from "@/components/workspace/state";
+import { ConversionChart } from "@/components/workspace/conversion-chart";
+import { ChangeList } from "@/components/workspace/change-list";
+
+export const Route = createFileRoute("/dashboard/")({
+  head: () => ({
+    meta: [
+      { title: "Overview — Friction Fixer" },
+      {
+        name: "description",
+        content:
+          "Follow your agent’s progress, conversion trends, and recent website improvements.",
+      },
+      { property: "og:title", content: "Overview — Friction Fixer" },
+      { property: "og:description", content: "Your website improvements, at a glance." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
+  component: Dashboard,
+});
+function Dashboard() {
+  const { paused, setPaused, changes, goal } = useWorkspace();
+  const reviewCount = changes.filter((change) => change.status === "Review").length;
+  return (
+    <main className="product-page">
+      <PageHeading
+        eyebrow="YOUR WEBSITE, MOVING FORWARD"
+        title="A little better, every day."
+        description="Here’s what your agent has been working on."
+        action={
+          <Button variant="outline" onClick={() => setPaused(!paused)}>
+            {paused ? <Play /> : <Pause />}
+            {paused ? "Resume agent" : "Pause agent"}
+          </Button>
+        }
+      />
+      <div className="metrics-strip">
+        <div className="metric">
+          <span>{goal}</span>
+          <strong>3.8%</strong>
+          <small>↑ 18.7% from baseline</small>
+        </div>
+        <div className="metric">
+          <span>Visitors analyzed</span>
+          <strong>2,418</strong>
+          <small>Last 14 days</small>
+        </div>
+        <div className="metric">
+          <span>Changes to review</span>
+          <strong>{reviewCount.toString().padStart(2, "0")}</strong>
+          <small>{reviewCount ? "Your approval needed" : "All caught up"}</small>
+        </div>
+      </div>
+      <div className="overview-grid">
+        <section>
+          <div className="product-section-title">
+            <h2>{goal}</h2>
+            <span>Last 14 days</span>
+          </div>
+          <ConversionChart />
+          <p className="chart-note">
+            <span className="status-dot" />
+            Pricing CTA improvement kept · +18.7% lift
+          </p>
+        </section>
+        <section className="current-cycle">
+          <div className="product-section-title">
+            <h2>Current cycle</h2>
+            <span>{paused ? "Paused" : "In progress"}</span>
+          </div>
+          <div className="cycle-steps">
+            <div className="cycle-step">
+              <Check />
+              <div>
+                Visitor behavior analyzed<small>Pricing page · 2,418 sessions</small>
+              </div>
+            </div>
+            <div className="cycle-step">
+              <Check />
+              <div>
+                Friction identified<small>Primary CTA below the fold</small>
+              </div>
+            </div>
+            <div className="cycle-step">
+              <GitPullRequest />
+              <div>
+                {reviewCount ? "Fix ready for review" : "Review complete"}
+                <small>Pull request #42</small>
+              </div>
+            </div>
+            <div className="cycle-step pending">
+              <ScanLine />
+              <div>
+                Measure the result
+                <small>
+                  {paused ? "Waiting for agent to resume" : "After the change goes live"}
+                </small>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <section className="recent-section">
+        <div className="product-section-title">
+          <h2>Recent changes</h2>
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/dashboard/changes">
+              All changes
+              <ArrowRight />
+            </Link>
+          </Button>
+        </div>
+        <ChangeList limit={3} />
+      </section>
+    </main>
+  );
+}
+
+
+if u need any other file/things ask me

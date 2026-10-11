@@ -1,0 +1,65 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4N5HRP6QJNX02ZBS48VGX04",
+  "session_id": "96832695-5f82-42ce-889a-0b7dae0b3093",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T09:43:51.069154Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "web/.env.example",
+    "web/src/app/(dashboard)/dashboard/page.tsx",
+    "web/src/app/api/github/callback/route.ts",
+    "web/src/app/api/github/connection/route.ts",
+    "web/src/app/api/github/install/route.ts",
+    "web/src/components/dashboard/change-list.tsx",
+    "web/src/components/dashboard/conversion-chart.tsx",
+    "web/src/components/dashboard/current-cycle.tsx",
+    "web/src/components/dashboard/metrics-strip.tsx",
+    "web/src/components/dashboard/overview.tsx",
+    "web/src/components/dashboard/page-heading.tsx",
+    "web/src/components/dashboard/section-title.tsx",
+    "web/src/components/dashboard/sidebar.tsx",
+    "web/src/components/dashboard/workspace.ts",
+    "web/src/components/onboarding/steps/github-step.tsx"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "2e7c34e5a5a7",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 103041,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 295296,
+    "output_tokens": 17488,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 1
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T09:43:51.056357Z",
+    "agent_lines": 332,
+    "agent_removed": 31,
+    "human_added": 123,
+    "human_modified": 100,
+    "human_removed": 0,
+    "total_committed": 555,
+    "total_lines_changed": 693,
+    "agent_percentage": 52.38095238095239,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 1,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_removed_per_file": {
+        "web/.env.example": 1
+      }
+    }
+  ]
+}
