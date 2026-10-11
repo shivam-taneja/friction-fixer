@@ -1,0 +1,184 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4P9NDJKT1Y68H4DC008XQZ0",
+  "session_id": "9d91cc99-be2f-482a-9451-9383d5dd0682",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T20:15:04.760593Z",
+  "branch": "main",
+  "checkpoints_count": 19,
+  "save_step_count": 12,
+  "files_touched": [
+    "agent/check.py",
+    "agent/loop.py",
+    "agent/posthog.py",
+    "agent/progress.py",
+    "agent/reviewer/verdict.py",
+    "agent/schemas.py",
+    "web/src/components/dashboard/runs-page.tsx"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "ee8bf1d965fc",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 847762,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 11429888,
+    "output_tokens": 72165,
+    "api_call_count": 11
+  },
+  "session_metrics": {
+    "turn_count": 143,
+    "context_tokens": 244567,
+    "context_window_size": 256000
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T20:15:04.64293Z",
+    "agent_lines": 189,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 174,
+    "human_removed": 11,
+    "total_committed": 363,
+    "total_lines_changed": 374,
+    "agent_percentage": 50.534759358288774,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 4,
+      "user_lines_removed": 1,
+      "agent_lines_added": 256,
+      "agent_lines_removed": 57,
+      "user_added_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 4
+      },
+      "user_removed_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 1
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 351,
+      "agent_lines_removed": 72
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 46,
+      "user_lines_removed": 47,
+      "agent_lines_added": 638,
+      "agent_lines_removed": 91,
+      "user_added_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 46
+      },
+      "user_removed_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 47
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 6,
+      "user_lines_removed": 3,
+      "agent_lines_added": 638,
+      "agent_lines_removed": 92,
+      "user_added_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 3,
+        "web/src/lib/pagination.ts": 3
+      },
+      "user_removed_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 1,
+        "web/src/lib/pagination.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 24,
+      "user_lines_removed": 2,
+      "agent_lines_added": 679,
+      "agent_lines_removed": 126,
+      "user_added_per_file": {
+        "web/package.json": 1,
+        "web/pnpm-lock.yaml": 20,
+        "web/src/lib/pagination.ts": 3
+      },
+      "user_removed_per_file": {
+        "web/src/lib/pagination.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 3,
+      "user_lines_removed": 2,
+      "agent_lines_added": 770,
+      "agent_lines_removed": 137,
+      "user_added_per_file": {
+        "web/src/lib/pagination.ts": 3
+      },
+      "user_removed_per_file": {
+        "web/src/lib/pagination.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 44,
+      "user_lines_removed": 29,
+      "agent_lines_added": 770,
+      "agent_lines_removed": 137,
+      "user_added_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 40,
+        "web/src/components/ui/toast.tsx": 1,
+        "web/src/lib/pagination.ts": 3
+      },
+      "user_removed_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 26,
+        "web/src/components/ui/toast.tsx": 1,
+        "web/src/lib/pagination.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 94,
+      "user_lines_removed": 153,
+      "agent_lines_added": 939,
+      "agent_lines_removed": 242,
+      "user_added_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 81,
+        "web/src/components/ui/pagination.tsx": 3,
+        "web/src/components/ui/toast.tsx": 1,
+        "web/src/lib/db/runs.ts": 6,
+        "web/src/lib/pagination.ts": 3
+      },
+      "user_removed_per_file": {
+        "web/src/components/dashboard/runs-page.tsx": 110,
+        "web/src/components/ui/pagination.tsx": 1,
+        "web/src/components/ui/toast.tsx": 1,
+        "web/src/lib/db/runs.ts": 39,
+        "web/src/lib/pagination.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 991,
+      "agent_lines_removed": 267
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
