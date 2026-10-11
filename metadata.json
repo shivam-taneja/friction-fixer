@@ -1,0 +1,53 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4N4V6CXJSFB1Q87BB4ZEWWF",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "web/.env.example",
+    "web/src/app/(dashboard)/dashboard/page.tsx",
+    "web/src/app/(dashboard)/layout.tsx",
+    "web/src/app/api/github/branches/route.ts",
+    "web/src/app/api/github/callback/route.ts",
+    "web/src/app/api/github/connection/route.ts",
+    "web/src/app/api/github/install/route.ts",
+    "web/src/app/dashboard/page.tsx",
+    "web/src/app/dashboard/signed-in-as.tsx",
+    "web/src/app/onboarding/actions.ts",
+    "web/src/app/onboarding/github/connected/github-connected.tsx",
+    "web/src/app/onboarding/github/connected/page.tsx",
+    "web/src/components/auth/logout-button.tsx",
+    "web/src/components/dashboard/sidebar.tsx",
+    "web/src/components/layout/brand.tsx",
+    "web/src/components/onboarding/onboarding-flow.tsx",
+    "web/src/components/onboarding/steps/github-step.tsx",
+    "web/src/components/onboarding/steps/goal-step.tsx",
+    "web/src/components/ui/breadcrumb.tsx",
+    "web/src/lib/db/collections.ts",
+    "web/src/lib/db/github-installations.ts",
+    "web/src/lib/db/projects.ts",
+    "web/src/lib/db/schema/github-installation.ts",
+    "web/src/lib/db/schema/project.ts",
+    "web/src/lib/github/app.ts",
+    "web/src/lib/github/config.ts",
+    "web/src/lib/github/state.ts",
+    "web/src/lib/github/types.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 56987,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 497792,
+    "output_tokens": 8586,
+    "api_call_count": 5
+  }
+}

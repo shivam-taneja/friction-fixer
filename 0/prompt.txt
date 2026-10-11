@@ -1,0 +1,128 @@
+i need ur help with getting the github repo connection logic in place, so i have an app which i had created which i want to use, and basically let user connect with one github repo and setup the project details etc etc. like what would be the main branch etc etc. so can u help me? web/src/components/onboarding/steps/github-step.tsx this is ref file where i want that logic. so please just work on this. whatever u need from that github app ask me and i'll tell u
+
+---
+
+dude just tell me, i;m not giving u access to env!!
+
+---
+
+here are the details which i had created!
+
+Skip to content
+Settings
+Developer Settings
+Settings Developer settings GitHub Apps Friction Fixer
+About
+Owned by: @shivam-taneja
+
+App ID: 5263576
+
+Using your App ID to get installation tokens? You can now use your Client ID instead.
+
+Client ID: Iv23lisUNKsb0hTLgIVl
+
+GitHub Apps can use OAuth credentials to identify users. Learn more about identifying users by reading our integration developer documentation.
+
+Public link
+https://github.com/apps/friction-fixer
+Basic information
+GitHub App name
+Friction Fixer
+The name of your GitHub App.
+
+ Markdown supported
+Write
+Preview
+Friction Fixer connects only to the repository you authorize or add, reads its code, opens a pull request with a change, and can revert that change. It cannot access any other repositories unless you explicitly grant access.
+Homepage URL
+https://friction-fixer.shivamtaneja.com
+The full URL to your GitHub App’s website.
+
+Identifying and authorizing users
+The URIs to redirect to after a user authorizes your application. You may add up to 10 redirect URIs. Wildcard matching allows tokens to be sent to all subdomains and additional paths of the redirect URI. Only enable this if you are sure you have control over all possible matches. Learn more about secure use of redirect URIs.
+Redirect URI
+https://friction-fixer.shivamtaneja.com/api/github/callback
+ Allow wildcard matching
+ Request user authorization (OAuth) during installation
+Requests that the installing user grants access to their identity during installation of your App.
+
+ Enable Device Flow
+Allow this GitHub App to authorize users via the device flow.
+
+Post installation
+Setup URL (optional)
+https://friction-fixer.shivamtaneja.com/dashboard
+Users will be redirected to this URL after installing your GitHub App to complete additional setup.
+
+ Redirect on update
+Redirect users to the 'Setup URL' after installations are updated (E.g. repositories added/removed).
+
+Webhook
+
+Active
+We will deliver event details when this hook is triggered.
+Webhook URL
+https://friction-fixer.shivamtaneja.com/api/github/webhook
+Events will POST to this URL with a webhook.
+
+
+There is currently a secret configured for this webhook. If you've lost or forgotten this secret, you can change it, but be aware that any integrations using this secret will need to be updated.
+
+Set a secret to secure your webhooks.
+
+SSL verification
+ By default, we verify SSL certificates when delivering payloads.
+
+ Enable SSL verification  Disable (not recommended)
+ 
+Display information
+
+You can also drag and drop a picture from your computer.
+
+
+Badge background color
+#C1EE49
+The hex value of the badge background color. Hex colors should only contain numbers and letters from a-f.
+
+ Saved
+
+Marketplace
+List your GitHub App in the GitHub Marketplace so that other users can discover it.
+
+List in Marketplace
+IP allow list
+Enter the IP addresses of your GitHub App to allow organizations with IP allow lists to selectively inherit the App's IP allow list when installed. Learn more about App IP allow lists.
+
+There are no IP addresses on the allow list yet.
+IP address or CIDR range
+Short description
+Check IP address
+Enter an IP address to check whether it is permitted by enabled entries on the IP allow list.
+
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+
+so tell me what exaclty do i need to add
+
+---
+
+what about webhook do i need them? or no? and i have it downloaded. and i've updated the setup url
+http://localhost:3000/api/github/callback to this for now
+
+---
+
+for my usecase do i need webhook or not?
+
+---
+
+so when connecting i just need to save the tokens so that when i actually work/the agent works it can pull the code from that repo. that's the logic i wnat to do!

@@ -1,0 +1,178 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4N4V6CXJSFB1Q87BB4ZEWWF",
+  "session_id": "1c3b1eb9-ea5d-4526-a439-77406dab5503",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T09:31:31.340645Z",
+  "branch": "main",
+  "checkpoints_count": 6,
+  "save_step_count": 6,
+  "files_touched": [
+    "web/.env.example",
+    "web/src/app/(dashboard)/dashboard/page.tsx",
+    "web/src/app/(dashboard)/layout.tsx",
+    "web/src/app/api/github/branches/route.ts",
+    "web/src/app/api/github/callback/route.ts",
+    "web/src/app/api/github/connection/route.ts",
+    "web/src/app/api/github/install/route.ts",
+    "web/src/app/dashboard/page.tsx",
+    "web/src/app/dashboard/signed-in-as.tsx",
+    "web/src/app/onboarding/actions.ts",
+    "web/src/app/onboarding/github/connected/github-connected.tsx",
+    "web/src/app/onboarding/github/connected/page.tsx",
+    "web/src/components/auth/logout-button.tsx",
+    "web/src/components/dashboard/sidebar.tsx",
+    "web/src/components/layout/brand.tsx",
+    "web/src/components/onboarding/onboarding-flow.tsx",
+    "web/src/components/onboarding/steps/github-step.tsx",
+    "web/src/components/onboarding/steps/goal-step.tsx",
+    "web/src/components/ui/breadcrumb.tsx",
+    "web/src/lib/db/collections.ts",
+    "web/src/lib/db/github-installations.ts",
+    "web/src/lib/db/projects.ts",
+    "web/src/lib/db/schema/github-installation.ts",
+    "web/src/lib/db/schema/project.ts",
+    "web/src/lib/github/app.ts",
+    "web/src/lib/github/config.ts",
+    "web/src/lib/github/state.ts",
+    "web/src/lib/github/types.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "936f263c1f3a",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 56987,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 497792,
+    "output_tokens": 8586,
+    "api_call_count": 5
+  },
+  "session_metrics": {
+    "turn_count": 6
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T09:31:31.331916Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 1513,
+    "human_modified": 789,
+    "human_removed": 0,
+    "total_committed": 1573,
+    "total_lines_changed": 2302,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1270,
+      "user_lines_removed": 36,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "web/.env.example": 5,
+        "web/src/app/api/github/branches/route.ts": 38,
+        "web/src/app/api/github/callback/route.ts": 73,
+        "web/src/app/api/github/connection/route.ts": 46,
+        "web/src/app/api/github/install/route.ts": 37,
+        "web/src/app/onboarding/actions.ts": 66,
+        "web/src/app/onboarding/github/connected/github-connected.tsx": 32,
+        "web/src/app/onboarding/github/connected/page.tsx": 22,
+        "web/src/components/onboarding/onboarding-flow.tsx": 121,
+        "web/src/components/onboarding/steps/github-step.tsx": 327,
+        "web/src/components/onboarding/steps/goal-step.tsx": 5,
+        "web/src/lib/db/collections.ts": 1,
+        "web/src/lib/db/github-installations.ts": 55,
+        "web/src/lib/db/projects.ts": 43,
+        "web/src/lib/db/schema/github-installation.ts": 2,
+        "web/src/lib/db/schema/project.ts": 14,
+        "web/src/lib/github/app.ts": 228,
+        "web/src/lib/github/config.ts": 34,
+        "web/src/lib/github/state.ts": 71,
+        "web/src/lib/github/types.ts": 50
+      },
+      "user_removed_per_file": {
+        "web/src/app/onboarding/actions.ts": 3,
+        "web/src/components/onboarding/onboarding-flow.tsx": 7,
+        "web/src/components/onboarding/steps/github-step.tsx": 23,
+        "web/src/components/onboarding/steps/goal-step.tsx": 3
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1624,
+      "agent_lines_removed": 58
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 554,
+      "user_lines_removed": 158,
+      "agent_lines_added": 1622,
+      "agent_lines_removed": 58,
+      "user_added_per_file": {
+        "web/src/components/auth/logout-button.tsx": 6,
+        "web/src/components/dashboard/nav-user.tsx": 104,
+        "web/src/components/dashboard/sidebar.tsx": 57,
+        "web/src/components/layout/brand.tsx": 12,
+        "web/src/components/ui/avatar.tsx": 108,
+        "web/src/components/ui/dropdown-menu.tsx": 267
+      },
+      "user_removed_per_file": {
+        "web/src/components/auth/logout-button.tsx": 8,
+        "web/src/components/dashboard/sidebar.tsx": 146,
+        "web/src/components/layout/brand.tsx": 4
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 560,
+      "user_lines_removed": 146,
+      "agent_lines_added": 1640,
+      "agent_lines_removed": 70,
+      "user_added_per_file": {
+        "web/src/components/dashboard/nav-user.tsx": 104,
+        "web/src/components/dashboard/sidebar.tsx": 81,
+        "web/src/components/ui/avatar.tsx": 108,
+        "web/src/components/ui/dropdown-menu.tsx": 267
+      },
+      "user_removed_per_file": {
+        "web/src/components/dashboard/sidebar.tsx": 146
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 560,
+      "user_lines_removed": 146,
+      "agent_lines_added": 1640,
+      "agent_lines_removed": 70,
+      "user_added_per_file": {
+        "web/src/components/dashboard/nav-user.tsx": 104,
+        "web/src/components/dashboard/sidebar.tsx": 81,
+        "web/src/components/ui/avatar.tsx": 108,
+        "web/src/components/ui/dropdown-menu.tsx": 267
+      },
+      "user_removed_per_file": {
+        "web/src/components/dashboard/sidebar.tsx": 146
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 552,
+      "user_lines_removed": 146,
+      "agent_lines_added": 1640,
+      "agent_lines_removed": 70,
+      "user_added_per_file": {
+        "web/src/components/dashboard/nav-user.tsx": 104,
+        "web/src/components/dashboard/sidebar.tsx": 73,
+        "web/src/components/ui/avatar.tsx": 108,
+        "web/src/components/ui/dropdown-menu.tsx": 267
+      },
+      "user_removed_per_file": {
+        "web/src/components/dashboard/sidebar.tsx": 146
+      }
+    }
+  ]
+}
