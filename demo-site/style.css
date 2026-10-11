@@ -11,14 +11,33 @@ main {
   padding: 0 1rem;
 }
 
+.cta-nudge {
+  margin: 2rem 0 0.6rem;
+  font-size: 1.05rem;
+  color: #444;
+  font-style: italic;
+}
+
 .button {
   display: inline-block;
-  margin-top: 1rem;
-  padding: 0.4rem 0.6rem;
-  color: #555;
-  background: #ddd;
-  font-size: 0.85rem;
+  margin-top: 0;
+  padding: 0.85rem 2rem;
+  color: #fff;
+  background: #1a5c2e;
+  font-size: 1.15rem;
+  font-family: Georgia, serif;
+  font-weight: bold;
   text-decoration: none;
+  border-radius: 3px;
+  letter-spacing: 0.01em;
+  transition: background 0.2s;
+}
+
+.button:hover,
+.button:focus {
+  background: #134820;
+  outline: 3px solid #a8d5b5;
+  outline-offset: 2px;
 }
 
 .benefits {
