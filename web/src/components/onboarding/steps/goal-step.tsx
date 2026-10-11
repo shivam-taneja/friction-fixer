@@ -1,12 +1,20 @@
+"use client";
+
 import {
   analyticsLabel,
   goalChoices,
   type AnalyticsProvider,
   type ProjectGoal,
 } from "@/components/onboarding/logic";
-
-const inputClass =
-  "mt-2 h-11 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none transition-colors focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 
 export function GoalStep({
   goal,
@@ -21,40 +29,55 @@ export function GoalStep({
   analytics: AnalyticsProvider;
   repo: string;
 }) {
+  const details = [
+    ["Website", site],
+    ["Analytics", analyticsLabel(analytics)],
+    ["Repository", repo],
+    ["Change approval", "Review before publishing"],
+  ] as const;
+
+  const selectedGoal = goalChoices.find((choice) => choice.id === goal);
+
   return (
     <div className="grid gap-6">
-      <label className="grid text-sm font-medium">
-        Primary goal
-        <select
-          className={inputClass}
+      <div className="grid gap-2">
+        <Label htmlFor="project-goal">Primary goal</Label>
+
+        <Select
           value={goal}
-          onChange={(event) => onGoalChange(event.target.value as ProjectGoal)}
+          onValueChange={(value) => onGoalChange(value as ProjectGoal)}
         >
-          {goalChoices.map((choice) => (
-            <option key={choice.id} value={choice.id}>
-              {choice.label}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div className="divide-y divide-border rounded-lg border border-border">
-        {(
-          [
-            ["Website", site],
-            ["Analytics", analyticsLabel(analytics)],
-            ["Repository", repo],
-            ["Change approval", "Review before publishing"],
-          ] as const
-        ).map(([label, value]) => (
-          <div
-            key={label}
-            className="flex items-baseline justify-between gap-4 px-4 py-3 text-sm"
-          >
-            <span className="text-muted-foreground">{label}</span>
-            <strong className="text-right font-semibold">{value}</strong>
-          </div>
-        ))}
+          <SelectTrigger id="project-goal" className="w-full">
+            <SelectValue placeholder="Select a goal">
+              {selectedGoal?.label ?? "Select a goal"}
+            </SelectValue>
+          </SelectTrigger>
+
+          <SelectContent>
+            {goalChoices.map((choice) => (
+              <SelectItem key={choice.id} value={choice.id}>
+                {choice.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
+
+      <Card className="py-0">
+        <CardContent className="p-0">
+          {details.map(([label, value], index) => (
+            <div
+              key={label}
+              className={`flex items-baseline justify-between gap-4 px-4 py-3 text-sm ${
+                index !== details.length - 1 ? "border-b" : ""
+              }`}
+            >
+              <span className="text-muted-foreground">{label}</span>
+              <strong className="text-right font-medium">{value}</strong>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 }

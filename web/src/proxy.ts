@@ -35,11 +35,6 @@ export async function proxy(request: NextRequest) {
       });
     },
     handleInvalidToken: async (reason) => {
-      console.error("[auth] Invalid token:", {
-        pathname: request.nextUrl.pathname,
-        reason,
-      });
-
       if (!PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
         console.info("Missing or invalid credentials", { reason });
       }

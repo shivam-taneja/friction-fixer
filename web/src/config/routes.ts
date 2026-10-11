@@ -31,10 +31,6 @@ export const LOGIN_PATH = "/auth";
 export const DEFAULT_LOGIN_REDIRECT = "/dashboard";
 
 export function redirectToLogin(request: NextRequest) {
-  console.trace("[redirectToLogin]", {
-    pathname: request.nextUrl.pathname,
-  });
-
   if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
     return NextResponse.next();
   }

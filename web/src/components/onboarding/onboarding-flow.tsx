@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Rocket } from "lucide-react";
 import { finishOnboarding } from "@/app/onboarding/actions";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { OnboardingProgress } from "@/components/onboarding/onboarding-progress";
@@ -128,7 +128,7 @@ export function OnboardingFlow() {
               disabled={saving}
             >
               {saving ? "Saving…" : lastStep ? "Start my agent" : "Continue"}
-              {lastStep ? <Sparkles /> : <ArrowRight />}
+              {lastStep ? <Rocket /> : <ArrowRight />}
             </Button>
           </div>
         </form>

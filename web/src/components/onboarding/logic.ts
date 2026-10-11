@@ -10,25 +10,28 @@ export const onboardingSteps = [
     id: "website",
     label: "YOUR WEBSITE",
     title: "Start with your website.",
-    description: "One website. One agent. A continuous loop of better.",
+    description: "Connect the website you want your agent to improve.",
   },
   {
     id: "analytics",
     label: "ANALYTICS",
     title: "Where’s your visitor data?",
-    description: "Choose the analytics platform you use.",
+    description:
+      "Connect your analytics to help your agent identify friction points.",
   },
   {
     id: "github",
     label: "REPOSITORY",
     title: "Give your agent a place to work.",
-    description: "Choose the GitHub repository for this website.",
+    description:
+      "Connect the GitHub repository your agent can use to make changes.",
   },
   {
     id: "goal",
     label: "YOUR GOAL",
     title: "Ready for less friction.",
-    description: "Pick a goal and review your setup.",
+    description:
+      "Choose what to improve and review your setup before getting started.",
   },
 ] as const;
 
