@@ -19,11 +19,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { folderLabel, frameworkLabel } from "@/lib/github/framework";
-import { OnboardingStatus } from "@/lib/db/schema/user";
+import {
+  CHECK_AFTER_MAX_HOURS,
+  CHECK_AFTER_MIN_HOURS,
+  formatCheckAfter,
+  isCheckAfterHours,
+  OnboardingStatus,
+} from "@/lib/db/schema/user";
 
 export function SettingsPage() {
-  const { data, error, loading, removing, savingMock, removeConnection, setMockData } =
-    useSettings();
+  const {
+    data,
+    error,
+    loading,
+    removing,
+    savingMock,
+    savingWait,
+    removeConnection,
+    setMockData,
+    setCheckAfter,
+  } = useSettings();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   return (
@@ -90,7 +105,11 @@ export function SettingsPage() {
               title={frameworkLabel(data.project.framework)}
               detail={folderLabel(data.project.sourceFolder)}
             />
-            <ConnectionRow title="Goal" detail={data.project.goal} divider={false} />
+            <ConnectionRow
+              title="Goal"
+              detail={data.project.goal}
+              divider={false}
+            />
             <div className="border-t px-4 py-3">
               <Button
                 type="button"
@@ -102,6 +121,11 @@ export function SettingsPage() {
               </Button>
             </div>
           </section>
+          <CheckWait
+            hours={data.checkAfterHours}
+            saving={savingWait}
+            onSave={setCheckAfter}
+          />
           <section className="overflow-hidden rounded-xl border bg-card">
             <header className="flex items-start justify-between gap-3 border-b bg-muted px-4 py-3.5">
               <div className="grid gap-1">
@@ -146,6 +170,77 @@ export function SettingsPage() {
         </div>
       ) : null}
     </main>
+  );
+}
+
+function CheckWait({
+  hours,
+  saving,
+  onSave,
+}: {
+  hours: number;
+  saving: boolean;
+  onSave: (hours: number) => Promise<void>;
+}) {
+  const [value, setValue] = useState(String(hours));
+  const [syncedHours, setSyncedHours] = useState(hours);
+  if (hours !== syncedHours) {
+    setSyncedHours(hours);
+    setValue(String(hours));
+  }
+
+  const parsed = Number(value);
+  const valid = isCheckAfterHours(parsed);
+  const unchanged = valid && parsed === hours;
+
+  return (
+    <section className="overflow-hidden rounded-xl border bg-card">
+      <header className="grid gap-1 border-b bg-muted px-4 py-3.5">
+        <h2 className="text-sm font-semibold">Check wait</h2>
+        <p className="text-xs leading-relaxed text-muted-foreground">
+          After a live change is merged, PostHog is read again this many hours
+          later. The shortest wait is 1 hour. The longest is 14 days. A run that
+          is already scheduled keeps its current check time.
+        </p>
+      </header>
+      <form
+        className="grid gap-3 px-4 py-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (!valid || unchanged || saving) return;
+          void onSave(parsed);
+        }}
+      >
+        <div className="grid gap-2">
+          <Label htmlFor="check-after-hours">Hours</Label>
+          <div className="flex items-center gap-3">
+            <Input
+              id="check-after-hours"
+              className="w-28"
+              type="number"
+              inputMode="numeric"
+              min={CHECK_AFTER_MIN_HOURS}
+              max={CHECK_AFTER_MAX_HOURS}
+              step={1}
+              value={value}
+              disabled={saving}
+              onChange={(event) => setValue(event.target.value)}
+            />
+            <span className="text-sm text-muted-foreground">
+              {valid ? formatCheckAfter(parsed) : "1 hour to 14 days"}
+            </span>
+          </div>
+        </div>
+        <Button
+          type="submit"
+          variant="outline"
+          className="w-fit cursor-pointer"
+          disabled={saving || !valid || unchanged}
+        >
+          {saving ? "Saving…" : "Save"}
+        </Button>
+      </form>
+    </section>
   );
 }
 

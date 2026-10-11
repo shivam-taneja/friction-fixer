@@ -2,29 +2,33 @@
 
 Python code for the Friction Fixer loop. The full loop is described in [FLOW.md](../FLOW.md).
 
-The website starts one round. The Builder edits the project's source folder, commits, and opens a pull request with the GitHub App. The loop merges that pull request before the review, so the site is live. The after-numbers are still mock. On KEEP the change stays. On UNDO the loop opens a second pull request that reverts the change, then merges that too. The Reviewer does not touch git.
+The website starts one round. The Builder edits the project's source folder, commits, and opens a pull request with the GitHub App. The loop merges that pull request before the review, so the site is live. On KEEP the change stays. On UNDO the loop opens a second pull request that reverts the change, then merges that too. The Reviewer does not touch git.
 
 If GitHub will not merge because of a conflict, or because the branch is behind, the run pauses. A person resolves it on GitHub and continues the run. The agent does not pull or rewrite the branch.
 
-A first run generates mock starting numbers. The next run uses the latest saved set: the after numbers when the last change was kept, the before numbers when it was undone. Past verdicts go to the Analyst.
+Mock data is off unless `users/{userId}.useMockData` is true. A mock run invents the after numbers from the improved or worse choice. The next mock run uses the latest saved set for that same project: the after numbers when the last change was kept, the before numbers when it was undone. Past verdicts for that project go to the Analyst.
+
+A live run reads the last 7 days from PostHog, saves them as `before`, merges the change, then sets status `measuring`. `checkAfter` is that moment plus the user's check wait, and `measuredFrom` is that moment. The wait is `users/{userId}.checkAfterHours`: 1 to 336 hours, default 168. Changing Settings later does not rewrite a run that already has `checkAfter`. It does not invent after numbers and it does not KEEP or UNDO yet. `python -m agent.check` finds those runs once `checkAfter` has passed, reads PostHog from `measuredFrom` until `checkAfter`, and then KEEP or UNDO. A run saved before `measuredFrom` existed is checked over the 7 days ending at `checkAfter`. Measuring holds that user's lock and does not count toward the two-sandbox cap. The sandbox is opened only if the verdict is UNDO.
 
 ## Files
 
 | File          | Job                                                                                                                                                                                                                                          |
 | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `loop.py`     | One round: `run(case, user_id, run_id)`. `continue_run(user_id, run_id)` finishes a run that was waiting on a person.                                                                                                                        |
-| `server.py`   | HTTP entry. `POST /runs` starts a round. `POST /runs/continue` resumes one. `GET /` is the health check.                                                                                                                                     |
-| `progress.py` | Writes each step onto the Firestore `runs` document.                                                                                                                                                                                         |
-| `history.py`  | Reads earlier runs so the next change starts from the latest saved numbers and past verdicts.                                                                                                                                                |
+| `loop.py`     | One round: `run(case, user_id, run_id)`. `case` is `increased`, `decreased`, or `live`. `continue_run(user_id, run_id)` finishes a run that was waiting on a person. `settle_live` is the KEEP or UNDO after a live check.                   |
+| `server.py`   | HTTP entry. `POST /runs` starts a round. `POST /runs/continue` resumes one. `GET /readiness` checks the baseline. `GET /capacity` checks the sandbox cap. `GET /` is the health check.                                                       |
+| `check.py`    | `python -m agent.check`. Finishes live runs whose `checkAfter` has passed.                                                                                                                                                                   |
+| `posthog.py`  | Reads the connected PostHog project. The baseline is the last 7 days. The check reads the window since the change.                                                                                                                           |
+| `progress.py` | Writes each step onto the Firestore `runs` document. `measuring` keeps the user lock.                                                                                                                                                        |
+| `history.py`  | Reads earlier runs for the same project so the next change starts from the latest saved numbers and past verdicts.                                                                                                                           |
 | `analyst/`    | Asks the model for one plan. The model requests files, then returns the plan. Past UNDO verdicts are included.                                                                                                                               |
 | `builder/`    | Edits the source folder inside a Daytona clone, commits, and opens a pull request. `edit.py` calls the model. `sandbox.py` clones, writes, and pushes. `git.py` merges through the GitHub API. `github_app.py` mints the installation token. |
-| `reviewer/`   | Compares the mock before and after numbers and returns KEEP or UNDO. KEEP requires bounce rate to fall by at least 5 percentage points.                                                                                                      |
-| `simulator/`  | Asks the model for the first baseline and, after the edit, for one improved outcome and one worse outcome.                                                                                                                                   |
+| `reviewer/`   | Compares before and after numbers and returns KEEP or UNDO. KEEP requires bounce rate to fall by at least 5 percentage points. Other metrics are recorded and do not decide.                                                                 |
+| `simulator/`  | Mock runs only. Asks the model for the first baseline and, after the edit, for one improved outcome and one worse outcome.                                                                                                                   |
 | `schemas.py`  | The plan and the verdict the agents pass to each other.                                                                                                                                                                                      |
 | `tracing.py`  | neatlogs. One round is one trace.                                                                                                                                                                                                            |
 | `project.py`  | Loads the user's project and GitHub installation from Firestore. The editable folder is `sourceFolder`.                                                                                                                                      |
 | `source.py`   | Lists and checks files inside that folder. Skips dependencies and lockfiles. Accepts HTML, CSS, JS, TS, and Python, among others.                                                                                                            |
-| `config.py`   | The keep margin: bounce rate down by at least 5 percentage points.                                                                                                                                                                           |
+| `config.py`   | The keep margin, and the check-wait bounds: 1 hour through 14 days, default 7 days. The saved value is on the user.                                                                                                                          |
 
 ## Run
 
@@ -36,7 +40,7 @@ The website starts a round. The deployed process is:
 python -m agent.server
 ```
 
-`POST /runs` needs `Authorization: Bearer <AGENT_SECRET>`. The body is the run id, the signed-in user id, and `increased` or `decreased`. `increased` is the improved mock outcome. `decreased` is the worse one. The Reviewer still decides KEEP or UNDO from the bounce-rate margin.
+`POST /runs` needs `Authorization: Bearer <AGENT_SECRET>`. The body is the run id, the signed-in user id, and `increased`, `decreased`, or `live`. `increased` is the improved mock outcome. `decreased` is the worse one. `live` saves the PostHog baseline and waits for `python -m agent.check`. The wait comes from that user's Settings. The Reviewer still decides KEEP or UNDO from the bounce-rate margin.
 
 `POST /runs/continue` uses the same secret. The body is the run id and the user id. It merges the pull request after a person has resolved a conflict, then finishes the round.
 
@@ -50,4 +54,4 @@ After the round, `neatlogs.flush` sends the trace. One round is one trace named 
 
 This folder imports **neatlogs** for traces. The Builder and Analyst call `LLM_PROVIDER` through the OpenAI client library. `litellm` uses the hackathon proxy. `groq` uses Groq. Git and pull requests use a short-lived GitHub App installation token.
 
-**Entire** and **cfo.ai** are not imported here. Entire is a CLI on the repo that records why a code change was made. cfo.ai is the business plan, written outside this loop.
+**Entire** and **cfo.ai** are not imported here. Entire is a CLI on the repo that records why a code change was made. cfo.ai is the business plan, written outside this loop. The handoff for that work is in the root [README](../README.md#cfoai). Do not add billing or a pricing model to this folder for that task.

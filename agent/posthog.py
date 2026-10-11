@@ -4,8 +4,13 @@ import json
 import urllib.error
 import urllib.parse
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
+from agent.config import (
+    CHECK_AFTER_DEFAULT_HOURS,
+    CHECK_AFTER_MAX_HOURS,
+    CHECK_AFTER_MIN_HOURS,
+)
 from agent.project import _client
 from agent.schemas import VisitorData
 
@@ -45,6 +50,21 @@ NOT_READY = (
 )
 
 
+def check_wait(user_id: str) -> timedelta:
+    """How long this user's next live run waits. Already scheduled runs keep their own time."""
+    snap = _client().collection("users").document(user_id).get()
+    data = snap.to_dict() if snap.exists else None
+    hours = data.get("checkAfterHours") if data else None
+    if isinstance(hours, bool) or not isinstance(hours, (int, float)):
+        hours = CHECK_AFTER_DEFAULT_HOURS
+    if isinstance(hours, float) and not hours.is_integer():
+        hours = CHECK_AFTER_DEFAULT_HOURS
+    whole = int(hours)
+    if whole < CHECK_AFTER_MIN_HOURS or whole > CHECK_AFTER_MAX_HOURS:
+        whole = CHECK_AFTER_DEFAULT_HOURS
+    return timedelta(hours=whole)
+
+
 def use_mock(user_id: str) -> bool:
     """Mock data is off unless this user turned it on in Settings."""
     snap = _client().collection("users").document(user_id).get()
@@ -77,7 +97,9 @@ def load_window(user_id: str, start: datetime, end: datetime) -> VisitorData | N
     if refresh != saved["refreshToken"]:
         _store_refresh(user_id, refresh)
     row = _query(saved["apiHost"], saved["projectId"], access, _range_query(start, end))
-    return _visitors(row, empty="PostHog has no pageview sessions in this check window.")
+    return _visitors(
+        row, empty="PostHog has no pageview sessions in this check window."
+    )
 
 
 def load_baseline(user_id: str) -> VisitorData | None:
@@ -166,7 +188,9 @@ def _visitors(row: list, *, empty: str) -> VisitorData:
     )
 
 
-def _query(api_host: str, project_id: str, access_token: str, query: str = QUERY) -> list:
+def _query(
+    api_host: str, project_id: str, access_token: str, query: str = QUERY
+) -> list:
     payload = json.dumps({"query": {"kind": "HogQLQuery", "query": query}}).encode()
     request = urllib.request.Request(
         f"{api_host}/api/projects/{project_id}/query/",

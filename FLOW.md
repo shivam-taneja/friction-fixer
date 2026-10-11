@@ -5,41 +5,57 @@ This file explains what each agent does, what it receives, and what it hands to 
 ## The loop at a glance
 
 ```
-  Dashboard: Start run (improved or worse)
+  Dashboard: Start run
        |
-       v
-  Saved numbers, or a new mock baseline
+       +-- mock on --> pick improved or worse
+       |
+       +-- mock off --> PostHog, last 7 days, or refuse the run
        |
        v
   [1] ANALYST  -- writes a plan -->  [2] BUILDER
-       ^                                  |
-       |                    edits the source folder, opens a PR
-       |                                  |
-       |                                  v
-       |                          [3] MERGE, or wait for a person
-       |                                  |
-       |                                  v
-       |                          [4] REVIEWER
-       |                          compares mock before and after
-       |                                  |
-       |                     +------------+------------+
-       |                     |                         |
-       |                   KEEP                      UNDO
-       |                     |                         |
-       |                     |                  revert PR, then merge it
-       |                     |                         |
-       +---------------------+-------------------------+
-         the next run starts from these numbers
-         and receives the verdict
+                                          |
+                            edits the source folder, opens a PR
+                                          |
+                                          v
+                                 [3] MERGE, or wait for a person
+                                          |
+                    +---------------------+----------------------+
+                    |                                            |
+                 mock run                                     live run
+                    |                                            |
+                    v                                            v
+             invented after numbers                      status: measuring
+                    |                                      checkAfter saved
+                    |                                            |
+                    |                                            v
+                    |                                   python -m agent.check
+                    |                                      reads that window
+                    |                                            |
+                    +---------------------+----------------------+
+                                          |
+                                          v
+                                    [4] REVIEWER
+                         KEEP if bounce rate fell by 5 points
+                                          |
+                            +-------------+-------------+
+                            |                           |
+                          KEEP                        UNDO
+                            |                           |
+                            |                    revert PR, then merge it
+                            |                           |
+                            +-------------+-------------+
+                                          |
+                            the next Start run uses these numbers
+                            and receives the verdict
 ```
 
-The website saves every step on the Firestore `runs` document. One click is one round.
+The website saves every step on the Firestore `runs` document. One click is one round. The live check is a later process, not a second click.
 
 ## The steps
 
 ### 1. Analyst
 
-- **Gets:** the project goal, the source folder's file list, mock visitor numbers, and past verdicts.
+- **Gets:** the project goal, the source folder's file list, the visitor numbers, and past verdicts for this project.
 - **Does:** asks for the files it needs, then picks ONE change. It must not repeat a change a past UNDO already rejected.
 - **Hands over:** a plan in the format below.
 
@@ -58,18 +74,28 @@ The website saves every step on the Firestore `runs` document. One click is one 
 
 ### 4. Reviewer
 
-- **Gets:** the change, the mock numbers from before, and the mock numbers from after.
+- **Gets:** the change, the numbers from before, and the numbers from after. Mock numbers are invented at the start. Live numbers are the PostHog window from the change until `checkAfter`.
 - **Decides:** KEEP or UNDO from the bounce rate. The site check on the verdict is recorded as OK.
 - **If UNDO:** a second pull request reverts the merge, then that pull request is merged too. The reason is stored for the next Analyst run.
 
 ## Numbers
 
-Real traffic is too slow for the hackathon, so the numbers are mock and labeled mock.
+Mock data is off unless that user turned it on in Settings.
+
+Mock:
 
 - The first run for a project asks the model for a starting set and saves it on the run.
-- The next run uses the latest saved set. A kept change continues from its after numbers. An undone change continues from its before numbers, because the edit was reverted.
+- The next run for that same project uses the latest saved set. A kept change continues from its after numbers. An undone change continues from its before numbers, because the edit was reverted.
 - The Start run dialog picks the after set: improved or worse. Improved pretends the goal was achieved. Worse pretends it was missed.
 - The model still has to return numbers that match that choice. Improved must drop bounce rate by at least 5 percentage points and raise the other metrics. Worse must not.
+
+Live PostHog:
+
+- Start run reads the last 7 days and saves that row as `before`. The dialog does not open.
+- After the pull request merges, the run stays `measuring` until `checkAfter`. That wait is the hours saved on the user in Settings. The default is 7 days. The shortest is 1 hour and the longest is 14 days. The baseline window stays 7 days. `measuredFrom` is when the wait started, so a later Settings change does not move this run.
+- `python -m agent.check` reads PostHog from `measuredFrom` until `checkAfter`, saves `after`, and runs the same KEEP or UNDO rule. One hour of traffic is unlikely to move bounce rate by 5 points, so a demo at the shortest wait should expect UNDO.
+- The PostHog project has to be the site the repository deploys. A portfolio PostHog project plus this repo's `demo-site/` measures the portfolio and reverts `demo-site/`.
+- A run already saved with an old `checkAfter` does not move when this setting changes.
 
 ## What agents pass to each other
 
@@ -126,4 +152,4 @@ reason:           why this decision was made, including the change text
 | Each dashboard step, the plan, the numbers, and the verdict | Firestore `runs`                                                                                                                                                                                                                                                                                                  |
 | Every change, kept or undone                                | Pull requests on the project's repository                                                                                                                                                                                                                                                                         |
 | Reasoning behind a code change                              | Entire checkpoints on the [commits page](https://entire.io/gh/shivam-taneja/friction-fixer/commits)                                                                                                                                                                                                               |
-| Business plan for the product                               | cfo.ai                                                                                                                                                                                                                                                                                                            |
+| Business plan for the product                               | cfo.ai, outside this loop. The handoff is in the root README under `cfo.ai`. Do not change the agent or the website to write that plan.                                                                                                                                                                           |

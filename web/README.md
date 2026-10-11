@@ -53,4 +53,8 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000). The dashboard is at [http://localhost:3000/dashboard](http://localhost:3000/dashboard). Runs are at [http://localhost:3000/dashboard/runs](http://localhost:3000/dashboard/runs).
 
-**Start run** asks the signed-in user's agent to edit the project's source folder. Pick improved or worse for the mock after-numbers. If a pull request conflicts, the run waits on that page until you resolve it on GitHub and press **Continue**.
+**Start run** checks the baseline when it is clicked. Mock data opens a dialog for improved or worse. A live PostHog run starts immediately, saves the last 7 days, and waits for the check time from Settings. That wait is 1 hour to 14 days, and the default is 7 days. A run that is already waiting keeps its check time when the setting changes. The run page shows Measuring until `python -m agent.check` keeps or undoes the change. If a pull request conflicts, the run waits on that page until you resolve it on GitHub and press **Continue**.
+
+GitHub and PostHog are connected during onboarding and removed together from Settings. The same email on Google and GitHub is one account. Runs on the dashboard are grouped by project. A removed project stays visible and cannot be continued.
+
+cfo.ai is not this app. Pricing work stays out of `web/`. The handoff is in the root [README](../README.md#cfoai).

@@ -9,6 +9,7 @@ from google.cloud import firestore
 from google.cloud.firestore_v1.base_query import FieldFilter
 
 from agent.builder.sandbox import WAIT_MESSAGE
+from agent.config import CHECK_AFTER_DEFAULT_HOURS
 from agent.loop import _stored_change, _stored_visitors, settle_live
 from agent.posthog import NOT_CONNECTED, load_window
 from agent.progress import RunLog, _now
@@ -87,7 +88,10 @@ def _check_run(client, run_id: str) -> None:
             raise Incomplete(
                 "This run is missing the saved plan, baseline, or pull request."
             )
-        after = load_window(user_id, end - timedelta(days=7), end)
+        start = _parsed(claimed.get("measuredFrom"))
+        if start is None:
+            start = end - timedelta(hours=CHECK_AFTER_DEFAULT_HOURS)
+        after = load_window(user_id, start, end)
         if after is None:
             raise Incomplete(NOT_CONNECTED)
         settle_live(user_id, log, before, after, change, pr_url)
@@ -111,7 +115,9 @@ def _claim(client, run_id: str) -> dict | None:
         data = snap.to_dict() if snap.exists else None
         if not _candidate(data or {}, datetime.now(timezone.utc)):
             return None
-        transaction.update(run_ref, {"status": "running", "error": "", "checkingAt": _now()})
+        transaction.update(
+            run_ref, {"status": "running", "error": "", "checkingAt": _now()}
+        )
         return data
 
     return update(transaction, ref)

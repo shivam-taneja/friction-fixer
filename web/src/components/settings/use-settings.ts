@@ -26,6 +26,7 @@ export type SettingsData =
       status: typeof OnboardingStatus.complete;
       project: SettingsProject;
       useMockData: boolean;
+      checkAfterHours: number;
     };
 
 export function useSettings() {
@@ -33,6 +34,7 @@ export function useSettings() {
   const [error, setError] = useState("");
   const [removing, setRemoving] = useState(false);
   const [savingMock, setSavingMock] = useState(false);
+  const [savingWait, setSavingWait] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -129,13 +131,51 @@ export function useSettings() {
     }
   }
 
+  async function setCheckAfter(hours: number) {
+    setSavingWait(true);
+    setError("");
+    try {
+      const response = await fetch("/api/settings", {
+        method: "PATCH",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checkAfterHours: hours }),
+      });
+      const body = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        checkAfterHours?: number;
+      };
+      if (!response.ok || typeof body.checkAfterHours !== "number") {
+        throw new Error(body.error || "Could not update the check wait.");
+      }
+      const checkAfterHours = body.checkAfterHours;
+      setData((current) =>
+        current && current.status === OnboardingStatus.complete
+          ? { ...current, checkAfterHours }
+          : current,
+      );
+      notify.success("Check wait saved.");
+    } catch (saveError) {
+      const message =
+        saveError instanceof Error
+          ? saveError.message
+          : "Could not update the check wait.";
+      setError(message);
+      notify.error(message);
+    } finally {
+      setSavingWait(false);
+    }
+  }
+
   return {
     data,
     error,
     loading: !data && !error,
     removing,
     savingMock,
+    savingWait,
     removeConnection,
     setMockData,
+    setCheckAfter,
   };
 }

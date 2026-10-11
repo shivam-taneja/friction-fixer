@@ -1,6 +1,6 @@
 """One round: baseline, Analyst, Builder, simulated outcome, Reviewer."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 
 import neatlogs
 
@@ -14,6 +14,7 @@ from agent.builder.text import plan_text
 from agent.history import load_saved
 from agent.posthog import (
     NOT_CONNECTED,
+    check_wait,
     load_baseline as load_posthog_baseline,
     use_mock,
 )
@@ -110,7 +111,7 @@ def _round(case: str, user_id: str, log: RunLog) -> None:
         )
 
         if live:
-            _schedule_check(log)
+            _schedule_check(log, user_id)
             return
 
         after = generate_outcomes(plan.change, before)[case]
@@ -184,7 +185,7 @@ def _continue(user_id: str, log: RunLog) -> None:
         {"pullRequestUrl": pr_url},
     )
     if case == "live":
-        _schedule_check(log)
+        _schedule_check(log, user_id)
         return
     plan = _stored_plan(data.get("plan"), change)
     after = generate_outcomes(plan.change, before)[case]
@@ -277,7 +278,7 @@ def _settle_live(
     log.step(
         "after",
         "After numbers",
-        after.describe(lead="PostHog, the 7 days after the change."),
+        after.describe(lead="PostHog, since the change went live."),
         {"after": _saved_numbers(after)},
     )
     verdict = review(change, before, after)
@@ -320,14 +321,15 @@ def _settle_live(
     log.finish("undone")
 
 
-def _schedule_check(log: RunLog) -> None:
-    when = datetime.now(timezone.utc) + timedelta(days=7)
+def _schedule_check(log: RunLog, user_id: str) -> None:
+    started = datetime.now(timezone.utc)
+    when = started + check_wait(user_id)
     stamp = when.strftime("%Y-%m-%d %H:%M UTC")
     log.step(
         "after",
         "Check later",
         "The baseline is saved.\n" f"PostHog will be checked after {stamp}.",
-        {"checkAfter": when.isoformat()},
+        {"checkAfter": when.isoformat(), "measuredFrom": started.isoformat()},
     )
     log.mark_measuring()
 

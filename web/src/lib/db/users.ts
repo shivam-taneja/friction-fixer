@@ -2,6 +2,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { db } from "@/lib/db/firebase";
 import {
   OnboardingStatus,
+  savedCheckAfterHours,
   UserRecord,
   type AuthProviderName,
 } from "@/lib/db/schema/user";
@@ -115,7 +116,15 @@ export async function getUserProfile(uid: string): Promise<UserRecord | null> {
       completedAt: null,
     },
     useMockData: data.useMockData === true,
+    checkAfterHours: savedCheckAfterHours(data.checkAfterHours),
   };
+}
+
+export async function setCheckAfterHours(userId: string, hours: number) {
+  await db().collection(COLLECTIONS.USERS).doc(userId).update({
+    checkAfterHours: hours,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
 }
 
 export async function setUseMockData(userId: string, enabled: boolean) {

@@ -6,9 +6,17 @@ import {
 } from "@/lib/db/github-installations";
 import { deleteUserProject, getProject } from "@/lib/db/projects";
 import { stopProjectRuns } from "@/lib/db/runs";
-import { OnboardingStatus } from "@/lib/db/schema/user";
+import {
+  isCheckAfterHours,
+  OnboardingStatus,
+  savedCheckAfterHours,
+} from "@/lib/db/schema/user";
 import { deletePosthogConnection } from "@/lib/db/posthog-connections";
-import { getUserProfile, setUseMockData } from "@/lib/db/users";
+import {
+  getUserProfile,
+  setCheckAfterHours,
+  setUseMockData,
+} from "@/lib/db/users";
 import { deleteInstallation, GithubRequestError } from "@/lib/github/app";
 
 export const runtime = "nodejs";
@@ -43,18 +51,33 @@ export async function GET() {
     status: OnboardingStatus.complete,
     project: { id: projectId, ...project },
     useMockData: profile.useMockData === true,
+    checkAfterHours: savedCheckAfterHours(profile.checkAfterHours),
   });
 }
 
 export async function PATCH(request: Request) {
   const user = await getServerUser();
   if (!user) {
-    return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
+    return NextResponse.json(
+      { error: "Sign in to continue." },
+      { status: 401 },
+    );
   }
 
   const body = (await request.json().catch(() => null)) as {
     useMockData?: unknown;
+    checkAfterHours?: unknown;
   } | null;
+  if (body && "checkAfterHours" in body) {
+    if (!isCheckAfterHours(body.checkAfterHours)) {
+      return NextResponse.json(
+        { error: "Choose a wait from 1 hour to 14 days." },
+        { status: 400 },
+      );
+    }
+    await setCheckAfterHours(user.userId, body.checkAfterHours);
+    return NextResponse.json({ checkAfterHours: body.checkAfterHours });
+  }
   if (!body || typeof body.useMockData !== "boolean") {
     return NextResponse.json(
       { error: "Choose whether mock data is on." },
