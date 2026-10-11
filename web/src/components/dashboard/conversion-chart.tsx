@@ -65,7 +65,7 @@ export function ConversionChart() {
       </svg>
       <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
         <span className="size-1.5 rounded-full bg-success ring-4 ring-success/10" />
-        Pricing CTA improvement kept · +18.7% lift
+        Pricing CTA improvement kept • +18.7% lift
       </p>
     </section>
   );

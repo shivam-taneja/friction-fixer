@@ -19,7 +19,7 @@ export function CurrentCycle({ paused }: { paused: boolean }) {
     {
       icon: Check,
       title: "Visitor behavior analyzed",
-      detail: "Pricing page · 2,418 sessions",
+      detail: "Pricing page • 2,418 sessions",
       state: "done",
     },
     {

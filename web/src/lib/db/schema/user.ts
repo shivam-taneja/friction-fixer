@@ -22,4 +22,5 @@ export type UserRecord = {
     projectId: string | null;
     completedAt: unknown | null;
   };
+  activeRunId?: string | null;
 };

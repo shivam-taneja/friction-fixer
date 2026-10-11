@@ -77,7 +77,7 @@ export function SettingsPage() {
             <ConnectionRow
               icon={<GithubIcon size={18} />}
               title="GitHub"
-              detail={`${data.project.repository} · ${data.project.branch}`}
+              detail={`${data.project.repository} • ${data.project.branch}`}
             />
             <ConnectionRow
               icon={null}

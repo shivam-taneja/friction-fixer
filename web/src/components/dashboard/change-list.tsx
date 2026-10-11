@@ -76,7 +76,7 @@ export function ChangeList({
                       {item.title}
                     </strong>
                     <small className="mt-1 block text-muted-foreground">
-                      #{item.id} · {item.page}
+                      #{item.id} • {item.page}
                     </small>
                   </span>
                 </Button>
@@ -135,7 +135,7 @@ export function ChangeList({
           <DialogHeader>
             <DialogTitle>{selected?.title}</DialogTitle>
             <DialogDescription>
-              Pull request #{selected?.id} · {selected?.page}
+              Pull request #{selected?.id} • {selected?.page}
             </DialogDescription>
           </DialogHeader>
           <p className="text-sm leading-relaxed">{selected?.detail}</p>

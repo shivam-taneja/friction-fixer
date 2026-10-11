@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { GitPullRequest, LayoutDashboard, Settings2 } from "lucide-react";
+import { GitPullRequest, LayoutDashboard, ListChecks, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -25,6 +25,7 @@ import { NavUser } from "./nav-user";
 const items = [
   { title: "Overview", to: "/dashboard", icon: LayoutDashboard },
   { title: "Changes", to: "/dashboard/changes", icon: GitPullRequest },
+  { title: "Runs", to: "/dashboard/runs", icon: ListChecks },
   { title: "Settings", to: "/dashboard/settings", icon: Settings2 },
 ] as const;
 

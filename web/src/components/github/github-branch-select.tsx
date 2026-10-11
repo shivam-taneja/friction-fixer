@@ -76,7 +76,7 @@ export function GithubBranchSelect({
               visible.map((branch) => (
                 <SelectItem key={branch} value={branch}>
                   {branch}
-                  {branch === selection.defaultBranch ? " · default" : ""}
+                  {branch === selection.defaultBranch ? " • default" : ""}
                 </SelectItem>
               ))
             )}

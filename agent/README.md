@@ -8,7 +8,9 @@ The loop runs one round. The Builder opens a pull request and the loop merges it
 
 | File         | Job                                                                                                                                                         |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `loop.py`    | One round: `run(case, user_id)`. Merges the Builder pull request, then reviews the mock after-numbers. On UNDO, opens and merges a revert pull request.     |
+| `loop.py`    | One round: `run(case, user_id, run_id)`. Merges the Builder pull request, then reviews the mock after-numbers. On UNDO, opens and merges a revert pull request. |
+| `server.py`  | HTTP entry. The website posts a run id, and the server starts that round.                                                                                     |
+| `progress.py`| Writes each step onto the Firestore run so the website can show it.                                                                                           |
 | `analyst/`   | Reads mock PostHog events and past verdicts. Writes one plan. `events.py` loads `fixtures/events.json`. `plan.py` asks the configured model for the change. |
 | `builder/`   | Makes that one change inside the project's source folder, commits, and opens a pull request. `edit.py` calls the model. `git.py` commits and opens the PR. |
 | `reviewer/`  | Asks the simulator for one outcome, then returns KEEP or UNDO. The verdict goes back to the Analyst through the loop.                                       |
@@ -23,7 +25,13 @@ The loop runs one round. The Builder opens a pull request and the loop merges it
 
 Python 3.13 is required. Mac and Windows setup, including pyenv and the virtualenv, is in the [root README](../README.md#setup).
 
-There is no local command. A round is `run(case, user_id)` in `loop.py`. `case` is `increased` or `decreased`. `user_id` is the signed-in user. The deployed process calls that with the id from the website. The Firebase service account fields in `agent/.env` match `web/.env`.
+The website starts a round. The deployed process is:
+
+```bash
+python -m agent.server
+```
+
+It listens for `POST /runs` with the shared `AGENT_SECRET`. The body is the run id, the signed-in user id, and `increased` or `decreased`. A new run is refused while two or more Daytona sandboxes are still open. The Firebase service account fields in `agent/.env` match `web/.env`.
 
 `increased` keeps the merged change. `decreased` opens a second pull request that undoes it and merges that too. The working tree must be clean, because the Builder commits only the new edit.
 

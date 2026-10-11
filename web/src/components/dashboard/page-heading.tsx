@@ -7,8 +7,8 @@ export function PageHeading({
   action,
 }: {
   eyebrow: string;
-  title: string;
-  description: string;
+  title: ReactNode;
+  description: ReactNode;
   action?: ReactNode;
 }) {
   return (

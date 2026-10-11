@@ -130,7 +130,7 @@ export function GithubProjectSetup({
             {frameworkChoices.map((choice) => (
               <SelectItem key={choice.id} value={choice.id}>
                 {choice.label}
-                {choice.id === detected ? " · detected" : ""}
+                {choice.id === detected ? " • detected" : ""}
               </SelectItem>
             ))}
           </SelectContent>
@@ -157,7 +157,7 @@ export function GithubProjectSetup({
           <SelectTrigger id="github-folder" className="h-11 w-full">
             <SelectValue placeholder="Choose a folder">
               {usingDefault
-                ? `Default · ${folderLabel(defaultFolder)}`
+                ? `Default • ${folderLabel(defaultFolder)}`
                 : folderLabel(folder)}
             </SelectValue>
           </SelectTrigger>
@@ -177,7 +177,7 @@ export function GithubProjectSetup({
           >
             {showDefault ? (
               <SelectItem value={defaultFolderValue}>
-                Default · {folderLabel(defaultFolder)}
+                Default • {folderLabel(defaultFolder)}
               </SelectItem>
             ) : null}
             {visibleFolders.length === 0 && !showDefault ? (
