@@ -1,0 +1,98 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NB8CSKZYJWBWT9ANPYEXFD",
+  "session_id": "8474702c-ee7a-45d1-80e3-32a0c6fb0ea8",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T11:23:35.388114Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 3,
+  "files_touched": [
+    "web/src/components/auth/auth-cta.tsx",
+    "web/src/components/home/final-cta.tsx",
+    "web/src/components/home/hero-section.tsx",
+    "web/src/components/home/home-page.tsx",
+    "web/src/components/layout/site-header.tsx"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "79a1412012b2",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 120597,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 971136,
+    "output_tokens": 13363,
+    "api_call_count": 3
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T11:23:35.373Z",
+    "agent_lines": 15,
+    "agent_removed": 9,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 15,
+    "total_lines_changed": 24,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 395,
+      "user_lines_removed": 26,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "web/src/app/(dashboard)/dashboard/settings/page.tsx": 15,
+        "web/src/app/api/settings/route.ts": 61,
+        "web/src/components/settings/settings-page.tsx": 140,
+        "web/src/components/settings/use-settings.ts": 90,
+        "web/src/lib/db/projects.ts": 89
+      },
+      "user_removed_per_file": {
+        "web/src/lib/db/projects.ts": 18,
+        "web/src/lib/db/schema/user.ts": 1,
+        "web/src/lib/db/users.ts": 7
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 126,
+      "user_lines_removed": 7,
+      "agent_lines_added": 395,
+      "agent_lines_removed": 26,
+      "user_added_per_file": {
+        "web/src/app/api/settings/route.ts": 18,
+        "web/src/components/settings/settings-page.tsx": 103,
+        "web/src/components/settings/use-settings.ts": 5
+      },
+      "user_removed_per_file": {
+        "web/src/app/api/settings/route.ts": 1,
+        "web/src/components/settings/settings-page.tsx": 5,
+        "web/src/components/settings/use-settings.ts": 1
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 126,
+      "user_lines_removed": 7,
+      "agent_lines_added": 434,
+      "agent_lines_removed": 47,
+      "user_added_per_file": {
+        "web/src/app/api/settings/route.ts": 18,
+        "web/src/components/settings/settings-page.tsx": 103,
+        "web/src/components/settings/use-settings.ts": 5
+      },
+      "user_removed_per_file": {
+        "web/src/app/api/settings/route.ts": 1,
+        "web/src/components/settings/settings-page.tsx": 5,
+        "web/src/components/settings/use-settings.ts": 1
+      }
+    }
+  ]
+}
