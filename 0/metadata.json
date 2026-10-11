@@ -1,0 +1,92 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4PB1734ANSB0JZ0E948A859",
+  "session_id": "0f173f38-0d3e-4328-8d0a-f5e9dfb0f80f",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T20:38:54.512361Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "save_step_count": 2,
+  "files_touched": [
+    "web/src/components/settings/settings-page.tsx",
+    "web/src/lib/db/schema/user.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "8afd47b1d4b6",
+  "checkpoint_transcript_start": 80,
+  "transcript_lines_at_start": 80,
+  "compact_transcript_start": 17,
+  "token_usage": {
+    "input_tokens": 155154,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 2332416,
+    "output_tokens": 10994,
+    "api_call_count": 2
+  },
+  "session_metrics": {
+    "duration_ms": 1671576,
+    "turn_count": 10
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T20:38:54.497904Z",
+    "agent_lines": 54,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 5,
+    "human_removed": 5,
+    "total_committed": 59,
+    "total_lines_changed": 64,
+    "agent_percentage": 84.375,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 641,
+      "user_lines_removed": 92,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "FLOW.md": 54,
+        "README.md": 37,
+        "agent/README.md": 15,
+        "agent/check.py": 161,
+        "agent/config.py": 7,
+        "agent/loop.py": 78,
+        "agent/posthog.py": 72,
+        "web/README.md": 5,
+        "web/src/app/api/settings/route.ts": 26,
+        "web/src/components/settings/settings-page.tsx": 99,
+        "web/src/components/settings/use-settings.ts": 52,
+        "web/src/lib/db/schema/user.ts": 26,
+        "web/src/lib/db/users.ts": 9
+      },
+      "user_removed_per_file": {
+        "FLOW.md": 28,
+        "README.md": 9,
+        "agent/README.md": 11,
+        "agent/config.py": 1,
+        "agent/loop.py": 7,
+        "agent/posthog.py": 19,
+        "web/README.md": 1,
+        "web/src/app/api/settings/route.ts": 3,
+        "web/src/components/settings/settings-page.tsx": 5,
+        "web/src/components/settings/use-settings.ts": 8
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 5,
+      "user_lines_removed": 5,
+      "agent_lines_added": 362,
+      "agent_lines_removed": 69,
+      "user_added_per_file": {
+        "web/src/components/settings/settings-page.tsx": 5
+      },
+      "user_removed_per_file": {
+        "web/src/components/settings/settings-page.tsx": 5
+      }
+    }
+  ]
+}
