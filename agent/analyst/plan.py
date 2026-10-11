@@ -1,60 +1,59 @@
 """Asks the configured model for one plan. Visitor numbers stay mock."""
 
-import json
-import re
-
-import neatlogs
-from openai import OpenAI
-
-from agent.builder.edit import provider_settings
-from agent.config import BOUNCE_RATE_DROP, DEMO_SITE_DIR, REPO_ROOT
+from agent.builder.edit import READ_LIMIT, file_loop
+from agent.config import BOUNCE_RATE_DROP, REPO_ROOT
+from agent.project import Project
 from agent.schemas import Plan, Verdict, VisitorData
+from agent.source import resolve_in_source, source_root
 
-TEXT_SUFFIXES = {".html", ".css", ".js", ".svg", ".txt", ".md"}
 
-
-def choose(visitors: VisitorData, history: list[Verdict]) -> Plan:
+def choose(visitors: VisitorData, history: list[Verdict], project: Project) -> Plan:
     """Ask the model for one change. It must not repeat a change already undone."""
-    api_key, base_url, model = provider_settings()
-    client = neatlogs.wrap(OpenAI(api_key=api_key, base_url=base_url))
-    response = client.chat.completions.create(
-        model=model,
-        temperature=0.2,
-        response_format={"type": "json_object"},
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You are the Analyst for a static site. "
-                    "You receive mock visitor numbers and past verdicts. "
-                    "Pick ONE change that should lower the bounce rate. "
-                    "Return JSON only, with this shape: "
-                    '{"problem":"one sentence","evidence":"the numbers",'
-                    '"change":"the one change","file":"demo-site/",'
-                    '"expected_effect":"what should improve"}. '
-                    "file is demo-site/. The builder may edit any file inside it. "
-                    "Use the visitor numbers you are given. Call them mock. "
-                    f"expected_effect must include a bounce-rate drop of at least "
-                    f"{int(BOUNCE_RATE_DROP * 100)} percentage points. "
-                    "Do not propose a change that a past UNDO verdict already rejected."
-                ),
-            },
-            {
-                "role": "user",
-                "content": _brief(visitors, history),
-            },
-        ],
+    root = source_root(project.source_folder)
+    data = file_loop(
+        _system(project),
+        _brief(visitors, history, project),
+        root,
+        _plan_ready,
+        _PLAN_HINT,
     )
-    text = response.choices[0].message.content or ""
-    return _parse_plan(text, visitors, history)
+    return _parse_plan(data, visitors, history, project)
 
 
-def _brief(visitors: VisitorData, history: list[Verdict]) -> str:
+def _system(project: Project) -> str:
+    return (
+        "You are the Analyst. "
+        "You receive mock visitor numbers, the project goal, past verdicts, and a file list. "
+        "Every reply is one JSON object and nothing else. "
+        "Open the files you need before you pick a change. "
+        "To open files, use only this shape: "
+        '{"read":["path/from/the/file/list"]}. '
+        f"At most {READ_LIMIT} paths. Copy each path from the file list. "
+        "You can ask again after you see the files. "
+        "When you are ready, use only this shape: "
+        '{"problem":"one sentence","evidence":"the numbers",'
+        '"change":"the one change","file":"path/from/the/file/list",'
+        '"expected_effect":"what should improve"}. '
+        "Do not include read in that reply. "
+        "Pick ONE change that should move the project toward that goal. "
+        f"The editable folder is {project.root_label()}. "
+        "The builder may edit any source file inside it. "
+        "Use the visitor numbers you are given. Call them mock. "
+        f"expected_effect must say what should improve, including a bounce-rate drop of at least "
+        f"{int(BOUNCE_RATE_DROP * 100)} percentage points when bounce rate is the goal. "
+        "Do not propose a change that a past UNDO verdict already rejected."
+    )
+
+
+def _brief(visitors: VisitorData, history: list[Verdict], project: Project) -> str:
     return "\n\n".join(
         [
+            f"Goal: {project.goal}",
+            f"Framework: {project.framework_label()}",
+            f"Repository: {project.repository} ({project.branch})",
+            f"Editable folder: {project.root_label()}",
             "Visitor numbers:\n" + _evidence(visitors),
             "Past verdicts:\n" + _history(history),
-            "Current site:\n" + _read_site(),
         ]
     )
 
@@ -83,46 +82,53 @@ def _history(history: list[Verdict]) -> str:
     return "\n".join(lines)
 
 
-def _read_site() -> str:
-    if not DEMO_SITE_DIR.exists():
-        raise RuntimeError("demo-site/ does not exist yet.")
-    files = [
-        path
-        for path in sorted(DEMO_SITE_DIR.rglob("*"))
-        if path.is_file() and path.suffix.lower() in TEXT_SUFFIXES
-    ]
-    if not files:
-        raise RuntimeError("demo-site/ has no pages to plan against.")
-    parts: list[str] = []
-    for path in files:
-        relative = path.relative_to(REPO_ROOT).as_posix()
-        parts.append(f"--- {relative} ---\n{path.read_text()}")
-    return "\n\n".join(parts)
+_PLAN_HINT = (
+    "Reply with one JSON object. "
+    'To open files: {"read":["path/from/the/file/list"]}. '
+    "When finished: "
+    '{"problem":"one sentence","evidence":"the numbers",'
+    '"change":"the one change","file":"path/from/the/file/list",'
+    '"expected_effect":"what should improve"}. '
+    "Do not add any other text."
+)
 
 
-def _parse_plan(text: str, visitors: VisitorData, history: list[Verdict]) -> Plan:
-    cleaned = text.strip()
-    if cleaned.startswith("```"):
-        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
-        cleaned = re.sub(r"\s*```$", "", cleaned)
-    try:
-        data = json.loads(cleaned)
-    except json.JSONDecodeError as error:
-        raise RuntimeError("The model did not return JSON.") from error
-    if not isinstance(data, dict):
-        raise RuntimeError("The model did not return a plan.")
+def _plan_ready(data: dict) -> bool:
+    file_name = data.get("file")
+    if isinstance(file_name, list):
+        file_name = " and ".join(str(part) for part in file_name)
+    if not isinstance(file_name, str) or not file_name.strip():
+        return False
+    for key in ("problem", "change", "expected_effect"):
+        value = data.get(key)
+        if not isinstance(value, str) or not value.strip():
+            return False
+    return True
 
+
+def _parse_plan(
+    data: dict, visitors: VisitorData, history: list[Verdict], project: Project
+) -> Plan:
     plan = Plan(
         problem=_text(data, "problem"),
         evidence=_evidence(visitors),
         change=_text(data, "change"),
-        file=_check_file(str(data.get("file", ""))),
+        file=_check_file(_file_name(data), project),
         expected_effect=_text(data, "expected_effect"),
     )
     undone = [item.reason for item in history if item.decision == "UNDO"]
     if any(plan.change and plan.change in reason for reason in undone):
         raise RuntimeError("The model repeated a change that was already undone.")
     return plan
+
+
+def _file_name(data: dict) -> str:
+    value = data.get("file")
+    if isinstance(value, list):
+        return " and ".join(str(part).strip() for part in value if str(part).strip())
+    if isinstance(value, str):
+        return value
+    return ""
 
 
 def _text(data: dict, key: str) -> str:
@@ -132,18 +138,17 @@ def _text(data: dict, key: str) -> str:
     return value.strip()
 
 
-def _check_file(raw: str) -> str:
+def _check_file(raw: str, project: Project) -> str:
+    root = source_root(project.source_folder)
     parts: list[str] = []
     for part in raw.split(" and "):
-        part = part.strip().replace("\\", "/")
-        if not part or part.startswith("/"):
-            raise RuntimeError(f"Refusing path: {part}")
-        relative = part if part.startswith("demo-site/") else f"demo-site/{part}"
-        path = (REPO_ROOT / relative).resolve()
-        demo = DEMO_SITE_DIR.resolve()
-        if path != demo and demo not in path.parents:
-            raise RuntimeError(f"Refusing a file outside demo-site: {part}")
-        parts.append(relative)
+        if not part.strip():
+            continue
+        path = resolve_in_source(part, root)
+        if path == REPO_ROOT.resolve():
+            parts.append(".")
+        else:
+            parts.append(path.relative_to(REPO_ROOT).as_posix())
     if not parts:
         raise RuntimeError("The model did not name a file.")
     return " and ".join(parts)

@@ -1,4 +1,4 @@
-"""One local round: baseline, Analyst, Builder, simulated outcome, Reviewer."""
+"""One round: baseline, Analyst, Builder, simulated outcome, Reviewer."""
 
 import neatlogs
 
@@ -6,13 +6,14 @@ from agent.analyst import write_plan
 from agent.builder import apply_plan
 from agent.builder import git
 from agent.builder.text import plan_text
+from agent.project import load_project
 from agent.reviewer import review, verdict_text
 from agent.schemas import VisitorData
 from agent.simulator.generate import CASES, generate_baseline, generate_outcomes
 
 
 @neatlogs.span(kind="WORKFLOW", name="friction-fix-round")
-def run(case: str) -> None:
+def run(case: str, user_id: str) -> None:
     """Run one round for a chosen mock outcome: increased or decreased.
 
     The builder pull request is merged before the review, so the site is live.
@@ -22,13 +23,23 @@ def run(case: str) -> None:
     if case not in CASES:
         raise RuntimeError("Case must be increased or decreased.")
 
+    project = load_project(user_id)
+    print(
+        _step(
+            "project",
+            f"{project.repository} ({project.branch})\n"
+            f"Folder: {project.root_label()}\n"
+            f"Goal: {project.goal}",
+        )
+    )
+
     before = generate_baseline()
     print(_step("baseline", _numbers(before)))
 
-    plan = write_plan(before, [])
+    plan = write_plan(before, [], project)
     print(_step("plan", plan_text(plan)))
 
-    pr_url = apply_plan(plan)
+    pr_url = apply_plan(plan, project)
     git.merge_pr(pr_url)
     print(_step("pull request", pr_url + "\nMerged, so the site can go live."))
 

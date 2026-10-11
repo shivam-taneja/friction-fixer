@@ -3,7 +3,6 @@
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DEMO_SITE_DIR = REPO_ROOT / "demo-site"
 
 # Stop after this many Analyst → Reviewer rounds.
 MAX_ROUNDS = 5

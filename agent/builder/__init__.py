@@ -1,4 +1,4 @@
-"""Applies one change inside demo-site/ and opens a pull request."""
+"""Applies one change inside the project's source folder and opens a pull request."""
 
 import os
 from pathlib import Path
@@ -8,15 +8,13 @@ import neatlogs
 from agent.builder import git
 from agent.builder.edit import edit_site, provider_settings
 from agent.builder.text import plan_text, subject
+from agent.project import Project
 from agent.schemas import Plan
 
 
 @neatlogs.span(kind="AGENT", name="builder")
-def apply_plan(plan: Plan) -> str:
-    """Edit the file named in the plan, commit, open a PR, and return the PR URL.
-
-    The PR description includes the plan. No files outside demo-site/ are edited.
-    """
+def apply_plan(plan: Plan, project: Project) -> str:
+    """Edit inside the project's source folder, commit, open a PR, and return the URL."""
     _require_keys()
     git.require_clean_tree()
 
@@ -28,7 +26,7 @@ def apply_plan(plan: Plan) -> str:
     git.checkout_new_branch(branch)
 
     try:
-        written = edit_site(plan)
+        written = edit_site(plan, project)
         git.commit_files(written, subject(plan.change), plan_text(plan))
         committed = True
         git.push(branch)

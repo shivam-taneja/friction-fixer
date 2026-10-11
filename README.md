@@ -42,11 +42,7 @@ You also need git, and a virtualenv named `venv` in the repo root. `venv/` is gi
 
 Fill in `agent/.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, `LLM_PROVIDER`, and that provider's API key. The site uses its own file, `web/.env`.
 
-Run the loop from the repo root, with the virtualenv activated:
-
-```bash
-python -m agent
-```
+The loop has no local command. The deployed process calls `run(case, user_id)` in `agent/loop.py`.
 
 ### Mac
 

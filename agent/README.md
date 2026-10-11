@@ -2,58 +2,30 @@
 
 Python code for the Friction Fixer loop. The full loop is described in [FLOW.md](../FLOW.md).
 
-The loop runs one local round. The Builder opens a pull request and the loop merges it before the review, so the site is live. The after-numbers are still mock. On KEEP the change stays. On UNDO the loop opens a second pull request that reverts it, then merges that too. The Reviewer does not touch git.
+The loop runs one round. The Builder opens a pull request and the loop merges it before the review, so the site is live. The after-numbers are still mock. On KEEP the change stays. On UNDO the loop opens a second pull request that reverts it, then merges that too. The Reviewer does not touch git.
 
 ## Files
 
-| File           | Job                                                                                                                                    |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `loop.py`      | One local round. Merges the Builder pull request, then reviews the mock after-numbers. On UNDO, opens and merges a revert pull request. |
-| `analyst/`     | Reads mock PostHog events and past verdicts. Writes one plan. `events.py` loads `fixtures/events.json`. `plan.py` asks the configured model for the change. |
-| `builder/`     | Makes that one change inside `demo-site/`, commits, and opens a pull request. `edit.py` calls Groq. `git.py` commits and opens the PR. |
-| `reviewer/`    | Asks the simulator for one outcome, then returns KEEP or UNDO. The verdict goes back to the Analyst through the loop.                  |
-| `simulator/`   | Asks the model for the starting numbers and, after the edit, for one improved outcome and one worse outcome.                             |
-| `schemas.py`   | The plan and the verdict the agents pass to each other.                                                                                |
-| `tracing.py`   | neatlogs. One round is one trace.                                                                                                      |
-| `config.py`    | Round limit (5) and the keep margin (bounce rate down by at least 5 percentage points).                                                |
+| File         | Job                                                                                                                                                         |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `loop.py`    | One round: `run(case, user_id)`. Merges the Builder pull request, then reviews the mock after-numbers. On UNDO, opens and merges a revert pull request.     |
+| `analyst/`   | Reads mock PostHog events and past verdicts. Writes one plan. `events.py` loads `fixtures/events.json`. `plan.py` asks the configured model for the change. |
+| `builder/`   | Makes that one change inside the project's source folder, commits, and opens a pull request. `edit.py` calls the model. `git.py` commits and opens the PR. |
+| `reviewer/`  | Asks the simulator for one outcome, then returns KEEP or UNDO. The verdict goes back to the Analyst through the loop.                                       |
+| `simulator/` | Asks the model for the starting numbers and, after the edit, for one improved outcome and one worse outcome.                                                |
+| `schemas.py` | The plan and the verdict the agents pass to each other.                                                                                                     |
+| `tracing.py` | neatlogs. One round is one trace.                                                                                                                           |
+| `project.py` | Loads the user's project and GitHub installation from Firestore. The editable folder is `sourceFolder`.                                                     |
+| `source.py`  | Lists and checks files inside that folder. Skips dependencies and lockfiles.                                                                                |
+| `config.py`  | Round limit (5) and the keep margin (bounce rate down by at least 5 percentage points).                                                                     |
 
 ## Run
 
 Python 3.13 is required. Mac and Windows setup, including pyenv and the virtualenv, is in the [root README](../README.md#setup).
 
-From the repo root, with `venv` activated and `agent/.env` filled in:
+There is no local command. A round is `run(case, user_id)` in `loop.py`. `case` is `increased` or `decreased`. `user_id` is the signed-in user. The deployed process calls that with the id from the website. The Firebase service account fields in `agent/.env` match `web/.env`.
 
-```bash
-python -m agent increased
-python -m agent decreased
-```
-
-Both commands merge the Builder pull request before the review. `increased` keeps that change. `decreased` opens a second pull request that undoes it and merges that too. The working tree must be clean, because the Builder commits only the new edit.
-
-To print the Analyst plan from the mock PostHog export:
-
-```bash
-python -m agent.analyst
-```
-
-To ask the model for both mock outcomes:
-
-```bash
-python -m agent.simulator
-```
-
-To have the Reviewer ask the simulator for one of those outcomes and judge it:
-
-```bash
-python -m agent.reviewer increased
-python -m agent.reviewer decreased
-```
-
-To test the Builder on its own, commit `demo-site/` on `main` first, then ask for one change. This pushes a branch and opens a pull request:
-
-```bash
-python -m agent.builder "Make the pricing button large and green"
-```
+`increased` keeps the merged change. `decreased` opens a second pull request that undoes it and merges that too. The working tree must be clean, because the Builder commits only the new edit.
 
 `agent/.env` holds `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, `LLM_PROVIDER`, and that provider's API key. Copy it from `agent/.env.example`. It is never committed. The site keeps its own secrets in `web/.env`.
 
