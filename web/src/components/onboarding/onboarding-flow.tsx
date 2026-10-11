@@ -130,6 +130,7 @@ export function OnboardingFlow() {
                 variant="ghost"
                 type="button"
                 disabled={saving}
+                className="cursor-pointer"
                 onClick={() => {
                   setStep(step - 1);
                   setError("");
@@ -147,7 +148,7 @@ export function OnboardingFlow() {
               variant="hero"
               type="submit"
               size="lg"
-              className="h-11 px-4"
+              className="h-11 px-4 cursor-pointer"
               disabled={saving || (current.id === "github" && !githubReady)}
             >
               {saving ? "Saving…" : lastStep ? "Start my agent" : "Continue"}

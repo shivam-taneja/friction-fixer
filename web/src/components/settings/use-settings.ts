@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { AnalyticsProvider, ProjectGoal } from "@/components/onboarding/logic";
+import type {
+  AnalyticsProvider,
+  ProjectGoal,
+} from "@/components/onboarding/logic";
 import { OnboardingStatus } from "@/lib/db/schema/user";
 
 export type SettingsProject = {

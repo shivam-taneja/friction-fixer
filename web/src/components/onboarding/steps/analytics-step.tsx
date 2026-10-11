@@ -31,7 +31,7 @@ export function AnalyticsStep({
             variant="outline"
             aria-pressed={selected}
             className={cn(
-              "h-14 w-full justify-start px-4",
+              "h-14 w-full justify-start px-4 cursor-pointer",
               selected && "border-foreground bg-secondary",
             )}
             onClick={() => onAnalyticsChange(provider.id)}

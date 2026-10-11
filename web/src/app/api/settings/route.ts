@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getServerUser } from "@/lib/auth/request-user";
-import { deleteGithubInstallation, getGithubInstallation } from "@/lib/db/github-installations";
+import {
+  deleteGithubInstallation,
+  getGithubInstallation,
+} from "@/lib/db/github-installations";
 import { deleteUserProject, getProject } from "@/lib/db/projects";
 import { OnboardingStatus } from "@/lib/db/schema/user";
 import { getUserProfile } from "@/lib/db/users";
@@ -12,7 +15,10 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const user = await getServerUser();
   if (!user) {
-    return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
+    return NextResponse.json(
+      { error: "Sign in to continue." },
+      { status: 401 },
+    );
   }
 
   const profile = await getUserProfile(user.userId);
@@ -40,7 +46,10 @@ export async function GET() {
 export async function DELETE(request: Request) {
   const user = await getServerUser();
   if (!user) {
-    return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
+    return NextResponse.json(
+      { error: "Sign in to continue." },
+      { status: 401 },
+    );
   }
 
   const body = (await request.json().catch(() => ({}))) as {
@@ -71,7 +80,9 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ status: OnboardingStatus.not_started });
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Could not remove the connection.";
+      error instanceof Error
+        ? error.message
+        : "Could not remove the connection.";
     const status = error instanceof GithubRequestError ? error.status : 500;
     return NextResponse.json({ error: message }, { status });
   }

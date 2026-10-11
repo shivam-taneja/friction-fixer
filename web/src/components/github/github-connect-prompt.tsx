@@ -20,7 +20,7 @@ export function GithubConnectPrompt({
         <GithubIcon />
         {authorizing ? "Waiting for GitHub…" : "Connect GitHub"}
       </Button>
-      <p className="text-xs text-muted-foreground">Connect one repository.</p>
+      <p className="text-xs text-muted-foreground">Connect your repository.</p>
     </div>
   );
 }

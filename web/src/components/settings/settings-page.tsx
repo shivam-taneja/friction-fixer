@@ -93,7 +93,7 @@ export function SettingsPage() {
           <Button
             type="button"
             variant="destructive"
-            className="w-fit"
+            className="w-fit cursor-pointer"
             onClick={() => setConfirmOpen(true)}
           >
             Remove connection
@@ -147,8 +147,8 @@ function RemoveConnectionDialog({
           <DialogTitle>Remove connection</DialogTitle>
           <DialogDescription>
             This deletes the project and uninstalls the GitHub app. Type{" "}
-            <span className="font-medium text-foreground">{repository}</span>{" "}
-            to confirm.
+            <span className="font-medium text-foreground">{repository}</span> to
+            confirm.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-2">
@@ -171,6 +171,7 @@ function RemoveConnectionDialog({
           <Button
             type="button"
             variant="outline"
+            className="cursor-pointer"
             disabled={removing}
             onClick={() => {
               setValue("");
@@ -182,6 +183,7 @@ function RemoveConnectionDialog({
           <Button
             type="button"
             variant="destructive"
+            className="cursor-pointer"
             disabled={!confirmed || removing}
             onClick={() => void onConfirm()}
           >
