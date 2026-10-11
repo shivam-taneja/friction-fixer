@@ -1,0 +1,9 @@
+can u check and let me know how i can show the picture in @web/src/components/layout/nav-user.tsx ? while u are doing that also think about email. do i need to add zustand to store it? or whatt?? cause i do have this @web/src/components/auth/auth-provider.tsx ....
+
+---
+
+alright since it's there add it, but the issue could be that it's server side code and we are talking to client?
+
+---
+
+@web/src/components/auth/auth-cta.tsx:18 also how to check this now?

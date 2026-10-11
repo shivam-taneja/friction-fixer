@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NTQQ9STS1QXCKGPE456AQ1",
+  "session_id": "8474702c-ee7a-45d1-80e3-32a0c6fb0ea8",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T15:54:06.196575Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 1,
+  "files_touched": [
+    "web/src/components/layout/sidebar.tsx"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "79a1412012b2",
+  "compact_transcript_start": 0,
+  "session_metrics": {
+    "duration_ms": 717801,
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T15:54:06.187274Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 39,
+    "human_modified": 15,
+    "human_removed": 0,
+    "total_committed": 39,
+    "total_lines_changed": 81,
+    "agent_percentage": 0,
+    "metric_version": 2
+  }
+}
