@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   GithubAuthProvider,
   GoogleAuthProvider,
@@ -9,12 +9,27 @@ import {
   type AuthError,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { cn } from "cn";
+import {
+  useLastAuth,
+  type AuthProviderName,
+} from "@/components/auth/use-last-auth";
 import { GithubIcon } from "@/components/icons/github-icon";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getFirebaseAuth } from "@/lib/firebase/client-app";
 import { mapFirebaseError } from "@/lib/firebase/errors";
 
-type ProviderType = "google" | "github";
+function LastUsedBadge() {
+  return (
+    <Badge
+      variant="secondary"
+      className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 px-1.5 py-0 text-[10px] leading-4"
+    >
+      Last used
+    </Badge>
+  );
+}
 
 function GoogleMark() {
   return (
@@ -42,11 +57,17 @@ function GoogleMark() {
 export function AuthForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState<ProviderType | null>(null);
+  const [pending, setPending] = useState<AuthProviderName | null>(null);
+  const lastUsed = useLastAuth((state) => state.provider);
+  const setLastUsed = useLastAuth((state) => state.setProvider);
+
+  useEffect(() => {
+    void useLastAuth.persist.rehydrate();
+  }, []);
 
   async function signIn(
     provider: FirebaseAuthProvider,
-    providerName: ProviderType,
+    providerName: AuthProviderName,
   ) {
     setError(null);
     setPending(providerName);
@@ -67,6 +88,7 @@ export function AuthForm() {
         throw new Error(`Login failed (${response.status}): ${body}`);
       }
 
+      setLastUsed(providerName);
       router.replace("/dashboard/runs");
     } catch (e) {
       console.error("[AuthForm] Sign-in failed:", e);
@@ -84,23 +106,31 @@ export function AuthForm() {
         type="button"
         variant="outline"
         size="lg"
-        className="h-11 w-full cursor-pointer"
+        className={cn(
+          "relative h-11 w-full cursor-pointer",
+          lastUsed === "google" && "pr-20",
+        )}
         disabled={pending !== null}
         onClick={() => void signIn(new GoogleAuthProvider(), "google")}
       >
         <GoogleMark />
         {pending === "google" ? "Continuing…" : "Continue with Google"}
+        {lastUsed === "google" ? <LastUsedBadge /> : null}
       </Button>
       <Button
         type="button"
         variant="outline"
         size="lg"
-        className="h-11 w-full cursor-pointer"
+        className={cn(
+          "relative h-11 w-full cursor-pointer",
+          lastUsed === "github" && "pr-20",
+        )}
         disabled={pending !== null}
         onClick={() => void signIn(new GithubAuthProvider(), "github")}
       >
         <GithubIcon className="size-4" />
         {pending === "github" ? "Continuing…" : "Continue with GitHub"}
+        {lastUsed === "github" ? <LastUsedBadge /> : null}
       </Button>
       {error && (
         <p
