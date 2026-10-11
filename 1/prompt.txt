@@ -1,0 +1,3 @@
+give me better intro, like i'm building what... a platform which runs agents that fixes ur website by itself. and it just doesnt fix/build any issues u are facing it connects with ur analytics platform like posthog, mixpanel and sees the actual data, creats a plan. makes a github repo and continues checking... so u just drop ur repo and ur site will improve automatically without doing anything. so i'll also add the link for this so that u guys can also check it out. v1 is out, the agents run, sometimes it fails so fixing that but yea super excited to see how it goes. 
+
+also add the neatlogs entire thingies also

@@ -1,0 +1,72 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NWRK1EG3JE4W2NDCWAZC7M",
+  "session_id": "c6734d3a-69c1-48cc-922c-0afefd84a651",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T16:29:32.446753Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "FLOW.md",
+    "README.md",
+    "agent/README.md",
+    "agent/analyst/__init__.py",
+    "agent/analyst/plan.py",
+    "agent/builder/__init__.py",
+    "agent/builder/edit.py",
+    "agent/builder/sandbox.py",
+    "agent/source.py"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "7b5757823679",
+  "checkpoint_transcript_start": 9,
+  "transcript_lines_at_start": 9,
+  "compact_transcript_start": 4,
+  "token_usage": {
+    "input_tokens": 20941,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 30592,
+    "output_tokens": 2078,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 3
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T16:29:32.439641Z",
+    "agent_lines": 52,
+    "agent_removed": 82,
+    "human_added": 58,
+    "human_modified": 38,
+    "human_removed": 0,
+    "total_committed": 146,
+    "total_lines_changed": 288,
+    "agent_percentage": 46.52777777777778,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 183,
+      "user_lines_removed": 22,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "FLOW.md": 2,
+        "README.md": 4,
+        "agent/README.md": 1,
+        "agent/builder/sandbox.py": 161,
+        "agent/source.py": 15
+      },
+      "user_removed_per_file": {
+        "FLOW.md": 2,
+        "README.md": 4,
+        "agent/README.md": 1,
+        "agent/builder/sandbox.py": 1,
+        "agent/source.py": 14
+      }
+    }
+  ]
+}
