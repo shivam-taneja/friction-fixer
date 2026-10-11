@@ -6,7 +6,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from agent.builder.github_app import github_json
+from agent.builder.github_app import github_json, github_list
 from agent.project import Project
 from agent.source import BLOCKED_NAMES, SKIP_DIRS, TEXT_SUFFIXES
 
@@ -27,23 +27,24 @@ _IDLE = {
 class RepoSandbox:
     sandbox: object
     path: str
+    repository: str
     _temp: tempfile.TemporaryDirectory[str] | None = None
 
     def materialize(self, project: Project) -> Path:
         """Copy the project's source files out of the sandbox for the model to read."""
         self._temp = tempfile.TemporaryDirectory(prefix="ff-repo-")
-        root = Path(self._temp.name)
+        root = Path(self._temp.name).resolve()
         folder = project.source_folder.strip().replace("\\", "/").strip("/")
         remote = self.path if folder in {"", "."} else f"{self.path}/{folder}"
-        listing = self._exec(
-            "find . -type d \\( -name .git -o -name node_modules -o -name .next "
-            "-o -name venv -o -name .venv -o -name dist -o -name build "
-            "-o -name __pycache__ \\) -prune -o -type f -print",
-            remote,
-        )
+        prefix = "" if folder in {"", "."} else folder + "/"
+        listing = self._exec("git -c core.quotePath=false ls-files", self.path)
         copied = 0
         for line in listing.splitlines():
-            rel = line.strip().removeprefix("./")
+            rel = line.strip()
+            if prefix:
+                if not rel.startswith(prefix):
+                    continue
+                rel = rel[len(prefix) :]
             if (
                 not rel
                 or rel.startswith(".git/")
@@ -71,13 +72,16 @@ class RepoSandbox:
         self, repo: Path, files: list[Path], title: str, body: str, token: str
     ) -> str:
         """Upload the edited files, commit them on a new branch, and push that branch."""
-        relative = [path.relative_to(repo).as_posix() for path in files]
+        repo = repo.resolve()
+        relative = [path.resolve().relative_to(repo).as_posix() for path in files]
         for path, name in zip(files, relative):
             self.sandbox.fs.upload_file(path.read_bytes(), f"{self.path}/{name}")
-        branch = self._fresh_branch(_slug(title))
+        branch = self._fresh_branch(_slug(title), token)
         self.sandbox.git.create_branch(self.path, branch)
         self.sandbox.git.checkout_branch(self.path, branch)
         self.sandbox.git.add(self.path, relative)
+        if not _staged(self.sandbox.git.status(self.path)):
+            raise RuntimeError("The model made no visible change.")
         self.sandbox.git.commit(
             self.path,
             f"{title}\n\n{body}",
@@ -103,7 +107,7 @@ class RepoSandbox:
         sha = pull.get("merge_commit_sha")
         if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-fA-F]{7,40}", sha):
             raise RuntimeError("The pull request has no merge commit to undo.")
-        branch = self._fresh_branch(f"undo/{number}")
+        branch = self._fresh_branch(f"undo/{number}", token)
         self.sandbox.git.checkout_branch(self.path, base)
         self.sandbox.git.pull(self.path, username="x-access-token", password=token)
         self.sandbox.git.create_branch(self.path, branch)
@@ -167,11 +171,11 @@ class RepoSandbox:
         return result.result or ""
 
     def _branches(self) -> set[str]:
-        text = self._exec("git branch --format=%(refname:short)", self.path)
-        return {line.strip() for line in text.splitlines() if line.strip()}
+        listed = self.sandbox.git.branches(self.path)
+        return {name.strip() for name in listed.branches if name and name.strip()}
 
-    def _fresh_branch(self, base: str) -> str:
-        existing = self._branches()
+    def _fresh_branch(self, base: str, token: str) -> str:
+        existing = self._branches() | _remote_branches(self.repository, token)
         name = base
         number = 2
         while name in existing:
@@ -213,7 +217,7 @@ def open_repo(project: Project, token: str) -> RepoSandbox:
         daytona.delete(sandbox)
         raise
 
-    return RepoSandbox(sandbox=sandbox, path=REPO_DIR)
+    return RepoSandbox(sandbox=sandbox, path=REPO_DIR, repository=project.repository)
 
 
 def demand_message() -> str | None:
@@ -237,6 +241,36 @@ def _open_count() -> int:
         if name not in _IDLE:
             count += 1
     return count
+
+
+def _remote_branches(repository: str, token: str) -> set[str]:
+    """Branch names already on GitHub. A fresh clone only has the base branch locally."""
+    names: set[str] = set()
+    page = 1
+    while page <= 20:
+        rows = github_list(
+            f"/repos/{repository}/branches?per_page=100&page={page}", token
+        )
+        for row in rows:
+            name = row.get("name") if isinstance(row, dict) else None
+            if isinstance(name, str) and name:
+                names.add(name)
+        if len(rows) < 100:
+            break
+        page += 1
+    return names
+
+
+def _staged(status: object) -> bool:
+    idle = {"", "unmodified", "untracked", "ignored"}
+    files = getattr(status, "file_status", None) or []
+    for item in files:
+        for field in ("staging", "worktree"):
+            value = getattr(item, field, None)
+            label = str(getattr(value, "value", value) or "").lower()
+            if label not in idle:
+                return True
+    return False
 
 
 def _slug(change: str) -> str:

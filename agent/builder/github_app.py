@@ -11,35 +11,20 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 
 
-def github_json(method: str, path: str, token: str, payload: dict | None = None) -> dict:
+def github_json(
+    method: str, path: str, token: str, payload: dict | None = None
+) -> dict:
     """Call the GitHub API with an installation token."""
-    data = None if payload is None else json.dumps(payload).encode()
-    request = urllib.request.Request(
-        f"https://api.github.com{path}",
-        data=data,
-        method=method,
-        headers={
-            "Accept": "application/vnd.github+json",
-            "Authorization": f"Bearer {token.strip()}",
-            "User-Agent": "friction-fixer",
-            "X-GitHub-Api-Version": "2022-11-28",
-            **({"Content-Type": "application/json"} if data is not None else {}),
-        },
-    )
-    try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            raw = response.read().decode()
-    except urllib.error.HTTPError as error:
-        detail = error.read().decode(errors="replace")
-        message = _github_message(detail) or error.reason
-        raise RuntimeError(f"GitHub refused the request. {message}") from error
-    except urllib.error.URLError as error:
-        raise RuntimeError(f"GitHub could not be reached. {error.reason}") from error
-
-    if not raw.strip():
-        return {}
-    body = json.loads(raw)
+    body = _github_body(method, path, token, payload)
     if not isinstance(body, dict):
+        raise RuntimeError("GitHub returned an unexpected response.")
+    return body
+
+
+def github_list(path: str, token: str) -> list:
+    """Call a GitHub API route that returns a list."""
+    body = _github_body("GET", path, token, None)
+    if not isinstance(body, list):
         raise RuntimeError("GitHub returned an unexpected response.")
     return body
 
@@ -91,7 +76,9 @@ def _app_jwt() -> str:
         )
 
     now = int(time.time())
-    header = _b64(json.dumps({"alg": "RS256", "typ": "JWT"}, separators=(",", ":")).encode())
+    header = _b64(
+        json.dumps({"alg": "RS256", "typ": "JWT"}, separators=(",", ":")).encode()
+    )
     payload = _b64(
         json.dumps(
             {"iat": now - 60, "exp": now + 9 * 60, "iss": app_id},
@@ -115,6 +102,40 @@ def _private_key(raw: str) -> str:
 
 def _b64(value: bytes) -> str:
     return base64.urlsafe_b64encode(value).rstrip(b"=").decode()
+
+
+def _github_body(
+    method: str, path: str, token: str, payload: dict | None
+) -> dict | list:
+    data = None if payload is None else json.dumps(payload).encode()
+    request = urllib.request.Request(
+        f"https://api.github.com{path}",
+        data=data,
+        method=method,
+        headers={
+            "Accept": "application/vnd.github+json",
+            "Authorization": f"Bearer {token.strip()}",
+            "User-Agent": "friction-fixer",
+            "X-GitHub-Api-Version": "2022-11-28",
+            **({"Content-Type": "application/json"} if data is not None else {}),
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=30) as response:
+            raw = response.read().decode()
+    except urllib.error.HTTPError as error:
+        detail = error.read().decode(errors="replace")
+        message = _github_message(detail) or error.reason
+        raise RuntimeError(f"GitHub refused the request. {message}") from error
+    except urllib.error.URLError as error:
+        raise RuntimeError(f"GitHub could not be reached. {error.reason}") from error
+
+    if not raw.strip():
+        return {}
+    body = json.loads(raw)
+    if isinstance(body, (dict, list)):
+        return body
+    raise RuntimeError("GitHub returned an unexpected response.")
 
 
 def _github_message(raw: str) -> str:

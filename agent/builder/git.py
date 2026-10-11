@@ -143,6 +143,10 @@ def merge_pr(url: str, token: str, repository: str) -> None:
     pull = _wait_for_mergeable(repository, number, token)
     if pull.get("merged") is True:
         return
+    if pull.get("state") == "closed":
+        raise RuntimeError(
+            "This pull request was closed, so this run cannot continue. Start a new run."
+        )
     reason = _handoff_reason(pull)
     if reason:
         raise NeedsPerson(reason, url)
@@ -159,6 +163,10 @@ def merge_pr(url: str, token: str, repository: str) -> None:
             fresh = github_json("GET", f"/repos/{repository}/pulls/{number}", token)
             if fresh.get("merged") is True:
                 return
+            if fresh.get("state") == "closed":
+                raise RuntimeError(
+                    "This pull request was closed, so this run cannot continue. Start a new run."
+                ) from error
             reason = _handoff_reason(fresh) or _CONFLICT
             raise NeedsPerson(reason, url) from error
         raise
