@@ -36,7 +36,14 @@ npm install -g pnpm@10.33.0
 
 ## Run
 
-From this folder, copy `.env.example` to `.env` and fill it in. It holds the Firebase keys and `COOKIE_SECRET_KEY`. It is never committed. The agent uses a separate file, `agent/.env`.
+From this folder, copy `.env.example` to `.env` and fill it in. It is never committed. The agent uses a separate file, `agent/.env`.
+
+The website file needs:
+
+- Firebase public keys and the Firebase Admin service account
+- `COOKIE_SECRET_KEY`
+- `GITHUB_APP_ID`, `GITHUB_APP_SLUG`, and `GITHUB_APP_PRIVATE_KEY`
+- `AGENT_URL` and `AGENT_SECRET` (the same secret as the agent)
 
 ```bash
 cp .env.example .env
@@ -44,4 +51,6 @@ pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). The dashboard is at [http://localhost:3000/dashboard](http://localhost:3000/dashboard).
+Open [http://localhost:3000](http://localhost:3000). The dashboard is at [http://localhost:3000/dashboard](http://localhost:3000/dashboard). Runs are at [http://localhost:3000/dashboard/runs](http://localhost:3000/dashboard/runs).
+
+**Start run** asks the signed-in user's agent to edit the project's source folder. Pick improved or worse for the mock after-numbers. If a pull request conflicts, the run waits on that page until you resolve it on GitHub and press **Continue**.

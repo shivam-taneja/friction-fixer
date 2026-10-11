@@ -88,7 +88,7 @@ export function RunDetail({ id }: { id: string }) {
             loading ? (
               <span className="inline-block h-4 w-72 animate-pulse rounded-md bg-muted align-middle" />
             ) : run ? (
-              `${run.repository} • ${run.branch} • ${run.sourceFolder}`
+              `${run.case === "increased" ? "Improved" : "Worse"} • ${run.repository} • ${run.branch} • ${run.sourceFolder}`
             ) : (
               "This run could not be loaded."
             )
@@ -248,13 +248,12 @@ function stepLabel(state: "done" | "current" | "pending" | "skipped") {
 }
 
 function title(run: RunRecord) {
-  const name = run.case === "increased" ? "Increased" : "Decreased";
-  if (run.status === "kept") return `${name} • kept`;
-  if (run.status === "undone") return `${name} • undone`;
-  if (run.status === "failed") return `${name} • failed`;
-  if (run.status === "blocked") return `${name} • needs you`;
-  if (run.status === "running") return `${name} • running`;
-  return `${name} • queued`;
+  if (run.status === "kept") return "Kept";
+  if (run.status === "undone") return "Undone";
+  if (run.status === "failed") return "Failed";
+  if (run.status === "blocked") return "Needs you";
+  if (run.status === "running") return "Running";
+  return "Queued";
 }
 
 function UrlLink({ label, url }: { label: string; url: string }) {

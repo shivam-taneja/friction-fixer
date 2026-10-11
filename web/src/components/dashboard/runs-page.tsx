@@ -213,17 +213,14 @@ export function RunsPage() {
             <li key={run.id} className="border-b border-border py-3.5">
               <Link
                 href={`/dashboard/runs/${run.id}`}
-                className="flex items-baseline justify-between gap-4"
+                className="flex flex-col gap-1"
               >
-                <span className="text-sm">
-                  {run.case === "increased" ? "Improved" : "Worse"}
-                  <span className="ml-2 text-muted-foreground">
-                    {run.repository}
-                  </span>
-                </span>
+                <span className="text-sm">{label(run.status)}</span>
                 <span className="text-xs text-muted-foreground">
-                  {label(run.status)}
-                  {run.createdAt ? ` • ${when(run.createdAt)}` : ""}
+                  {run.case === "increased" ? "Improved" : "Worse"}
+                  {" · "}
+                  {run.repository}
+                  {run.createdAt ? ` · ${when(run.createdAt)}` : ""}
                 </span>
               </Link>
             </li>

@@ -14,24 +14,25 @@ Visitors land on a homepage, scroll a bit, and leave. Someone has to read the an
 
 Full details are in [FLOW.md](FLOW.md). In short:
 
-1. **Analyst agent** reads the visitor data and writes a plan: what is wrong and one change to try.
-2. **Builder agent** reads the plan, edits the site, and opens a pull request (PR).
-3. The PR is merged and the site goes live automatically.
-4. **Reviewer agent** checks the live site and the new numbers, then decides: keep the change or undo it.
-5. If undone, the reason goes back to the Analyst, who tries a different idea.
+1. You start a run from the dashboard and pick the mock outcome: improved or worse.
+2. **Analyst** reads the saved visitor numbers, past verdicts, and the files it asks for, then writes one plan.
+3. **Builder** edits the project's source folder, commits, and opens a pull request with the GitHub App.
+4. The pull request is merged. If it conflicts, the run waits. You resolve it on GitHub and press **Continue**. The agent does not pull or rewrite the branch.
+5. **Reviewer** compares the mock numbers. Bounce rate must fall by at least 5 percentage points to keep the change. Otherwise a second pull request undoes it and is merged too.
+6. The next run starts from those saved numbers. A first project generates the starting set.
 
 ## Current status
 
-The goal right now is a complete, working loop. Because real traffic takes too long to collect in a 48-hour hackathon, the agent is currently fed **mock visitor data**.
+The loop runs from the website through the deployed agent. Visitor numbers are still **mock**. A first run creates them. Later runs reuse the latest saved set in Firestore. Real analytics (PostHog) is later.
 
 ## Project structure
 
-- `agent/` — Python agents that run the loop. Files are placeholders.
-- `demo-site/` — the site the Builder is allowed to edit.
+- `agent/` — the Python loop. The deployed process is `python -m agent.server`.
+- `demo-site/` — the sample site. A project edits whatever folder it saved as `sourceFolder`.
 - `web/` — the marketing site and the dashboard. How to run it is in [web/README.md](web/README.md).
 - `FLOW.md` — what each agent receives and hands on.
-- `agent/.env` — agent API keys and the GitHub App id and private key. Copy from `agent/.env.example`. Never commit this file.
-- `web/.env` — Firebase and cookie secrets for the site. Copy from `web/.env.example`. Never commit this file.
+- `agent/.env` — agent API keys, the GitHub App, and Firebase Admin. Copy from `agent/.env.example`. Never commit this file.
+- `web/.env` — Firebase, the GitHub App, and the agent URL and secret. Copy from `web/.env.example`. Never commit this file.
 - `.python-version` — tells pyenv to use Python 3.13 in this folder only.
 
 ## Setup
@@ -40,9 +41,11 @@ Python **3.13** is required. `neatlogs` does not install on 3.14. The `.python-v
 
 You also need git, and a virtualenv named `venv` in the repo root. `venv/` is gitignored.
 
-Fill in `agent/.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `LLM_PROVIDER`, and that provider's API key. The GitHub values match the website. The site uses its own file, `web/.env`.
+Fill in `agent/.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `LLM_PROVIDER`, that provider's API key, `AGENT_SECRET`, and the Firebase service account fields. The GitHub App id and private key match the website. The app needs **Contents** and **Pull requests** set to **Read and write**.
 
-The loop has no local command. The deployed process calls `run(case, user_id)` in `agent/loop.py`.
+The site uses `web/.env`. It needs the Firebase keys, `COOKIE_SECRET_KEY`, the GitHub App (`GITHUB_APP_ID`, `GITHUB_APP_SLUG`, `GITHUB_APP_PRIVATE_KEY`), `AGENT_URL`, and the same `AGENT_SECRET`.
+
+The website starts a round. The deployed process is `python -m agent.server`, which calls `run(case, user_id, run_id)` in `agent/loop.py`. Render builds with `pip install -r agent/requirements.txt`, starts with `python -m agent.server`, and uses Python 3.13. The service root stays the repo root. The health check path is `/`.
 
 ### Mac
 
