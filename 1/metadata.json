@@ -1,0 +1,71 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NGT1D3T87Z13M2D29VC1MN",
+  "session_id": "9d91cc99-be2f-482a-9451-9383d5dd0682",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T13:00:37.068894Z",
+  "branch": "main",
+  "checkpoints_count": 6,
+  "save_step_count": 4,
+  "files_touched": [
+    "web/src/components/dashboard/run-detail.tsx"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "c557ce3b7453",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 11641,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1342208,
+    "output_tokens": 3395,
+    "api_call_count": 3
+  },
+  "session_metrics": {
+    "turn_count": 72,
+    "context_tokens": 230978,
+    "context_window_size": 256000
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T13:00:36.995662Z",
+    "agent_lines": 22,
+    "agent_removed": 23,
+    "human_added": 4,
+    "human_modified": 3,
+    "human_removed": 0,
+    "total_committed": 29,
+    "total_lines_changed": 52,
+    "agent_percentage": 86.53846153846155,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3,
+      "agent_lines_removed": 111
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3,
+      "agent_lines_removed": 111
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
