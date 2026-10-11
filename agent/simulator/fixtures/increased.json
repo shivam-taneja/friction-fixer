@@ -1,6 +1,6 @@
 {
   "source": "mock",
-  "change": "Add a short benefit-focused subheadline and three feature bullets on the homepage.",
+  "change": "Rewrite the hero copy to include a concrete benefit and a social-proof line, and restyle the CTA button with a high-contrast colour so it draws the eye and invites a click.",
   "before": {
     "bounce_rate": 0.71,
     "scroll_depth": 0.12,
@@ -8,9 +8,9 @@
     "time_on_page": 8.6
   },
   "after": {
-    "bounce_rate": 0.62,
-    "scroll_depth": 0.34,
-    "pricing_page_visits": 7,
-    "time_on_page": 18.4
+    "bounce_rate": 0.63,
+    "scroll_depth": 0.41,
+    "pricing_page_visits": 9,
+    "time_on_page": 34.7
   }
 }
