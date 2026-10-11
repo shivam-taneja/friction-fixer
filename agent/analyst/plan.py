@@ -30,9 +30,9 @@ def choose(visitors: VisitorData, history: list[Verdict]) -> Plan:
                     "Pick ONE change that should lower the bounce rate. "
                     "Return JSON only, with this shape: "
                     '{"problem":"one sentence","evidence":"the numbers",'
-                    '"change":"the one change","file":"demo-site/index.html",'
+                    '"change":"the one change","file":"demo-site/",'
                     '"expected_effect":"what should improve"}. '
-                    "file must stay inside demo-site/. "
+                    "file is demo-site/. The builder may edit any file inside it. "
                     "Use the visitor numbers you are given. Call them mock. "
                     f"expected_effect must include a bounce-rate drop of at least "
                     f"{int(BOUNCE_RATE_DROP * 100)} percentage points. "

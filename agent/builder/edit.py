@@ -47,40 +47,62 @@ def edit_site(plan: Plan) -> list[Path]:
     current = _read_site()
     api_key, base_url, model = provider_settings()
     client = neatlogs.wrap(OpenAI(api_key=api_key, base_url=base_url))
-    response = client.chat.completions.create(
-        model=model,
-        temperature=0.2,
-        response_format={"type": "json_object"},
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "You edit a static site. Return JSON only, with the shape "
-                    '{"files":[{"path":"demo-site/style.css","content":"full file"}]}. '
-                    "Include the full new contents of each file you change. "
-                    "Change only what the plan asks for. "
-                    "Every path must stay inside demo-site/."
-                ),
-            },
-            {
-                "role": "user",
-                "content": plan_text(plan) + "\n\nCurrent files:\n\n" + current,
-            },
-        ],
-    )
-    text = response.choices[0].message.content or ""
-    written: list[Path] = []
+    mistake = ""
+    last_error = "The model did not change any files."
+    for _ in range(2):
+        correction = f"\n\nYour last answer was rejected: {mistake}" if mistake else ""
+        response = client.chat.completions.create(
+            model=model,
+            temperature=0.2,
+            response_format={"type": "json_object"},
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You edit a static site. Return JSON only, with the shape "
+                        '{"files":[{"path":"demo-site/index.html","content":"full file"}]}. '
+                        "That path is only an example. "
+                        "Include the full new contents of each file you change. "
+                        "Change only what the plan asks for. "
+                        "You may edit any file inside demo-site/."
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": plan_text(plan)
+                    + "\n\nCurrent files:\n\n"
+                    + current
+                    + correction,
+                },
+            ],
+        )
+        text = response.choices[0].message.content or ""
+        try:
+            edits = _edits(text)
+        except RuntimeError as error:
+            last_error = str(error)
+            mistake = last_error
+            continue
+        written: list[Path] = []
+        for path, content in edits:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content)
+            written.append(path)
+        return written
+    raise RuntimeError(last_error)
+
+
+def _edits(text: str) -> list[tuple[Path, str]]:
+    edits: list[tuple[Path, str]] = []
     for item in _parse_files(text):
-        path = _site_path(str(item.get("path", "")), plan)
+        path = _site_path(str(item.get("path", "")))
         content = item.get("content")
         if not isinstance(content, str) or content == "":
             raise RuntimeError(f"The model returned empty contents for {path.name}.")
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content)
-        written.append(path)
-    if not written:
+        edits.append((path, content))
+    if not edits:
         raise RuntimeError("The model did not change any files.")
-    return written
+    return edits
 
 
 def _read_site() -> str:
@@ -119,7 +141,7 @@ def _parse_files(text: str) -> list[dict]:
     return [item for item in files if isinstance(item, dict)]
 
 
-def _site_path(raw: str, plan: Plan) -> Path:
+def _site_path(raw: str) -> Path:
     raw = raw.strip().replace("\\", "/")
     if not raw or raw.startswith("/"):
         raise RuntimeError(f"Refusing path: {raw}")
@@ -128,21 +150,6 @@ def _site_path(raw: str, plan: Plan) -> Path:
     demo = DEMO_SITE_DIR.resolve()
     if path != demo and demo not in path.parents:
         raise RuntimeError(f"Refusing a file outside demo-site: {raw}")
-    allowed = _allowed_files(plan)
-    if allowed is not None and path not in allowed:
-        raise RuntimeError(f"The plan does not allow editing {relative}.")
+    if path.is_dir():
+        raise RuntimeError(f"Refusing a directory: {relative}")
     return path
-
-
-def _allowed_files(plan: Plan) -> set[Path] | None:
-    raw = plan.file.strip().replace("\\", "/")
-    if raw in {"demo-site", "demo-site/"}:
-        return None
-    allowed: set[Path] = set()
-    for part in raw.split(" and "):
-        part = part.strip()
-        if not part:
-            continue
-        path = (REPO_ROOT / part).resolve()
-        allowed.add(path)
-    return allowed or None
