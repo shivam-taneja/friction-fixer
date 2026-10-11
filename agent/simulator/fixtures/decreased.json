@@ -1,6 +1,6 @@
 {
   "source": "mock",
-  "change": "Rewrite the hero copy to include a concrete benefit and a social-proof line, and restyle the CTA button with a high-contrast colour so it draws the eye and invites a click.",
+  "change": "Rewrite the hero copy to include a clear value proposition and three concrete benefit bullets, and restyle the CTA button with a high-contrast colour so it draws the eye and invites a click.",
   "before": {
     "bounce_rate": 0.71,
     "scroll_depth": 0.12,
@@ -8,9 +8,9 @@
     "time_on_page": 8.6
   },
   "after": {
-    "bounce_rate": 0.84,
-    "scroll_depth": 0.05,
+    "bounce_rate": 0.79,
+    "scroll_depth": 0.06,
     "pricing_page_visits": 1,
-    "time_on_page": 3.9
+    "time_on_page": 4.2
   }
 }
