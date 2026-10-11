@@ -8,6 +8,7 @@ import {
   type ProjectGoal,
 } from "@/components/onboarding/logic";
 import { getGithubInstallation } from "@/lib/db/github-installations";
+import { getPosthogConnection } from "@/lib/db/posthog-connections";
 import { createProject } from "@/lib/db/projects";
 import {
   assertRepoBranch,
@@ -27,8 +28,16 @@ export async function finishOnboarding(input: {
     throw new Error("Sign in to continue.");
   }
 
-  if (!analyticsChoices.some((choice) => choice.id === input.analytics)) {
-    throw new Error("Choose an analytics provider.");
+  const provider = analyticsChoices.find(
+    (choice) => choice.id === input.analytics,
+  );
+  if (!provider?.available) {
+    throw new Error(
+      "PostHog is the analytics provider you can connect right now.",
+    );
+  }
+  if (!(await getPosthogConnection(user.userId))) {
+    throw new Error("Connect PostHog before continuing.");
   }
 
   const parsedGoal = await parseProjectGoal(input.goal);

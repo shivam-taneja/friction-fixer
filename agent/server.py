@@ -10,6 +10,7 @@ import neatlogs
 
 from agent.builder.sandbox import demand_message
 from agent.loop import continue_run, run
+from agent.posthog import readiness
 from agent.simulator.generate import CASES
 from agent.tracing import init_tracing
 
@@ -25,6 +26,19 @@ def main() -> None:
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         path = _path(self.path)
+        if path == "/readiness":
+            if not _authorized(self.headers.get("Authorization", "")):
+                self._send(401, {"error": "Unauthorized."})
+                return
+            user_id = _query(self.path, "userId")
+            if not user_id:
+                self._send(400, {"error": "Send a userId."})
+                return
+            try:
+                self._send(200, readiness(user_id))
+            except Exception as error:
+                self._send(502, {"error": str(error) or "Could not check PostHog."})
+            return
         if path == "/capacity":
             if not _authorized(self.headers.get("Authorization", "")):
                 self._send(401, {"error": "Unauthorized."})
@@ -139,6 +153,13 @@ def _authorized(header: str) -> bool:
 
 def _path(raw: str) -> str:
     return raw.split("?", 1)[0]
+
+
+def _query(raw: str, key: str) -> str:
+    from urllib.parse import parse_qs, urlparse
+
+    values = parse_qs(urlparse(raw).query).get(key) or []
+    return values[0].strip() if values else ""
 
 
 if __name__ == "__main__":

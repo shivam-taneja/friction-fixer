@@ -6,7 +6,7 @@ import {
 } from "@/lib/db/github-installations";
 import { deleteUserProject, getProject } from "@/lib/db/projects";
 import { OnboardingStatus } from "@/lib/db/schema/user";
-import { getUserProfile } from "@/lib/db/users";
+import { getUserProfile, setUseMockData } from "@/lib/db/users";
 import { deleteInstallation, GithubRequestError } from "@/lib/github/app";
 
 export const runtime = "nodejs";
@@ -40,7 +40,28 @@ export async function GET() {
   return NextResponse.json({
     status: OnboardingStatus.complete,
     project,
+    useMockData: profile.useMockData === true,
   });
+}
+
+export async function PATCH(request: Request) {
+  const user = await getServerUser();
+  if (!user) {
+    return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
+  }
+
+  const body = (await request.json().catch(() => null)) as {
+    useMockData?: unknown;
+  } | null;
+  if (!body || typeof body.useMockData !== "boolean") {
+    return NextResponse.json(
+      { error: "Choose whether mock data is on." },
+      { status: 400 },
+    );
+  }
+
+  await setUseMockData(user.userId, body.useMockData);
+  return NextResponse.json({ useMockData: body.useMockData });
 }
 
 export async function DELETE(request: Request) {

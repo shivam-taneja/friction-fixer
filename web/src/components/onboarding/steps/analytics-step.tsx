@@ -1,10 +1,10 @@
-import { ChartNoAxesCombined, Check, Layers } from "lucide-react";
+import { ChartNoAxesCombined, Layers } from "lucide-react";
+import { PosthogConnect } from "@/components/posthog/posthog-connect";
 import {
   analyticsChoices,
   type AnalyticsProvider,
 } from "@/components/onboarding/logic";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 const icons = {
   posthog: ChartNoAxesCombined,
@@ -13,35 +13,35 @@ const icons = {
 } as const;
 
 export function AnalyticsStep({
-  analytics,
-  onAnalyticsChange,
+  onConnectedChange,
 }: {
-  analytics: AnalyticsProvider;
-  onAnalyticsChange: (value: AnalyticsProvider) => void;
+  onConnectedChange?: (connected: boolean) => void;
 }) {
   return (
     <div className="grid gap-3">
-      {analyticsChoices.map((provider) => {
-        const selected = analytics === provider.id;
-        const Icon = icons[provider.id];
-        return (
-          <Button
-            key={provider.id}
-            type="button"
-            variant="outline"
-            aria-pressed={selected}
-            className={cn(
-              "h-14 w-full justify-start px-4 cursor-pointer",
-              selected && "border-foreground bg-secondary",
-            )}
-            onClick={() => onAnalyticsChange(provider.id)}
-          >
-            <Icon />
-            {provider.label}
-            {selected && <Check className="ml-auto" />}
-          </Button>
-        );
-      })}
+      <PosthogConnect onConnectedChange={onConnectedChange} />
+      {analyticsChoices
+        .filter((provider) => !provider.available)
+        .map((provider) => {
+          const Icon = icons[provider.id];
+          return (
+            <Button
+              key={provider.id}
+              type="button"
+              variant="outline"
+              disabled
+              className="h-14 w-full cursor-not-allowed justify-start px-4 text-muted-foreground disabled:opacity-100"
+            >
+              <Icon />
+              {provider.label}
+              <span className="ml-auto text-xs font-medium tracking-normal text-muted-foreground normal-case">
+                Coming soon
+              </span>
+            </Button>
+          );
+        })}
     </div>
   );
 }
+
+export type { AnalyticsProvider };

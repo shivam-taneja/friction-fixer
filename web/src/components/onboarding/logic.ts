@@ -50,10 +50,14 @@ export const onboardingSteps = [
   },
 ] as const;
 
-export const analyticsChoices: { id: AnalyticsProvider; label: string }[] = [
-  { id: "posthog", label: "PostHog" },
-  { id: "mixpanel", label: "Mixpanel" },
-  { id: "amplitude", label: "Amplitude" },
+export const analyticsChoices: {
+  id: AnalyticsProvider;
+  label: string;
+  available: boolean;
+}[] = [
+  { id: "posthog", label: "PostHog", available: true },
+  { id: "mixpanel", label: "Mixpanel", available: false },
+  { id: "amplitude", label: "Amplitude", available: false },
 ];
 
 export const goalChoices = [

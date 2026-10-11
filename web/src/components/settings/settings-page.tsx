@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ChartNoAxesCombined, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import Link from "next/link";
 import { PageHeading } from "@/components/dashboard/page-heading";
 import { SectionTitle } from "@/components/dashboard/section-title";
 import { GithubIcon } from "@/components/icons/github-icon";
-import { analyticsLabel } from "@/components/onboarding/logic";
+import { PosthogConnect } from "@/components/posthog/posthog-connect";
 import { useSettings } from "@/components/settings/use-settings";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,7 +23,8 @@ import { folderLabel, frameworkLabel } from "@/lib/github/framework";
 import { OnboardingStatus } from "@/lib/db/schema/user";
 
 export function SettingsPage() {
-  const { data, error, loading, removing, removeConnection } = useSettings();
+  const { data, error, loading, removing, savingMock, removeConnection, setMockData } =
+    useSettings();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   return (
@@ -68,12 +69,8 @@ export function SettingsPage() {
       {data?.status === OnboardingStatus.complete ? (
         <section className="grid max-w-xl gap-4">
           <SectionTitle title="Connections" />
+          <PosthogConnect />
           <div className="divide-y rounded-lg border">
-            <ConnectionRow
-              icon={<ChartNoAxesCombined size={18} />}
-              title={analyticsLabel(data.project.analyticsProvider)}
-              detail="Visitor analytics"
-            />
             <ConnectionRow
               icon={<GithubIcon size={18} />}
               title="GitHub"
@@ -90,6 +87,29 @@ export function SettingsPage() {
               detail={data.project.goal}
             />
           </div>
+          <section className="grid max-w-xl gap-3 rounded-lg border px-4 py-4">
+            <div>
+              <h2 className="text-sm font-semibold">Mock data</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {data.useMockData
+                  ? "On. Runs use mock numbers instead of waiting for PostHog."
+                  : "Off. A run waits until PostHog has visitor data."}
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-fit cursor-pointer"
+              disabled={savingMock}
+              onClick={() => void setMockData(!data.useMockData)}
+            >
+              {savingMock
+                ? "Saving…"
+                : data.useMockData
+                  ? "Turn off"
+                  : "Turn on"}
+            </Button>
+          </section>
           <Button
             type="button"
             variant="destructive"

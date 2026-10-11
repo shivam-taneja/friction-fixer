@@ -64,12 +64,7 @@ def _brief(visitors: VisitorData, history: list[Verdict], project: Project) -> s
 
 
 def _evidence(visitors: VisitorData) -> str:
-    return (
-        f"Mock data. Bounce rate {visitors.bounce_rate:.0%}. "
-        f"Average scroll depth {visitors.scroll_depth:.0%}. "
-        f"Average time on page {visitors.time_on_page:.1f}s. "
-        f"Pricing page visits {visitors.pricing_page_visits}."
-    )
+    return visitors.describe()
 
 
 def _history(history: list[Verdict]) -> str:

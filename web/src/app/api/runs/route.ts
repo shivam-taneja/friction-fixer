@@ -5,6 +5,7 @@ import {
   createRun,
   failRun,
   listRuns,
+  readReady,
   RunRejected,
   startAgent,
 } from "@/lib/db/runs";
@@ -40,6 +41,17 @@ export async function POST(request: Request) {
 
   let runId = "";
   try {
+    const gate = await readReady(user.userId);
+    if (!gate.ready) {
+      return NextResponse.json(
+        {
+          error:
+            gate.error ||
+            "This project needs a baseline before a run can start. Wait until PostHog has visitor data, or turn on mock data in Settings.",
+        },
+        { status: 409 },
+      );
+    }
     await assertCapacity();
     runId = await createRun(user.userId, runCase);
     await startAgent({ runId, userId: user.userId, case: runCase });

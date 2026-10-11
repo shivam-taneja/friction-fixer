@@ -97,5 +97,13 @@ export async function getUserProfile(uid: string): Promise<UserRecord | null> {
       projectId: null,
       completedAt: null,
     },
+    useMockData: data.useMockData === true,
   };
+}
+
+export async function setUseMockData(userId: string, enabled: boolean) {
+  await db().collection(COLLECTIONS.USERS).doc(userId).update({
+    useMockData: enabled,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
 }

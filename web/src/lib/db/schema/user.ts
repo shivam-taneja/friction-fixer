@@ -23,4 +23,5 @@ export type UserRecord = {
     completedAt: unknown | null;
   };
   activeRunId?: string | null;
+  useMockData?: boolean;
 };

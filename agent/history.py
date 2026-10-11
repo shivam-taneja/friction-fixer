@@ -13,9 +13,7 @@ def load_saved(user_id: str, run_id: str) -> tuple[VisitorData | None, list[Verd
     An undone run continues from its before numbers, because that change was reverted.
     A run that stopped early still contributes its before numbers when nothing newer settled.
     """
-    docs = list(
-        _client().collection("runs").where("userId", "==", user_id).stream()
-    )
+    docs = list(_client().collection("runs").where("userId", "==", user_id).stream())
     rows = []
     for doc in docs:
         if doc.id == run_id:
@@ -63,7 +61,11 @@ def _verdict(data: dict) -> Verdict | None:
     site_check = raw.get("siteCheck")
     return Verdict(
         decision=decision,
-        site_check=site_check.strip() if isinstance(site_check, str) and site_check.strip() else "OK",
+        site_check=(
+            site_check.strip()
+            if isinstance(site_check, str) and site_check.strip()
+            else "OK"
+        ),
         numbers_before=before,
         numbers_after=after,
         reason=reason.strip() if isinstance(reason, str) else "",
@@ -78,13 +80,16 @@ def _visitors(value: object) -> VisitorData | None:
     seconds = value.get("timeOnPage")
     visits = value.get("pricingPageVisits")
     values = (bounce, scroll, seconds, visits)
-    if not all(isinstance(item, (int, float)) and not isinstance(item, bool) for item in values):
+    if not all(
+        isinstance(item, (int, float)) and not isinstance(item, bool) for item in values
+    ):
         return None
     return VisitorData(
         bounce_rate=float(bounce),
         scroll_depth=float(scroll),
         time_on_page=float(seconds),
         pricing_page_visits=int(visits),
+        source="posthog" if value.get("source") == "posthog" else "mock",
     )
 
 

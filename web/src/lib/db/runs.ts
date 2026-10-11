@@ -151,6 +151,30 @@ export async function getRun(userId: string, runId: string) {
   return toRun(snap.id, data);
 }
 
+export async function readReady(userId: string) {
+  const response = await agentFetch(
+    `/readiness?userId=${encodeURIComponent(userId)}`,
+    undefined,
+    25_000,
+  );
+  const body = (await response.json().catch(() => null)) as {
+    ready?: boolean;
+    mock?: boolean;
+    error?: string;
+  } | null;
+  if (!response.ok || !body) {
+    throw new RunRejected(
+      body?.error || "Could not check whether this project has a baseline.",
+      response.ok ? 502 : response.status,
+    );
+  }
+  return {
+    ready: body.ready === true,
+    mock: body.mock === true,
+    error: typeof body.error === "string" ? body.error : "",
+  };
+}
+
 export async function assertCapacity() {
   const response = await agentFetch("/capacity");
   if (response.status === 429) {
@@ -189,7 +213,7 @@ export async function startAgent(input: {
   }
 }
 
-async function agentFetch(path: string, init?: RequestInit) {
+async function agentFetch(path: string, init?: RequestInit, timeout = 15_000) {
   const url = process.env.AGENT_URL?.replace(/\/$/, "");
   const secret = process.env.AGENT_SECRET?.trim();
   if (!url || !secret) {
@@ -203,7 +227,7 @@ async function agentFetch(path: string, init?: RequestInit) {
         "content-type": "application/json",
         authorization: `Bearer ${secret}`,
       },
-      signal: AbortSignal.timeout(15_000),
+      signal: AbortSignal.timeout(timeout),
     });
   } catch {
     throw new RunRejected("The agent did not accept the run.", 502);

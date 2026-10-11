@@ -36,6 +36,9 @@ export function RunsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
+  const [ready, setReady] = useState<boolean | null>(null);
+  const [usingMock, setUsingMock] = useState(false);
+  const [readyMessage, setReadyMessage] = useState("");
   const [open, setOpen] = useState(false);
   const [runCase, setRunCase] = useState<RunCase>("increased");
   const locked = activeRunId(runs);
@@ -74,6 +77,41 @@ export function RunsPage() {
     };
   }, [locked]);
 
+  useEffect(() => {
+    if (!onboarded) return;
+    let cancelled = false;
+    fetch("/api/readiness")
+      .then(async (response) => {
+        const body = (await response.json().catch(() => null)) as {
+          ready?: boolean;
+          mock?: boolean;
+          error?: string;
+        } | null;
+        if (!response.ok) {
+          throw new Error(body?.error || "Could not check the baseline.");
+        }
+        return body;
+      })
+      .then((body) => {
+        if (cancelled || !body) return;
+        setReady(body.ready === true);
+        setUsingMock(body.mock === true);
+        setReadyMessage(body.error ?? "");
+      })
+      .catch((loadError) => {
+        if (cancelled) return;
+        setReady(false);
+        setReadyMessage(
+          loadError instanceof Error
+            ? loadError.message
+            : "Could not check the baseline.",
+        );
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [onboarded]);
+
   async function start() {
     if (!onboarded) return;
     setPending(true);
@@ -110,7 +148,7 @@ export function RunsPage() {
             <Skeleton className="h-8 w-28" />
           ) : onboarded ? (
             <Button
-              disabled={loading || Boolean(locked || pending)}
+              disabled={loading || ready !== true || Boolean(locked || pending)}
               onClick={() => setOpen(true)}
               className="cursor-pointer"
             >
@@ -122,6 +160,14 @@ export function RunsPage() {
 
       {error || settingsError ? (
         <p className="text-sm text-destructive">{error || settingsError}</p>
+      ) : null}
+      {onboarded && ready === false ? (
+        <p className="text-sm text-muted-foreground">
+          {readyMessage}{" "}
+          <Link className="text-foreground underline" href="/dashboard/settings">
+            Open Settings
+          </Link>
+        </p>
       ) : null}
       {locked ? (
         <p className="text-sm text-muted-foreground">
@@ -142,9 +188,11 @@ export function RunsPage() {
           <DialogHeader>
             <DialogTitle>Start run</DialogTitle>
             <DialogDescription>
-              {starting
-                ? "This run uses your latest saved mock numbers as the baseline, then creates new numbers for the outcome you choose."
-                : "No mock numbers are saved yet. This run creates a baseline, then new numbers for the outcome you choose."}
+              {usingMock
+                ? starting
+                  ? "This run uses your latest saved mock numbers as the baseline, then creates new numbers for the outcome you choose."
+                  : "No mock numbers are saved yet. This run creates a baseline, then new numbers for the outcome you choose."
+                : "This run reads the last 7 days from PostHog as the baseline, then creates mock numbers for the outcome you choose."}
             </DialogDescription>
           </DialogHeader>
           {starting ? (

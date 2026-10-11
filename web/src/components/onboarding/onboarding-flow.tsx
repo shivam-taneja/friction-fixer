@@ -22,7 +22,8 @@ export function OnboardingFlow() {
 
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
-  const [analytics, setAnalytics] = useState<AnalyticsProvider>("posthog");
+  const [analytics] = useState<AnalyticsProvider>("posthog");
+  const [posthogConnected, setPosthogConnected] = useState(false);
   const [github, setGithub] = useState<GithubSelection | null>(null);
   const [goal, setGoal] = useState("");
   const [error, setError] = useState("");
@@ -93,10 +94,7 @@ export function OnboardingFlow() {
           }}
         >
           {current.id === "analytics" && (
-            <AnalyticsStep
-              analytics={analytics}
-              onAnalyticsChange={setAnalytics}
-            />
+            <AnalyticsStep onConnectedChange={setPosthogConnected} />
           )}
 
           {current.id === "github" && (
@@ -149,7 +147,11 @@ export function OnboardingFlow() {
               type="submit"
               size="lg"
               className="h-11 px-4 cursor-pointer"
-              disabled={saving || (current.id === "github" && !githubReady)}
+              disabled={
+                saving ||
+                (current.id === "analytics" && !posthogConnected) ||
+                (current.id === "github" && !githubReady)
+              }
             >
               {saving ? "Saving…" : lastStep ? "Start my agent" : "Continue"}
               {lastStep ? <Rocket /> : <ArrowRight />}

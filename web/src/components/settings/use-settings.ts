@@ -18,13 +18,18 @@ export type SettingsProject = {
 };
 
 export type SettingsData =
-  | { status: typeof OnboardingStatus.not_started }
-  | { status: typeof OnboardingStatus.complete; project: SettingsProject };
+  | { status: typeof OnboardingStatus.not_started; useMockData?: boolean }
+  | {
+      status: typeof OnboardingStatus.complete;
+      project: SettingsProject;
+      useMockData: boolean;
+    };
 
 export function useSettings() {
   const [data, setData] = useState<SettingsData | null>(null);
   const [error, setError] = useState("");
   const [removing, setRemoving] = useState(false);
+  const [savingMock, setSavingMock] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,11 +92,44 @@ export function useSettings() {
     }
   }
 
+  async function setMockData(enabled: boolean) {
+    setSavingMock(true);
+    setError("");
+    try {
+      const response = await fetch("/api/settings", {
+        method: "PATCH",
+        cache: "no-store",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ useMockData: enabled }),
+      });
+      const body = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        useMockData?: boolean;
+      };
+      if (!response.ok) {
+        throw new Error(body.error || "Could not update mock data.");
+      }
+      setData((current) =>
+        current ? { ...current, useMockData: body.useMockData === true } : current,
+      );
+    } catch (saveError) {
+      setError(
+        saveError instanceof Error
+          ? saveError.message
+          : "Could not update mock data.",
+      );
+    } finally {
+      setSavingMock(false);
+    }
+  }
+
   return {
     data,
     error,
     loading: !data && !error,
     removing,
+    savingMock,
     removeConnection,
+    setMockData,
   };
 }

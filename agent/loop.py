@@ -10,6 +10,11 @@ from agent.builder.github_app import installation_token
 from agent.builder.sandbox import open_repo
 from agent.builder.text import plan_text
 from agent.history import load_saved
+from agent.posthog import (
+    NOT_CONNECTED,
+    load_baseline as load_posthog_baseline,
+    use_mock,
+)
 from agent.progress import RunLog
 from agent.project import load_project
 from agent.reviewer import review, verdict_text
@@ -65,7 +70,16 @@ def _round(case: str, user_id: str, log: RunLog) -> None:
 
     token = installation_token(project.installation_id)
     saved, history = load_saved(user_id, log.run_id)
-    if saved:
+    if use_mock(user_id):
+        live = None
+    else:
+        live = load_posthog_baseline(user_id)
+        if live is None:
+            raise RuntimeError(NOT_CONNECTED)
+    if live:
+        before = live
+        baseline_detail = _numbers(before)
+    elif saved:
         before = saved
         baseline_detail = "Continued from the latest saved mock numbers.\n" + _numbers(
             before
@@ -264,6 +278,7 @@ def _stored_visitors(value: object) -> VisitorData | None:
         scroll_depth=float(scroll),
         time_on_page=float(seconds),
         pricing_page_visits=int(visits),
+        source="posthog" if value.get("source") == "posthog" else "mock",
     )
 
 
@@ -296,6 +311,7 @@ def _saved_numbers(visitors: VisitorData) -> dict:
         "scrollDepth": visitors.scroll_depth,
         "timeOnPage": visitors.time_on_page,
         "pricingPageVisits": visitors.pricing_page_visits,
+        "source": visitors.source,
     }
 
 
@@ -310,9 +326,4 @@ def _saved_plan(plan: Plan) -> dict:
 
 
 def _numbers(visitors: VisitorData) -> str:
-    return (
-        f"Mock data. Bounce rate {visitors.bounce_rate:.0%}. "
-        f"Average scroll depth {visitors.scroll_depth:.0%}. "
-        f"Average time on page {visitors.time_on_page:.1f}s. "
-        f"Pricing page visits {visitors.pricing_page_visits}."
-    )
+    return visitors.describe()
