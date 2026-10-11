@@ -1,0 +1,88 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NWRK1EG3JE4W2NDCWAZC7M",
+  "session_id": "9d91cc99-be2f-482a-9451-9383d5dd0682",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T16:29:32.160413Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 1,
+  "files_touched": [
+    "FLOW.md",
+    "README.md",
+    "agent/README.md",
+    "agent/analyst/__init__.py",
+    "agent/analyst/plan.py",
+    "agent/builder/__init__.py",
+    "agent/builder/edit.py",
+    "agent/builder/sandbox.py",
+    "agent/loop.py",
+    "agent/simulator/generate.py",
+    "agent/source.py"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "3246792ebd86",
+  "checkpoint_transcript_start": 454,
+  "transcript_lines_at_start": 454,
+  "compact_transcript_start": 185,
+  "token_usage": {
+    "input_tokens": 204606,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 421120,
+    "output_tokens": 830,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 94,
+    "context_tokens": 230978,
+    "context_window_size": 256000
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T16:29:32.063321Z",
+    "agent_lines": 0,
+    "agent_removed": 3,
+    "human_added": 0,
+    "human_modified": 29,
+    "human_removed": 147,
+    "total_committed": 17,
+    "total_lines_changed": 179,
+    "agent_percentage": 1.675977653631285,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 322,
+      "user_lines_removed": 156,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "FLOW.md": 9,
+        "README.md": 5,
+        "agent/README.md": 3,
+        "agent/analyst/__init__.py": 6,
+        "agent/analyst/plan.py": 21,
+        "agent/builder/__init__.py": 15,
+        "agent/builder/edit.py": 9,
+        "agent/builder/sandbox.py": 162,
+        "agent/loop.py": 65,
+        "agent/simulator/generate.py": 3,
+        "agent/source.py": 24
+      },
+      "user_removed_per_file": {
+        "FLOW.md": 9,
+        "README.md": 5,
+        "agent/README.md": 3,
+        "agent/analyst/__init__.py": 2,
+        "agent/analyst/plan.py": 11,
+        "agent/builder/__init__.py": 42,
+        "agent/builder/edit.py": 8,
+        "agent/builder/sandbox.py": 2,
+        "agent/loop.py": 52,
+        "agent/simulator/generate.py": 3,
+        "agent/source.py": 19
+      }
+    }
+  ]
+}
