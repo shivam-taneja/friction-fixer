@@ -138,8 +138,8 @@ export function RunsPage() {
             <DialogTitle>Start run</DialogTitle>
             <DialogDescription>
               {starting
-                ? "This run starts from the latest saved mock numbers, then creates the after set you pick."
-                : "This project has no mock numbers yet. This run creates the starting set, then the after set you pick."}
+                ? "This run uses your latest saved mock numbers as the baseline, then creates new numbers for the outcome you choose."
+                : "No mock numbers are saved yet. This run creates a baseline, then new numbers for the outcome you choose."}
             </DialogDescription>
           </DialogHeader>
           {starting ? (
