@@ -159,7 +159,9 @@ export function RunsPage() {
     const body = await response.json().catch(() => null);
     setPending(false);
     if (!response.ok) {
-      setError(body?.error ?? "Could not start the run.");
+      const message = body?.error ?? "Could not start the run.";
+      setError(message);
+      notify.error(message);
       if (
         response.status !== 429 &&
         typeof body?.runId === "string" &&

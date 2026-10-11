@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ChartNoAxesCombined, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { notify } from "@/components/ui/toast";
 import { POSTHOG_MESSAGE } from "@/lib/posthog/config";
 import type { PosthogConnectionStatus } from "@/lib/db/schema/posthog-connection";
 
@@ -31,7 +32,11 @@ export function PosthogConnect({
       try {
         const parsed = JSON.parse(raw) as { error?: unknown };
         if (typeof parsed.error === "string" && parsed.error) {
-          queueMicrotask(() => setError(parsed.error as string));
+          const message = parsed.error;
+          queueMicrotask(() => {
+            setError(message);
+            notify.error(message);
+          });
         }
       } catch {
         // Ignore invalid session storage data.
@@ -89,10 +94,11 @@ export function PosthogConnect({
       cleanup();
       if (typeof event.data.error === "string" && event.data.error) {
         setError(event.data.error);
+        notify.error(event.data.error);
         return;
       }
       setStatus(null);
-      refresh();
+      refresh(true);
     };
     const timer = window.setInterval(() => {
       if (popup.closed) cleanup();
@@ -105,7 +111,7 @@ export function PosthogConnect({
     window.addEventListener("message", onMessage);
   }
 
-  function refresh() {
+  function refresh(announce = false) {
     fetch("/api/posthog/connection")
       .then(async (response) => {
         const body = (await response.json()) as PosthogConnectionStatus & {
@@ -115,13 +121,19 @@ export function PosthogConnect({
           throw new Error(body.error || "Could not load PostHog.");
         setStatus(body);
         onConnectedChange?.(body.connected);
+        if (announce && body.connected) {
+          notify.success("PostHog connected.", {
+            description: body.projectName,
+          });
+        }
       })
       .catch((loadError) => {
-        setError(
+        const message =
           loadError instanceof Error
             ? loadError.message
-            : "Could not load PostHog.",
-        );
+            : "Could not load PostHog.";
+        setError(message);
+        if (announce) notify.error(message);
       });
   }
 
@@ -137,12 +149,14 @@ export function PosthogConnect({
         throw new Error(body.error || "Could not disconnect PostHog.");
       setStatus({ connected: false });
       onConnectedChange?.(false);
+      notify.success("PostHog disconnected.");
     } catch (disconnectError) {
-      setError(
+      const message =
         disconnectError instanceof Error
           ? disconnectError.message
-          : "Could not disconnect PostHog.",
-      );
+          : "Could not disconnect PostHog.";
+      setError(message);
+      notify.error(message);
     } finally {
       setDisconnecting(false);
     }

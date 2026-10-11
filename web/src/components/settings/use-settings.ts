@@ -5,6 +5,7 @@ import type {
   AnalyticsProvider,
   ProjectGoal,
 } from "@/components/onboarding/logic";
+import { notify } from "@/components/ui/toast";
 import { OnboardingStatus } from "@/lib/db/schema/user";
 
 export type SettingsProject = {
@@ -81,13 +82,15 @@ export function useSettings() {
         throw new Error(body.error || "Could not remove the connection.");
       }
       setData({ status: OnboardingStatus.not_started });
+      notify.success("GitHub and PostHog disconnected.");
       return true;
     } catch (removeError) {
-      setError(
+      const message =
         removeError instanceof Error
           ? removeError.message
-          : "Could not remove the connection.",
-      );
+          : "Could not remove the connection.";
+      setError(message);
+      notify.error(message);
       return false;
     } finally {
       setRemoving(false);
@@ -111,15 +114,16 @@ export function useSettings() {
       if (!response.ok) {
         throw new Error(body.error || "Could not update mock data.");
       }
-      setData((current) =>
-        current ? { ...current, useMockData: body.useMockData === true } : current,
-      );
+      const useMockData = body.useMockData === true;
+      setData((current) => (current ? { ...current, useMockData } : current));
+      notify.success(useMockData ? "Mock data is on." : "Mock data is off.");
     } catch (saveError) {
-      setError(
+      const message =
         saveError instanceof Error
           ? saveError.message
-          : "Could not update mock data.",
-      );
+          : "Could not update mock data.";
+      setError(message);
+      notify.error(message);
     } finally {
       setSavingMock(false);
     }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { getFirebaseAuth } from "@/lib/firebase/client-app";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { notify } from "@/components/ui/toast";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -26,6 +27,7 @@ export function LogoutButton() {
       router.replace("/");
       router.refresh();
     } catch {
+      notify.error("Could not sign out. Try again.");
       setPending(false);
     }
   }

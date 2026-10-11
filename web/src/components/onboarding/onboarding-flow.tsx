@@ -15,6 +15,7 @@ import {
 import { AnalyticsStep } from "@/components/onboarding/steps/analytics-step";
 import { GoalStep } from "@/components/onboarding/steps/goal-step";
 import { Button } from "@/components/ui/button";
+import { notify } from "@/components/ui/toast";
 import type { GithubSelection } from "@/lib/github/types";
 
 export function OnboardingFlow() {
@@ -37,11 +38,16 @@ export function OnboardingFlow() {
     github.sourceFolder,
   );
 
+  function fail(message: string) {
+    setError(message);
+    notify.error(message);
+  }
+
   async function next() {
     setError("");
 
     if (current.id === "github" && !githubReady) {
-      setError("Choose a repository, branch, and source folder.");
+      fail("Choose a repository, branch, and source folder.");
       return;
     }
 
@@ -51,13 +57,13 @@ export function OnboardingFlow() {
     }
 
     if (!github) {
-      setError("Choose a repository, branch, and source folder.");
+      fail("Choose a repository, branch, and source folder.");
       return;
     }
 
     const parsedGoal = await parseProjectGoal(goal);
     if (!parsedGoal.ok) {
-      setError(parsedGoal.error);
+      fail(parsedGoal.error);
       return;
     }
 
@@ -67,7 +73,7 @@ export function OnboardingFlow() {
       await finishOnboarding({ analytics, github, goal: parsedGoal.goal });
       router.replace("/dashboard/runs");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not save.");
+      fail(e instanceof Error ? e.message : "Could not save.");
     } finally {
       setSaving(false);
     }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { GithubIcon } from "@/components/icons/github-icon";
 import { GithubAccount } from "@/components/github/github-account";
 import { GithubBranchSelect } from "@/components/github/github-branch-select";
@@ -16,6 +16,7 @@ import { GithubProjectSetup } from "@/components/github/github-project-setup";
 import { GithubRepoSelect } from "@/components/github/github-repo-select";
 import { takeGithubInstallResult } from "@/components/github/install-result";
 import { Button } from "@/components/ui/button";
+import { notify } from "@/components/ui/toast";
 import {
   type GithubConnection as GithubConnectionState,
   type GithubSelection,
@@ -42,6 +43,7 @@ export function GithubConnection({
     () => takeGithubInstallResult()?.error ?? "",
   );
   const [refreshKey, setRefreshKey] = useState(0);
+  const announceConnect = useRef(false);
 
   const selectedRepo = selection?.fullName ?? "";
   const [branchLoad, setBranchLoad] = useState<{
@@ -68,6 +70,11 @@ export function GithubConnection({
   });
 
   useEffect(() => {
+    const installError = takeGithubInstallResult()?.error;
+    if (installError) notify.error(installError);
+  }, []);
+
+  useEffect(() => {
     let cancelled = false;
 
     readJson<GithubConnectionState>("/api/github/connection")
@@ -76,9 +83,16 @@ export function GithubConnection({
         setConnection(next);
         setLoading(false);
         syncSelection(next);
+        if (announceConnect.current && next.connected) {
+          notify.success("GitHub connected.", {
+            description: next.accountLogin,
+          });
+        }
+        announceConnect.current = false;
       })
       .catch((loadError) => {
         if (cancelled) return;
+        announceConnect.current = false;
         setConnection({ connected: false });
         setError(messageFrom(loadError));
         setLoading(false);
@@ -108,7 +122,9 @@ export function GithubConnection({
       .catch((branchError) => {
         if (cancelled) return;
         setBranchLoad({ repo: selectedRepo, branches: [], loading: false });
-        setError(messageFrom(branchError));
+        const message = messageFrom(branchError);
+        setError(message);
+        notify.error(message);
       });
 
     return () => {
@@ -139,8 +155,10 @@ export function GithubConnection({
       cleanup();
       if (event.data.error) {
         setError(event.data.error);
+        notify.error(event.data.error);
         return;
       }
+      announceConnect.current = true;
       setSelection(null);
       setConnection(null);
       setLoading(true);
@@ -170,8 +188,11 @@ export function GithubConnection({
       );
       setSelection(null);
       setConnection(next);
+      notify.success("GitHub disconnected.");
     } catch (disconnectError) {
-      setError(messageFrom(disconnectError));
+      const message = messageFrom(disconnectError);
+      setError(message);
+      notify.error(message);
     } finally {
       setDisconnecting(false);
     }

@@ -6,6 +6,7 @@ import { ArrowLeft, Check, Loader2 } from "lucide-react";
 import { PageHeading } from "@/components/dashboard/page-heading";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { notify } from "@/components/ui/toast";
 import {
   isActiveRun,
   runStepOrder,
@@ -57,12 +58,15 @@ export function RunDetail({ id }: { id: string }) {
     const body = await response.json().catch(() => null);
     setPending(false);
     if (!response.ok) {
-      setError(body?.error ?? "Could not continue this run.");
+      const message = body?.error ?? "Could not continue this run.";
+      setError(message);
+      notify.error(message);
       return;
     }
     setRun((current) =>
       current ? { ...current, status: "running", error: "" } : current,
     );
+    notify.success("Run continued.");
   }
 
   const saved = new Map(run?.steps.map((step) => [step.id, step]));

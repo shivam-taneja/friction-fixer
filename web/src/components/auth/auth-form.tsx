@@ -16,6 +16,7 @@ import {
 import { GithubIcon } from "@/components/icons/github-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { notify } from "@/components/ui/toast";
 import { getFirebaseAuth } from "@/lib/firebase/client-app";
 import { mapFirebaseError } from "@/lib/firebase/errors";
 
@@ -93,7 +94,9 @@ export function AuthForm() {
       console.error("[AuthForm] Sign-in failed:", e);
 
       const err = e as AuthError;
-      setError(err.code ? mapFirebaseError(err) : err.message);
+      const message = err.code ? mapFirebaseError(err) : err.message;
+      setError(message);
+      notify.error(message);
     } finally {
       setPending(null);
     }
