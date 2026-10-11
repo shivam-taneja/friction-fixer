@@ -1,0 +1,81 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4N5HRP6QJNX02ZBS48VGX04",
+  "session_id": "1c3b1eb9-ea5d-4526-a439-77406dab5503",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T09:43:50.992489Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 3,
+  "files_touched": [
+    "web/.env.example"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "aec10ba58c16",
+  "checkpoint_transcript_start": 30,
+  "transcript_lines_at_start": 30,
+  "compact_transcript_start": 12,
+  "token_usage": {
+    "input_tokens": 65016,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 119936,
+    "output_tokens": 3529,
+    "api_call_count": 3
+  },
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T09:43:50.981151Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 637,
+    "human_modified": 3,
+    "human_removed": 0,
+    "total_committed": 637,
+    "total_lines_changed": 855,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 1,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_removed_per_file": {
+        "web/.env.example": 1
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 9,
+      "user_lines_removed": 2,
+      "agent_lines_added": 432,
+      "agent_lines_removed": 32,
+      "user_added_per_file": {
+        "web/src/app/api/github/branches/route.ts": 8,
+        "web/src/components/onboarding/steps/github-step.tsx": 1
+      },
+      "user_removed_per_file": {
+        "web/src/app/api/github/branches/route.ts": 2
+      }
+    }
+  ]
+}

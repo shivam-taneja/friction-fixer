@@ -1,0 +1,110 @@
+check this
+
+Skip to content
+Settings
+Developer Settings
+
+Got it. Your GitHub App has been updated. 
+Settings Developer settings GitHub Apps Friction Fixer
+About
+Owned by: @shivam-taneja
+
+App ID: 5263576
+
+Using your App ID to get installation tokens? You can now use your Client ID instead.
+
+Client ID: Iv23lisUNKsb0hTLgIVl
+
+GitHub Apps can use OAuth credentials to identify users. Learn more about identifying users by reading our integration developer documentation.
+
+Public link
+https://github.com/apps/friction-fixer
+Basic information
+GitHub App name
+Friction Fixer
+The name of your GitHub App.
+
+ Markdown supported
+Write
+Preview
+Friction Fixer connects only to the repository you authorize or add, reads its code, opens a pull request with a change, and can revert that change. It cannot access any other repositories unless you explicitly grant access.
+Homepage URL
+https://friction-fixer.shivamtaneja.com
+The full URL to your GitHub App’s website.
+
+Identifying and authorizing users
+The URIs to redirect to after a user authorizes your application. You may add up to 10 redirect URIs. Wildcard matching allows tokens to be sent to all subdomains and additional paths of the redirect URI. Only enable this if you are sure you have control over all possible matches. Learn more about secure use of redirect URIs.
+Redirect URI
+https://friction-fixer.shivamtaneja.com/api/github/callback
+ Allow wildcard matching
+ Request user authorization (OAuth) during installation
+Requests that the installing user grants access to their identity during installation of your App.
+
+ Enable Device Flow
+Allow this GitHub App to authorize users via the device flow.
+
+Post installation
+Setup URL (optional)
+http://localhost:3000/api/github/callback
+Users will be redirected to this URL after installing your GitHub App to complete additional setup.
+
+ Redirect on update
+Redirect users to the 'Setup URL' after installations are updated (E.g. repositories added/removed).
+
+Webhook
+
+Active
+We will deliver event details when this hook is triggered.
+Webhook URL
+Events will POST to this URL with a webhook.
+
+Secret
+Set a secret to secure your webhooks.
+
+ 
+Display information
+
+You can also drag and drop a picture from your computer.
+
+
+Badge background color
+#C1EE49
+The hex value of the badge background color. Hex colors should only contain numbers and letters from a-f.
+
+ Saved
+
+Marketplace
+List your GitHub App in the GitHub Marketplace so that other users can discover it.
+
+List in Marketplace
+IP allow list
+Enter the IP addresses of your GitHub App to allow organizations with IP allow lists to selectively inherit the App's IP allow list when installed. Learn more about App IP allow lists.
+
+There are no IP addresses on the allow list yet.
+IP address or CIDR range
+Short description
+Check IP address
+Enter an IP address to check whether it is permitted by enabled entries on the IP allow list.
+
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+
+fine?
+
+---
+
+Identifying and authorizing users - do i need this?
+
+---
+
+ykw wait imma give u the ss so that u can properly see. now u see fully everything tell me now what i need to change if anythign. please tell me if i need to remove also, proper cleanup!
