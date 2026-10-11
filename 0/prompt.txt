@@ -968,3 +968,7 @@ fatal: Could not read from remote repository.
 
 Please make sure you have the correct access rights
 and the repository exists.
+
+---
+
+ok so i have a few more questions. those are basically now what if the branch or pr makes a git conflict? we should add a human in the loop logic. so please work on that part also, that way we dont have to worry about the agent doing the git pull, this way we can have humans in the loop! does that sound good?
