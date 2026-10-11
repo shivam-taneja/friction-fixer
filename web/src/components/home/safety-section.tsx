@@ -15,7 +15,7 @@ const items = [
   {
     icon: RotateCcw,
     title: "Nothing is irreversible.",
-    body: "Changes that don’t help get undone. No sunk-cost fixes. Just learning that makes the next attempt better.",
+    body: "If the bounce rate does not fall by at least 5 points, the change is reverted. The lesson stays for the next run you start.",
   },
 ];
 

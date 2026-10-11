@@ -15,7 +15,7 @@ export default function TermsPage() {
       title="Terms of use"
       description={termsMetadata.description ?? ""}
       path="/terms"
-      updated="10 October 2026"
+      updated="12 October 2026"
     >
       <LegalSection id="agreement" title="Agreement">
         <p>
@@ -33,8 +33,9 @@ export default function TermsPage() {
         <p>
           Friction Fixer is an agent that looks at how visitors use a website
           you connect, proposes a change to that site through GitHub, and checks
-          whether the change helped. If it did not help, the agent can revert
-          it and try a different change.
+          whether the change helped. The change stays only if the bounce rate
+          falls by at least 5 percentage points. If it does not, the agent
+          reverts it. Another change starts when you start another run.
         </p>
         <p>
           The service is still being built. Features can change, pause, or
@@ -79,8 +80,8 @@ export default function TermsPage() {
           You keep ownership of your website, your repository, and your
           analytics. You give Friction Fixer permission to access them only for
           the service: finding friction, proposing or applying a change, and
-          checking the result. You can remove the GitHub App or disconnect a
-          site at any time.
+          checking the result. After setup, GitHub and PostHog are disconnected
+          together from Settings. That stops a run still going for that project.
         </p>
       </LegalSection>
 
@@ -94,18 +95,30 @@ export default function TermsPage() {
         <p>
           You are responsible for reviewing what runs on your site, for keeping
           backups, and for the customer experience on that site. Friction Fixer
-          does not guarantee that a change will increase conversion, stay
-          within your brand rules, or be free of defects.
+          does not guarantee that a change will increase conversion, stay within
+          your brand rules, or be free of defects.
         </p>
       </LegalSection>
 
       <LegalSection id="acceptable-use" title="Acceptable use">
         <p>You will not:</p>
         <ul className="list-disc space-y-2 pl-5">
-          <li>Connect a site, repository, or analytics project you are not allowed to change or read.</li>
-          <li>Use the service to break the law, or to store or publish someone else’s personal data without a lawful basis.</li>
-          <li>Probe, disrupt, or overload the service, Firebase, Vercel, or GitHub.</li>
-          <li>Resell the account or present the agent’s output as a guaranteed business result.</li>
+          <li>
+            Connect a site, repository, or analytics project you are not allowed
+            to change or read.
+          </li>
+          <li>
+            Use the service to break the law, or to store or publish someone
+            else’s personal data without a lawful basis.
+          </li>
+          <li>
+            Probe, disrupt, or overload the service, Firebase, Vercel, or
+            GitHub.
+          </li>
+          <li>
+            Resell the account or present the agent’s output as a guaranteed
+            business result.
+          </li>
         </ul>
       </LegalSection>
 
@@ -141,9 +154,9 @@ export default function TermsPage() {
         <p>
           Friction Fixer is not liable for lost profits, lost data, or indirect
           or consequential loss arising from your use of the service or from a
-          change the agent makes. Our total liability arising out of the
-          service is limited to the amount you paid us in the three months
-          before the claim. If you have not paid a fee, that amount is zero.
+          change the agent makes. Our total liability arising out of the service
+          is limited to the amount you paid us in the three months before the
+          claim. If you have not paid a fee, that amount is zero.
         </p>
         <p>
           Nothing in these terms limits liability that the law of India does not
@@ -155,9 +168,9 @@ export default function TermsPage() {
       <LegalSection id="ending" title="Ending access">
         <p>
           You can stop using the service and ask us to delete your account from
-          the <ContactLink />. We can stop providing the service, or close
-          your account, by notice to the email on the account. Sections that
-          should survive, including ownership, disclaimers, and liability, keep
+          the <ContactLink />. We can stop providing the service, or close your
+          account, by notice to the email on the account. Sections that should
+          survive, including ownership, disclaimers, and liability, keep
           applying.
         </p>
       </LegalSection>
@@ -169,9 +182,8 @@ export default function TermsPage() {
         </p>
         <p>
           Reach us through the <ContactLink />. These terms are the contract for
-          the service.
-          They are not legal advice about your own website, your visitors’ data,
-          or your duties under the DPDP Act.
+          the service. They are not legal advice about your own website, your
+          visitors’ data, or your duties under the DPDP Act.
         </p>
       </LegalSection>
     </LegalPage>

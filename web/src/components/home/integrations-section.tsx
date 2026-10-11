@@ -20,16 +20,22 @@ export function IntegrationsSection() {
             <ChartNoAxesCombined />
             PostHog
           </span>
-          <span className={`${logoClass} font-medium`}>
-            <span aria-hidden="true">Ⅲ</span> mixpanel
-          </span>
-          <span className={logoClass}>
-            <Layers />
-            Amplitude
-          </span>
           <span className={logoClass}>
             <GithubIcon />
             GitHub
+          </span>
+          <span className={`${logoClass} font-medium text-muted-foreground`}>
+            <span aria-hidden="true">Ⅲ</span> mixpanel
+            <span className="text-[10px] font-medium tracking-normal text-muted-foreground">
+              Coming soon
+            </span>
+          </span>
+          <span className={`${logoClass} text-muted-foreground`}>
+            <Layers />
+            Amplitude
+            <span className="text-[10px] font-medium tracking-normal text-muted-foreground">
+              Coming soon
+            </span>
           </span>
         </div>
       </PageContainer>

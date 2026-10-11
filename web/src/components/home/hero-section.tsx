@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowUpRight, Check, Play } from "lucide-react";
+import { ArrowDownRight, Check, Play } from "lucide-react";
 import { AuthCta } from "@/components/auth/auth-cta";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
@@ -64,11 +64,11 @@ export function HeroSection({ signedIn }: { signedIn: boolean }) {
             Less friction. One fix at a time.
           </p>
           <small className="text-[10px] text-muted-foreground">
-            Pricing page improvement verified
+            Bounce rate checked after the change
           </small>
         </div>
         <span className="ml-auto text-[13px] text-success max-sm:text-[11px]">
-          +18.7% <ArrowUpRight size={13} className="inline" />
+          −6 pts <ArrowDownRight size={13} className="inline" />
         </span>
       </div>
     </section>

@@ -13,7 +13,7 @@ export const steps = [
   {
     title: "See where visitors get stuck.",
     description:
-      "Your analytics tell a story. The agent finds the drop-offs, dead clicks, and moments that make people leave.",
+      "PostHog tells the story. The agent reads bounce rate, scroll, time on page, and pageviews, then picks one place people are leaving.",
   },
   {
     title: "Turn the insight into a fix.",
@@ -23,12 +23,12 @@ export const steps = [
   {
     title: "Let the results do the talking.",
     description:
-      "After the change goes live, the agent watches the same goal to see whether the experience actually improved.",
+      "After the change is merged, the agent waits, then reads PostHog again. The change stays only if the bounce rate fell by at least 5 points.",
   },
   {
     title: "Keep the wins. Undo the rest.",
     description:
-      "If a change doesn’t help, it gets rolled back. The agent learns from the result and tries a different approach.",
+      "If the bounce rate does not fall by at least 5 points, the change is rolled back. The lesson stays on the run. The next fix starts when you start another run.",
   },
 ];
 
@@ -73,7 +73,7 @@ const panels: {
     events: [
       { icon: Sparkles, label: "Hypothesis created", value: "CTA visibility" },
       { icon: GitPullRequest, label: "fix/pricing-page-cta", value: "PR #42" },
-      { icon: Check, label: "Checks passed", value: "Ready to review" },
+      { icon: Check, label: "Pull request", value: "Merged" },
     ],
     result: "Change scope",
     resultValue: "One page. One hypothesis.",
@@ -82,27 +82,27 @@ const panels: {
     label: "03 / VERIFY",
     title: "Better is a number. Not a guess.",
     description:
-      "Compare signup conversion before and after the change, using your connected analytics.",
+      "Compare bounce rate before and after the change, using the PostHog project for this site.",
     events: [
-      { icon: Activity, label: "Baseline conversion", value: "3.2%" },
-      { icon: Activity, label: "Conversion after change", value: "3.8%" },
-      { icon: Check, label: "Measurement window", value: "Complete" },
+      { icon: Activity, label: "Bounce rate before", value: "44%" },
+      { icon: Activity, label: "Bounce rate after", value: "38%" },
+      { icon: Check, label: "Keep rule", value: "Down 5 points" },
     ],
-    result: "Relative conversion lift",
-    resultValue: "+18.7% ↗",
+    result: "Bounce rate",
+    resultValue: "Down 6 pts",
   },
   {
     label: "04 / LEARN",
     title: "Every result makes the next fix smarter.",
     description:
-      "Keep the change when it helps. Revert it when it doesn’t. Then start the next cycle.",
+      "Keep the change when bounce rate falls by at least 5 points. Revert it when it does not. The next run starts when you start it.",
     events: [
       { icon: Check, label: "Pricing CTA improvement", value: "Kept" },
       { icon: RotateCcw, label: "Longer signup form", value: "Reverted" },
-      { icon: Sparkles, label: "Next hypothesis", value: "Form clarity" },
+      { icon: Sparkles, label: "Next run", value: "When you start it" },
     ],
     result: "Agent status",
-    resultValue: "Learning. Improving. Repeating.",
+    resultValue: "Waiting for the next run.",
   },
 ];
 

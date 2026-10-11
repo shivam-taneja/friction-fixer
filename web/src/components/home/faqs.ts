@@ -12,11 +12,11 @@ export const faqs = [
   {
     question: "Do I stay in control of my website?",
     answer:
-      "Yes. Changes are traceable in GitHub, with a clear hypothesis and a focused pull request. The workflow is designed around reviewable changes, measurable results, and reversibility—not unexplained edits.",
+      "Yes. Each change is one pull request in your repository, with the reason written on it. The pull request is merged so the site can go live. If it conflicts, the run waits for you.",
   },
   {
     question: "What if a change makes things worse?",
     answer:
-      "A fix is only a win if the results support it. When a change does not improve the goal, the agent rolls it back, uses what it learned, and tries another approach.",
+      "The change stays only if the bounce rate falls by at least 5 percentage points. Otherwise the agent opens a new pull request that reverts it. The next fix starts when you start another run.",
   },
 ];

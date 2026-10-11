@@ -15,7 +15,7 @@ export default function PrivacyPage() {
       title="Privacy policy"
       description={privacyMetadata.description ?? ""}
       path="/privacy"
-      updated="10 October 2026"
+      updated="12 October 2026"
     >
       <LegalSection id="who-we-are" title="Who we are">
         <p>
@@ -50,12 +50,13 @@ export default function PrivacyPage() {
           <li>A Firebase user id, and the session cookies described below.</li>
         </ul>
         <p>
-          If you connect a website, an analytics project, or the Friction Fixer
+          If you connect a website, a PostHog project, or the Friction Fixer
           GitHub App, we process the site URL, the repositories you authorize,
-          installation events GitHub sends us, and the analytics connection
-          details needed to read that site’s visitor metrics. Those metrics can
-          describe how visitors use the site you connected. We use them to find
-          friction and to check a change.
+          installation events GitHub sends us, and the PostHog connection needed
+          to read that site’s visitor metrics. Those metrics are bounce rate,
+          scroll depth, time on page, and pageviews. We use them to find
+          friction and to check a change. The PostHog refresh token is stored so
+          the agent can read those numbers. It is not sent to your browser.
         </p>
         <p>
           On friction-fixer.shivamtaneja.com itself, Vercel Web Analytics
@@ -118,6 +119,15 @@ export default function PrivacyPage() {
           product records the service needs.
         </p>
         <p>
+          To plan and make a change, the agent sends the project goal and the
+          source files in the folder you chose to the model provider configured
+          for that agent. Each run also clones the repository into a short-lived
+          Daytona sandbox, edits it there, and pushes a pull request. The agent
+          process runs on Render, including a later check that reads PostHog
+          again. A trace of each round, including the plan and the visitor
+          numbers, is sent to neatlogs so the operator can debug the agent.
+        </p>
+        <p>
           The site is hosted on Vercel. Vercel’s privacy policy is at{" "}
           <a
             className="text-foreground underline"
@@ -154,7 +164,8 @@ export default function PrivacyPage() {
           to a country the Central Government restricts by notification. Google
           Firebase and Google Cloud may process account data outside India,
           including in the United States, depending on the Firebase project.
-          Vercel and GitHub may also process data outside India.
+          Vercel, GitHub, PostHog, the model provider, Daytona, Render, and
+          neatlogs may also process data outside India.
         </p>
         <p>
           We rely on those providers’ contracts and security measures for that
