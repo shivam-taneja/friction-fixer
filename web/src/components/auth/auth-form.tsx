@@ -67,7 +67,7 @@ export function AuthForm() {
         throw new Error(`Login failed (${response.status}): ${body}`);
       }
 
-      router.replace("/dashboard");
+      router.replace("/dashboard/runs");
     } catch (e) {
       console.error("[AuthForm] Sign-in failed:", e);
 

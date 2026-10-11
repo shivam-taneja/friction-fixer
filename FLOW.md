@@ -122,7 +122,7 @@ reason:           why this decision was made, including the change text
 
 | What | Where |
 | --- | --- |
-| Every agent run, step by step | neatlogs, one trace per round |
+| Every agent run, step by step | neatlogs, one trace per round. Share that trace from the dashboard when the link should be public. |
 | Each dashboard step, the plan, the numbers, and the verdict | Firestore `runs` |
 | Every change, kept or undone | Pull requests on the project's repository |
 | Reasoning behind a code change | Entire checkpoints |

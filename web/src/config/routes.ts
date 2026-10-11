@@ -28,7 +28,7 @@ export const LOGIN_PATH = "/auth";
 /**
  * The default path to redirect authenticated users to after login.
  */
-export const DEFAULT_LOGIN_REDIRECT = "/dashboard";
+export const DEFAULT_LOGIN_REDIRECT = "/dashboard/runs";
 
 export function redirectToLogin(request: NextRequest) {
   if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {

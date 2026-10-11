@@ -20,7 +20,7 @@ export function AuthCta({
   return (
     <Button
       nativeButton={false}
-      render={<Link href={signedIn ? "/dashboard" : "/auth"} />}
+      render={<Link href={signedIn ? "/dashboard/runs" : "/auth"} />}
       variant={variant}
       size={size}
       className={className}

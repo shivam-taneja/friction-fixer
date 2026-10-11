@@ -40,7 +40,9 @@ python -m agent.server
 
 `POST /runs/continue` uses the same secret. The body is the run id and the user id. It merges the pull request after a person has resolved a conflict, then finishes the round.
 
-A new run is refused while two or more Daytona sandboxes are still open, when `DAYTONA_API_KEY` is set. The working tree must be clean, because the Builder commits only the new edit.
+The agent process on Render edits its own checkout. `builder/sandbox.py` can clone the project into a Daytona sandbox, and a new run is refused while two or more of those sandboxes are open, when `DAYTONA_API_KEY` is set. The Builder does not call that clone yet.
+
+The working tree must be clean, because the Builder commits only the new edit. After the round, `neatlogs.flush` sends the trace. One round is one trace named `friction-fix-round`.
 
 `agent/.env` holds `NEATLOGS_API_KEY`, `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `LLM_PROVIDER`, that provider's API key, `AGENT_SECRET`, and the Firebase service account fields. The GitHub and Firebase values match the website. Copy it from `agent/.env.example`. It is never committed.
 

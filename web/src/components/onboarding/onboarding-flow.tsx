@@ -64,7 +64,7 @@ export function OnboardingFlow() {
 
     try {
       await finishOnboarding({ analytics, github, goal: parsedGoal.goal });
-      router.replace("/dashboard");
+      router.replace("/dashboard/runs");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save.");
     } finally {

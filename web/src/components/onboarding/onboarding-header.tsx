@@ -16,7 +16,7 @@ export function OnboardingHeader() {
       <Brand />
       <Button
         nativeButton={false}
-        render={<Link href="/dashboard" />}
+        render={<Link href="/dashboard/runs" />}
         variant="ghost"
       >
         Go to dashboard

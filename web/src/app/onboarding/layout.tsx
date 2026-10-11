@@ -17,7 +17,7 @@ export default async function OnboardingLayout({
   const profile = await getUserProfile(user.userId);
 
   if (profile?.onboarding.status === OnboardingStatus.complete) {
-    redirect("/dashboard");
+    redirect("/dashboard/runs");
   }
 
   return children;

@@ -25,6 +25,14 @@ Full details are in [FLOW.md](FLOW.md). In short:
 
 The loop runs from the website through the deployed agent. Visitor numbers are still **mock**. A first run creates them. Later runs reuse the latest saved set in Firestore. Real analytics (PostHog) is later.
 
+## Where it runs
+
+- The website is the Next.js app in `web/`. **Start run** calls the agent. It does not call Render from the browser.
+- The agent is a Render web service. Build `pip install -r agent/requirements.txt`, start `python -m agent.server`, Python 3.13, health check `/`. The live service is [friction-fixer.onrender.com](https://friction-fixer.onrender.com).
+- Each round is one neatlogs trace, workflow `friction-fix-round`. The agent sends it to `https://ingest.neatlogs.com`. You read it in the neatlogs dashboard. A public link is a share you turn on for that trace. The code does not publish one.
+- Daytona is the sandbox the agent can open instead of a long-lived machine. `open_repo` clones the project there, and a new run is refused while two sandboxes are already open. The Builder does not use that clone yet. It still edits the checkout on the Render service.
+- Entire records the Cursor sessions that built this repo. It is not called by the agent loop. After `git push`, a checkpoint opens at `https://entire.io/gh/shivam-taneja/friction-fixer/commit/<commit-sha>` when that commit has an `Entire-Checkpoint` trailer.
+
 ## Project structure
 
 - `agent/` — the Python loop. The deployed process is `python -m agent.server`.
@@ -107,8 +115,8 @@ copy agent\.env.example agent\.env
 
 ## Evidence
 
-- neatlogs traces, before vs after improving the agent: _link_
-- A run where the agent's change failed and it undid it: _link_
+- neatlogs traces, before vs after improving the agent: open the trace in the neatlogs dashboard, turn on public sharing, and paste that link
+- A run where the agent's change failed and it undid it: the pull request URL, plus the neatlogs trace for that `run_id`
 - Website results, before vs after (mock data): _numbers_
 - Entire checkpoints: _link or screenshot_
 - cfo.ai business plan: _link_
