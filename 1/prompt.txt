@@ -1,0 +1,38 @@
+@web/src/components/dashboard/runs-page.tsx add pagination support for this please! and create a common component which i can re-use so that i'll get pagination support. @web/src/app/api/runs/route.ts you'll have to update this too!
+
+---
+
+dude i think there should be a better seperator between projects in the runs page
+
+shivam-taneja/friction-fixer
+main • demo-site • Connected about 3 hours ago
+
+This project was disconnected. These runs cannot be continued.
+
+like for example i have these right. so it's not that easily visible. can u please improve the ui of this!
+
+---
+
+good one buddy! just one thing the pagination should come inside that project... or we do the pagination for all the runs? not just project??? what's the logic?
+
+---
+
+so if current project has 10 runs and old one has 5 what would happen to the pagination?
+
+like think about the different conditions that can happen and tell me
+
+---
+
+also can u update the settings page ui to match this card theme u have created i like it
+
+---
+
+so ur pagination logic is fine right? for the usecase... or we should have a better logic to show in the ui?
+
+---
+
+so pleaes fix this
+
+---
+
+also can u update the settings page ui to match this card theme u have created i like it
