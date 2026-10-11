@@ -1,0 +1,13 @@
+please help me clean up auth @web/src/config/routes.ts @web/src/proxy.ts @web/src/components/auth/auth-provider.tsx @web/src/components/auth/auth-form.tsx 
+
+so basically what i want to do is subscribe to Firebase Authentication onAuthStateChanged so that if there is any change in the db it updates right? 
+
+and also i dont wnat that header logic, instead we'll call the firebase on layout change so that we know the user is there and what is the status and update the zustand store, for example we'll create a persisted store with zustand 
+
+and we'll keep v bare min things req, for example the onboarding status and current step in onboarding and the useremail and picture so that it's persisted. got it? 
+
+if u need anything else ask me
+
+---
+
+dude what in the fuck are u stuck at?????
