@@ -11,12 +11,43 @@ main {
   padding: 0 1rem;
 }
 
+.benefits {
+  margin: 1.5rem 0 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.benefits li {
+  padding: 0.45rem 0 0.45rem 1.6rem;
+  position: relative;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.benefits li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #1a7f4b;
+  font-weight: bold;
+}
+
 .button {
   display: inline-block;
-  margin-top: 1rem;
-  padding: 0.4rem 0.6rem;
-  color: #555;
-  background: #ddd;
-  font-size: 0.85rem;
+  margin-top: 2rem;
+  padding: 0.85rem 2rem;
+  color: #fff;
+  background: #1a7f4b;
+  font-size: 1.05rem;
+  font-family: Georgia, serif;
   text-decoration: none;
+  border-radius: 3px;
+  letter-spacing: 0.01em;
+  transition: background 0.15s ease;
+}
+
+.button:hover,
+.button:focus {
+  background: #145f38;
 }
