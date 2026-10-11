@@ -1258,3 +1258,7 @@ ok and what if it's just newly added project? then what would happen? since we j
 ---
 
 ok so basically i can remove those files also right now? like can we cleanup whatever isn't req please! since we are getting close to finalizing the project now
+
+---
+
+anything else which we need to cleanup?
