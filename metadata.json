@@ -3,7 +3,7 @@
   "checkpoint_id": "01M4N5HRP6QJNX02ZBS48VGX04",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 4,
+  "checkpoints_count": 2,
   "files_touched": [
     "web/.env.example",
     "web/src/app/(dashboard)/dashboard/page.tsx",
@@ -19,7 +19,12 @@
     "web/src/components/dashboard/section-title.tsx",
     "web/src/components/dashboard/sidebar.tsx",
     "web/src/components/dashboard/workspace.ts",
-    "web/src/components/onboarding/steps/github-step.tsx"
+    "web/src/components/onboarding/steps/github-step.tsx",
+    "web/src/components/onboarding/steps/github/github-account.tsx",
+    "web/src/components/onboarding/steps/github/github-branch-select.tsx",
+    "web/src/components/onboarding/steps/github/github-connect-prompt.tsx",
+    "web/src/components/onboarding/steps/github/github-repo-select.tsx",
+    "web/src/components/ui/select.tsx"
   ],
   "sessions": [
     {
@@ -38,11 +43,11 @@
     }
   ],
   "token_usage": {
-    "input_tokens": 168057,
+    "input_tokens": 244419,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 415232,
-    "output_tokens": 21017,
-    "api_call_count": 4
+    "cache_read_tokens": 1709184,
+    "output_tokens": 39276,
+    "api_call_count": 2
   },
   "combined_attribution": {
     "calculated_at": "2026-10-11T09:43:51.186868Z",
