@@ -1,7 +1,11 @@
 import { FieldValue } from "firebase-admin/firestore";
-import type { AuthProviderName } from "@/lib/db/schema/user";
 import { db } from "@/lib/db/firebase";
-import { OnboardingStatus } from "@/lib/db/schema/user";
+import {
+  OnboardingStatus,
+  UserRecord,
+  type AuthProviderName,
+} from "@/lib/db/schema/user";
+import { COLLECTIONS } from "./collections";
 
 export function userDocId(
   email: string | null | undefined,
@@ -21,7 +25,7 @@ export async function upsertUser(input: {
   accountId: string;
 }) {
   const id = userDocId(input.email, input.provider, input.accountId);
-  const ref = db().collection("users").doc(id);
+  const ref = db().collection(COLLECTIONS.USERS).doc(id);
   const snap = await ref.get();
   const existing = snap.get(`providers.${input.provider}`) as
     | { connectedAt?: unknown }
@@ -57,4 +61,35 @@ export async function upsertUser(input: {
   });
 
   return id;
+}
+
+export async function markOnboardingInProgress(userId: string) {
+  await db().collection(COLLECTIONS.USERS).doc(userId).update({
+    "onboarding.status": OnboardingStatus.in_progress,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+}
+
+export async function getUserProfile(uid: string): Promise<UserRecord | null> {
+  const snap = await db().collection(COLLECTIONS.USERS).doc(uid).get();
+
+  if (!snap.exists) return null;
+
+  const data = snap.data() as Partial<UserRecord>;
+
+  if (!data) return null;
+
+  return {
+    email: data.email ?? null,
+    name: data.name ?? null,
+    image: data.image ?? null,
+    providers: data.providers ?? {},
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+    onboarding: data.onboarding ?? {
+      status: OnboardingStatus.not_started,
+      projectId: null,
+      completedAt: null,
+    },
+  };
 }

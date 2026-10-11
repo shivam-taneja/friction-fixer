@@ -1,13 +1,9 @@
-import type {
-  AnalyticsProvider,
-  OwnershipMethod,
-  ProjectGoal,
-  ProjectStep,
-} from "@/lib/db/schema/project";
-import { parseWebsite, isRepoName } from "@/lib/onboarding/website";
+export type AnalyticsProvider = "posthog" | "mixpanel" | "amplitude";
 
-export { parseWebsite, isRepoName };
-export type { AnalyticsProvider, OwnershipMethod, ProjectGoal };
+export type ProjectGoal =
+  | "signup_conversion"
+  | "checkout_completion"
+  | "contact_form";
 
 export const onboardingSteps = [
   {
@@ -47,13 +43,6 @@ export const goalChoices: { id: ProjectGoal; label: string }[] = [
   { id: "checkout_completion", label: "Checkout completion" },
   { id: "contact_form", label: "Contact form submissions" },
 ];
-
-export function uiStepIndex(step: ProjectStep) {
-  if (step === "analytics") return 1;
-  if (step === "github") return 2;
-  if (step === "goal" || step === "done") return 3;
-  return 0;
-}
 
 export function analyticsLabel(id: AnalyticsProvider) {
   return analyticsChoices.find((choice) => choice.id === id)?.label ?? id;

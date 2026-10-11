@@ -2,16 +2,16 @@
 
 Python code for the Friction Fixer loop. The full loop is described in [FLOW.md](../FLOW.md).
 
-The Analyst, Reviewer, simulator, and loop are still placeholders. The Builder can already edit `demo-site/` and open a pull request.
+The Analyst reads a mock PostHog export and writes one plan. The Builder can edit `demo-site/` and open a pull request. The Reviewer compares mock before and after numbers and returns KEEP or UNDO. The simulator and the loop are still placeholders.
 
 ## Files
 
 | File           | Job                                                                                                                                    |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `loop.py`      | Runs Analyst, Builder, merge, then Reviewer. Stops after 5 rounds, or when bounce rate hits the goal.                                  |
-| `analyst.py`   | Reads visitor data and past verdicts. Writes one plan.                                                                                 |
+| `analyst/`     | Reads mock PostHog events and past verdicts. Writes one plan. `events.py` loads `fixtures/events.json`. `plan.py` asks the configured model for the change. |
 | `builder/`     | Makes that one change inside `demo-site/`, commits, and opens a pull request. `edit.py` calls Groq. `git.py` commits and opens the PR. |
-| `reviewer.py`  | Checks the live page and the new numbers. Returns KEEP or UNDO.                                                                        |
+| `reviewer/`    | Compares one change with mock before and after numbers. Returns KEEP or UNDO for the loop to pass back to the Analyst. `fixtures/increased.json` clears the margin. `fixtures/decreased.json` misses it. |
 | `simulator.py` | Mock visitor numbers. They must change when the page changes.                                                                          |
 | `schemas.py`   | The plan and the verdict the agents pass to each other.                                                                                |
 | `tracing.py`   | neatlogs. One round is one trace.                                                                                                      |
@@ -25,6 +25,19 @@ From the repo root, with `venv` activated and `agent/.env` filled in:
 
 ```bash
 python -m agent
+```
+
+To print the Analyst plan from the mock PostHog export:
+
+```bash
+python -m agent.analyst
+```
+
+To judge the two temp result files:
+
+```bash
+python -m agent.reviewer increased
+python -m agent.reviewer decreased
 ```
 
 To test the Builder on its own, commit `demo-site/` on `main` first, then ask for one change. This pushes a branch and opens a pull request:

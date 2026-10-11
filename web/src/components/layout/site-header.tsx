@@ -1,14 +1,12 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { AuthCta } from "@/components/auth/auth-cta";
 import { Brand } from "@/components/layout/brand";
 import { pageContainerClass } from "@/components/layout/page-container";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const navLinkClass =
   "text-muted-foreground no-underline transition-colors hover:text-foreground max-md:hidden";
 
-export function SiteHeader({ signedIn }: { signedIn: boolean }) {
+export function SiteHeader() {
   return (
     <header
       className={cn(
@@ -30,14 +28,11 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
         <a className={navLinkClass} href="#faq">
           FAQs
         </a>
-        <Button
-          nativeButton={false}
-          render={<Link href={signedIn ? "/dashboard" : "/auth"} />}
+        <AuthCta
+          signedOutLabel="Meet your agent"
           variant="ink"
           className="max-sm:px-3 max-sm:text-[11px]"
-        >
-          {signedIn ? "Go to dashboard" : "Meet your agent"} <ArrowUpRight />
-        </Button>
+        />
       </nav>
     </header>
   );

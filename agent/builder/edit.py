@@ -39,7 +39,7 @@ def provider_settings() -> tuple[str, str, str]:
         raise RuntimeError(
             f"Set {spec['api_key_env']} in agent/.env for the {name} provider."
         )
-    model = os.getenv("LLM_MODEL", spec["model"]).strip()
+    model = os.getenv("LLM_MODEL", "").strip() or spec["model"]
     return key, spec["base_url"], model
 
 

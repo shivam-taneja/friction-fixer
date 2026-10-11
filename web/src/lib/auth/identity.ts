@@ -10,14 +10,26 @@ export type SignInIdentity = {
 };
 
 function authProvider(token: DecodedIdToken): AuthProviderName | null {
-  if (token.firebase.sign_in_provider === "google.com") return "google";
-  if (token.firebase.sign_in_provider === "github.com") return "github";
+  if (token.firebase.identities["google.com"]) return "google";
+  if (token.firebase.identities["github.com"]) return "github";
   return null;
 }
 
 function accountId(token: DecodedIdToken) {
-  const ids = token.firebase.identities[token.firebase.sign_in_provider];
-  if (Array.isArray(ids) && typeof ids[0] === "string") return ids[0];
+  const provider = authProvider(token);
+  const providerId =
+    provider === "google"
+      ? "google.com"
+      : provider === "github"
+        ? "github.com"
+        : null;
+
+  const ids = providerId ? token.firebase.identities[providerId] : undefined;
+
+  if (Array.isArray(ids) && typeof ids[0] === "string") {
+    return ids[0];
+  }
+
   return token.uid;
 }
 

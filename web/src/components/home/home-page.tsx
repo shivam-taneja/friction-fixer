@@ -7,17 +7,17 @@ import { WorkflowSection } from "@/components/home/workflow-section";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 
-export function HomePage({ signedIn }: { signedIn: boolean }) {
+export function HomePage() {
   return (
     <>
-      <SiteHeader signedIn={signedIn} />
+      <SiteHeader />
       <main>
-        <HeroSection signedIn={signedIn} />
+        <HeroSection />
         <IntegrationsSection />
         <WorkflowSection />
         <SafetySection />
         <FaqSection />
-        <FinalCta signedIn={signedIn} />
+        <FinalCta />
       </main>
       <SiteFooter />
     </>

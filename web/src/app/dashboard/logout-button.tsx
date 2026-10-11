@@ -14,9 +14,7 @@ export function LogoutButton() {
     setPending(true);
     try {
       await signOut(getFirebaseAuth());
-      await fetch("/api/logout");
       router.replace("/");
-      router.refresh();
     } catch {
       setPending(false);
     }

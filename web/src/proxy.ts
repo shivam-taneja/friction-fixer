@@ -10,17 +10,6 @@ import {
 } from "./config/routes";
 
 export async function proxy(request: NextRequest) {
-  if (request.nextUrl.pathname === "/login") {
-    return NextResponse.redirect(new URL("/auth", request.url));
-  }
-
-  if (
-    request.nextUrl.pathname === AUTH_API_PATHS.login ||
-    request.nextUrl.pathname === AUTH_API_PATHS.logout
-  ) {
-    return NextResponse.next();
-  }
-
   return authMiddleware(request, {
     loginPath: AUTH_API_PATHS.login,
     logoutPath: AUTH_API_PATHS.logout,
@@ -29,7 +18,7 @@ export async function proxy(request: NextRequest) {
     cookieSignatureKeys: authConfig.cookieSignatureKeys,
     cookieSerializeOptions: authConfig.cookieSerializeOptions,
     serviceAccount: authConfig.serviceAccount,
-    handleValidToken: async (_token, headers) => {
+    handleValidToken: async ({}, headers) => {
       if (
         PUBLIC_PATHS.includes(request.nextUrl.pathname) &&
         request.nextUrl.pathname === LOGIN_PATH
@@ -39,17 +28,18 @@ export async function proxy(request: NextRequest) {
         );
       }
 
-      const requestHeaders = new Headers(headers);
-      requestHeaders.delete("x-user-email");
-      requestHeaders.set("x-signed-in", "1");
-
       return NextResponse.next({
         request: {
-          headers: requestHeaders,
+          headers,
         },
       });
     },
     handleInvalidToken: async (reason) => {
+      console.error("[auth] Invalid token:", {
+        pathname: request.nextUrl.pathname,
+        reason,
+      });
+
       if (!PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
         console.info("Missing or invalid credentials", { reason });
       }

@@ -26,8 +26,7 @@ export function GithubStep({
           onChange={(event) => onRepoChange(event.target.value)}
         />
         <span className="mt-2 text-xs font-normal text-muted-foreground">
-          Use the repository that powers this website. The name is saved on this
-          project. GitHub access comes later.
+          Use the repository that powers this website.
         </span>
       </label>
       <div className="flex items-center justify-between gap-4 rounded-lg border border-border px-4 py-3">

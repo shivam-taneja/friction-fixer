@@ -57,16 +57,14 @@ export function AuthForm() {
       const token = await credential.user.getIdToken();
 
       await fetch("/api/login", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      router.refresh();
-      router.replace("/onboarding");
+      router.refresh(); // Refresh Next.js server component state with the new cookie
+      router.replace("/dashboard");
     } catch (e) {
       const err = e as AuthError;
-      setError(mapFirebaseError(err));
+      setError(err.code ? mapFirebaseError(err) : err.message);
     } finally {
       setPending(null);
     }

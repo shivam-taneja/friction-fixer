@@ -1,4 +1,4 @@
-import type { AnalyticsProvider } from "@/lib/db/schema/project";
+import { AnalyticsProvider } from "@/components/onboarding/logic";
 
 export type AnalyticsConnectionRecord = {
   userId: string;

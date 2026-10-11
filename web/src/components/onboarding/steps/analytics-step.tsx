@@ -42,10 +42,6 @@ export function AnalyticsStep({
           </Button>
         );
       })}
-      <p className="text-xs text-muted-foreground">
-        Your choice is saved on this project. Connecting the account comes
-        later.
-      </p>
     </div>
   );
 }

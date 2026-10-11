@@ -4,19 +4,28 @@ import { signInIdentity } from "@/lib/auth/identity";
 import { userDocId } from "@/lib/db/users";
 import { authConfig } from "@/lib/firebase/auth-config";
 
-export async function requestUser() {
-  const tokens = await getTokens(await cookies(), {
-    apiKey: authConfig.apiKey,
-    cookieName: authConfig.cookieName,
-    cookieSignatureKeys: authConfig.cookieSignatureKeys,
-    serviceAccount: authConfig.serviceAccount,
-  });
-  if (!tokens) return null;
+export async function getServerUser() {
+  try {
+    const tokens = await getTokens(await cookies(), {
+      apiKey: authConfig.apiKey,
+      cookieName: authConfig.cookieName,
+      cookieSignatureKeys: authConfig.cookieSignatureKeys,
+      serviceAccount: authConfig.serviceAccount,
+    });
 
-  const identity = signInIdentity(tokens.decodedToken);
-  if (!identity) return null;
+    if (!tokens) return null;
 
-  return {
-    userId: userDocId(identity.email, identity.provider, identity.accountId),
-  };
+    const identity = signInIdentity(tokens.decodedToken);
+
+    if (!identity) return null;
+
+    return {
+      ...tokens.decodedToken,
+      userId: userDocId(identity.email, identity.provider, identity.accountId),
+      identity,
+    };
+  } catch (error) {
+    console.error("[getServerUser] Token error:", error);
+    return null;
+  }
 }
