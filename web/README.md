@@ -53,8 +53,12 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000). The dashboard is at [http://localhost:3000/dashboard](http://localhost:3000/dashboard). Runs are at [http://localhost:3000/dashboard/runs](http://localhost:3000/dashboard/runs).
 
-**Start run** checks the baseline when it is clicked. Mock data opens a dialog for improved or worse. A live PostHog run starts immediately, saves the last 7 days, and waits for the check time from Settings. That wait is 1 hour to 14 days, and the default is 7 days. A run that is already waiting keeps its check time when the setting changes. The run page shows Measuring until `python -m agent.check` keeps or undoes the change. If a pull request conflicts, the run waits on that page until you resolve it on GitHub and press **Continue**.
+The browser calls this app's API routes. Those routes call `AGENT_URL` with `AGENT_SECRET`. A local agent is `python -m agent.server` on port 8000. Leave both servers stopped unless the task asks to run them.
 
-GitHub and PostHog are connected during onboarding and removed together from Settings. The same email on Google and GitHub is one account. Runs on the dashboard are grouped by project. A removed project stays visible and cannot be continued.
+**Start run** checks the baseline when it is clicked, not when the page loads. Mock data opens a dialog for improved or worse. Keep that dialog. A live PostHog run starts immediately, saves the last 7 days, and waits for the check time from Settings. That wait is stored as `checkAfterHours` on the user: 1 hour to 14 days, default 7 days. A run that is already waiting keeps its check time when the setting changes. The run page shows Measuring until `python -m agent.check` keeps or undoes the change. If a pull request conflicts, the run waits on that page until you resolve it on GitHub and press **Continue**. Closing that pull request makes Continue fail the run.
 
-cfo.ai is not this app. Pricing work stays out of `web/`. The handoff is in the root [README](../README.md#cfoai).
+GitHub and PostHog are connected during onboarding and removed together from Settings. After setup, connecting or disconnecting only one of them is refused. The same email on Google and GitHub is one account. Runs on the dashboard are grouped by project id. The heading is the repository. A second line shows the branch and when that project was connected, so two groups with the same repository stay distinct. A removed project stays visible and cannot be continued. Disconnecting stops a queued, running, blocked, or measuring run.
+
+Settings also has the mock toggle and the check wait. Errors from Start run use the `notify` toast wrapper. Overview and Changes are unused screens. Their sidebar links stay commented out.
+
+cfo.ai is not this app. Pricing work stays out of `web/`. The handoff is in the root [README](../README.md#cfoai). The decisions a new session must keep are in that same file under **Already decided**.

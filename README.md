@@ -19,7 +19,7 @@ Full details are in [FLOW.md](FLOW.md). In short:
 3. **Builder** edits the project's source folder, commits, and opens a pull request with the GitHub App.
 4. The pull request is merged. If it conflicts, the run waits. You resolve it on GitHub and press **Continue**. The agent does not pull or rewrite the branch.
 5. **Reviewer** compares before and after. Bounce rate must fall by at least 5 percentage points to keep the change. Otherwise a second pull request undoes it and is merged too.
-6. Mock after-numbers are invented when the run starts. Live after-numbers come from PostHog after the check wait saved on that user in Settings. The default is 7 days. The shortest wait is 1 hour and the longest is 14 days. `python -m agent.check` does that read. A run that is already waiting keeps the check time it was given. The next change is another Start run. The loop does not start it by itself.
+6. Mock after-numbers are invented when the run starts. The next mock run for that project continues from the saved set. Live after-numbers come from PostHog after the check wait saved on that user in Settings. The default is 7 days. The shortest wait is 1 hour and the longest is 14 days. `python -m agent.check` does that read. A run that is already waiting keeps the check time it was given. The next live run reads PostHog again for a new 7-day baseline. It does not continue from the previous after numbers. Past verdicts for the same project still go to the Analyst. The next change is another Start run. The loop does not start it by itself.
 
 ## Current status
 
@@ -36,9 +36,28 @@ Still open, and these are the rest of the core:
 
 Overview and Changes exist in the dashboard and are not linked. Leave them unless a task asks for them.
 
+## Already decided
+
+A new session should keep these. They were chosen on purpose.
+
+- Mock data stays. It is off until the user turns it on in Settings. Live PostHog does not replace it.
+- The check wait is `users/{userId}.checkAfterHours`. Settings allows 1 through 336 hours. The default, when the field is missing, is 168 (7 days). `agent/config.py` only stores those bounds. It does not schedule the check.
+- When a live run merges, it saves `measuredFrom` (that moment) and `checkAfter` (`measuredFrom` plus the user's wait). Changing Settings later does not rewrite those fields. `python -m agent.check` reads PostHog from `measuredFrom` until `checkAfter`. A run saved before `measuredFrom` existed is read over the 7 days ending at `checkAfter`.
+- One email is one Friction Fixer account. Google and GitHub with the same email are the same user. The id is the lowercased email.
+- After onboarding, GitHub and PostHog are disconnected together from Settings, and they are connected again only by going through onboarding. Disconnecting stops queued, running, blocked, and measuring runs for that project. The run documents stay. The runs page groups them by project id. A disconnected project cannot be continued.
+- The PostHog project and the GitHub repository must be the same deployed site. Traffic on one site does not measure an edit to another.
+- On UNDO, open a new revert pull request and merge that. Do not close the original pull request.
+- On a merge conflict, pause the run. Do not `git pull` and do not rewrite the branch. The person fixes it on GitHub and presses Continue. If they closed the pull request, Continue fails the run.
+- The Reviewer does not call the model. KEEP only when bounce rate falls by at least 5 percentage points (`BOUNCE_RATE_DROP`). Scroll, time, and pageviews are recorded and do not decide. `site_check` is `OK`.
+- One active run per user. `measuring` and `blocked` hold that lock and do not count toward the Daytona cap. The cap is 2 sandboxes for the whole app, and it applies to queued and running work. UNDO is the only part of the check that opens a sandbox.
+- The local agent is `python -m agent.server` on port 8000. Restart it after a Python change. The website on port 3000 calls `AGENT_URL` from its own API routes. The browser does not call Render.
+- Do not start the dev server or the agent unless the task asks for it. Do not commit `.env` files, and do not print their values.
+- cfo.ai is the business plan, outside this repo. The handoff is [below](#cfoai). Do not add billing to the agent or the website for that work.
+
 ## Where it runs
 
-- The website is the Next.js app in `web/`. **Start run** calls the agent. It does not call Render from the browser.
+- The public site is [friction-fixer.shivamtaneja.com](https://friction-fixer.shivamtaneja.com). The website is the Next.js app in `web/`. **Start run** calls a Next.js route, and that route calls the agent with `AGENT_SECRET`. The browser does not call Render.
+- PostHog's OAuth client id is `https://friction-fixer.shivamtaneja.com/api/posthog/client`. That URL has to be the deployed site. Localhost is only the redirect.
 - The agent is a Render web service. Build `pip install -r agent/requirements.txt`, start `python -m agent.server`, Python 3.13, health check `/`. Root directory stays empty. The live service is [friction-fixer.onrender.com](https://friction-fixer.onrender.com).
 - The live check is a separate Render cron job, same build command, command `python -m agent.check`, region Singapore. It needs `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`, `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, and `DAYTONA_API_KEY` from the agent service. It does not need `AGENT_SECRET`, the LLM keys, or `PYTHON_VERSION` unless a build fails on the wrong Python. Leave `PYTHON_VERSION` unset so it matches the web service. The cheapest instance is enough. The cron does not inherit the web service's environment.
 - Each round is one neatlogs trace, workflow `friction-fix-round`. The agent sends it to `https://ingest.neatlogs.com`. You read traces on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3). That URL is the project home, not a public share of one trace. A public link is a share you turn on for that trace in the dashboard. The code does not publish one.
@@ -133,6 +152,7 @@ copy agent\.env.example agent\.env
 - Entire checkpoints: [commits page](https://entire.io/gh/shivam-taneja/friction-fixer/commits)
 - cfo.ai business plan: _link when the plan exists_
 - Demo video: _link_
+- Posts shared while building (#neatHack): _links_
 
 ## cfo.ai
 
@@ -148,5 +168,3 @@ The plan has to match the product as it works now:
 - Do not invent vendor prices. Use each vendor's current public pricing. A 7-day wait matches the baseline window. A 1-hour wait is something a user can choose in Settings for a demo. Runs already scheduled keep the wait they were given.
 
 Leave the agent loop alone. The business plan is not a new status, a new screen, or a change to the keep rule.
-
-- Posts shared while building (#neatHack): _links_

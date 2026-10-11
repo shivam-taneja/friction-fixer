@@ -45,8 +45,9 @@ This file explains what each agent does, what it receives, and what it hands to 
                             |                           |
                             +-------------+-------------+
                                           |
-                            the next Start run uses these numbers
-                            and receives the verdict
+              mock: the next Start run continues from these numbers
+              live: the next Start run reads PostHog again
+              both: the Analyst receives the verdict
 ```
 
 The website saves every step on the Firestore `runs` document. One click is one round. The live check is a later process, not a second click.
@@ -93,9 +94,10 @@ Live PostHog:
 
 - Start run reads the last 7 days and saves that row as `before`. The dialog does not open.
 - After the pull request merges, the run stays `measuring` until `checkAfter`. That wait is the hours saved on the user in Settings. The default is 7 days. The shortest is 1 hour and the longest is 14 days. The baseline window stays 7 days. `measuredFrom` is when the wait started, so a later Settings change does not move this run.
-- `python -m agent.check` reads PostHog from `measuredFrom` until `checkAfter`, saves `after`, and runs the same KEEP or UNDO rule. One hour of traffic is unlikely to move bounce rate by 5 points, so a demo at the shortest wait should expect UNDO.
+- `python -m agent.check` reads PostHog from `measuredFrom` until `checkAfter`, saves `after`, and runs the same KEEP or UNDO rule. One hour of traffic is unlikely to move bounce rate by 5 points, so a demo at the shortest wait should expect UNDO. If the cron runs late, the window stays the one saved on the run.
+- The next live Start run reads a new 7-day baseline from PostHog. It does not continue from this run's after numbers. Past verdicts for this project are still given to the Analyst.
 - The PostHog project has to be the site the repository deploys. A portfolio PostHog project plus this repo's `demo-site/` measures the portfolio and reverts `demo-site/`.
-- A run already saved with an old `checkAfter` does not move when this setting changes.
+- A run already saved with an old `checkAfter` does not move when this setting changes. Keep mock data. It is the path that does not wait on PostHog.
 
 ## What agents pass to each other
 
@@ -141,7 +143,8 @@ reason:           why this decision was made, including the change text
 - Every change is its own commit and its own pull request, so undoing is one revert.
 - The Builder only touches source files inside the project's source folder.
 - A conflict stops the run for a person. The agent does not pull.
-- One active run per user. Two Daytona sandboxes is the global cap, when that key is set.
+- One active run per user, including `measuring` and `blocked`. Two Daytona sandboxes is the global cap for queued and running work. A measuring run does not take a sandbox until UNDO.
+- Mock data stays in the product. The check wait is per user, in Settings, from 1 hour to 14 days, default 7 days.
 - Secrets live in `agent/.env` and `web/.env` and are never committed. Git uses the GitHub App, not a personal token.
 
 ## What gets recorded
