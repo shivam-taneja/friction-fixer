@@ -24,43 +24,66 @@ export async function upsertUser(input: {
   provider: AuthProviderName;
   accountId: string;
 }) {
-  const id = userDocId(input.email, input.provider, input.accountId);
-  const ref = db().collection(COLLECTIONS.USERS).doc(id);
-  const snap = await ref.get();
-  const existing = snap.get(`providers.${input.provider}`) as
-    | { connectedAt?: unknown }
-    | undefined;
-  const providerLink = {
+  console.info("[upsertUser] Starting", {
+    provider: input.provider,
     accountId: input.accountId,
-    connectedAt: existing?.connectedAt ?? FieldValue.serverTimestamp(),
-  };
-
-  if (!snap.exists) {
-    await ref.set({
-      email: input.email?.trim().toLowerCase() ?? null,
-      name: input.name ?? null,
-      image: input.image ?? null,
-      providers: { [input.provider]: providerLink },
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp(),
-      onboarding: {
-        status: OnboardingStatus.not_started,
-        projectId: null,
-        completedAt: null,
-      },
-    });
-    return id;
-  }
-
-  await ref.update({
-    email: input.email?.trim().toLowerCase() ?? snap.get("email") ?? null,
-    name: input.name ?? snap.get("name") ?? null,
-    image: input.image ?? snap.get("image") ?? null,
-    [`providers.${input.provider}`]: providerLink,
-    updatedAt: FieldValue.serverTimestamp(),
+    hasEmail: Boolean(input.email),
+    hasName: Boolean(input.name),
+    hasImage: Boolean(input.image),
   });
 
-  return id;
+  try {
+    const id = userDocId(input.email, input.provider, input.accountId);
+    const ref = db().collection(COLLECTIONS.USERS).doc(id);
+
+    const snap = await ref.get();
+
+    const existing = snap.get(`providers.${input.provider}`) as
+      | { connectedAt?: unknown }
+      | undefined;
+
+    const providerLink = {
+      accountId: input.accountId,
+      connectedAt: existing?.connectedAt ?? FieldValue.serverTimestamp(),
+    };
+
+    if (!snap.exists) {
+      console.info("[upsertUser] Creating new user", { id });
+
+      await ref.set({
+        email: input.email?.trim().toLowerCase() ?? null,
+        name: input.name ?? null,
+        image: input.image ?? null,
+        providers: { [input.provider]: providerLink },
+        createdAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp(),
+        onboarding: {
+          status: OnboardingStatus.not_started,
+          projectId: null,
+          completedAt: null,
+        },
+      });
+
+      return id;
+    }
+
+    await ref.update({
+      email: input.email?.trim().toLowerCase() ?? snap.get("email") ?? null,
+      name: input.name ?? snap.get("name") ?? null,
+      image: input.image ?? snap.get("image") ?? null,
+      [`providers.${input.provider}`]: providerLink,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    return id;
+  } catch (error) {
+    console.error("[upsertUser] Failed", {
+      provider: input.provider,
+      error,
+    });
+
+    throw error;
+  }
 }
 
 export async function markOnboardingInProgress(userId: string) {

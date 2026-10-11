@@ -54,15 +54,23 @@ export function AuthForm() {
     try {
       const auth = getFirebaseAuth();
       const credential = await signInWithPopup(auth, provider);
+
       const token = await credential.user.getIdToken();
 
-      await fetch("/api/login", {
+      const response = await fetch("/api/auth/session", {
+        method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      router.refresh(); // Refresh Next.js server component state with the new cookie
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(`Login failed (${response.status}): ${body}`);
+      }
+
       router.replace("/dashboard");
     } catch (e) {
+      console.error("[AuthForm] Sign-in failed:", e);
+
       const err = e as AuthError;
       setError(err.code ? mapFirebaseError(err) : err.message);
     } finally {

@@ -16,13 +16,14 @@ export async function createSession(request: NextRequest) {
     return NextResponse.json({ error: "Missing token" }, { status: 401 });
   }
 
-  const { verifyIdToken } = getFirebaseAuth(
-    authConfig.serviceAccount,
-    authConfig.apiKey,
-  );
-
   try {
+    const { verifyIdToken } = getFirebaseAuth(
+      authConfig.serviceAccount,
+      authConfig.apiKey,
+    );
+
     const decoded = await verifyIdToken(token);
+
     const identity = signInIdentity(decoded);
 
     if (!identity) {
@@ -33,9 +34,11 @@ export async function createSession(request: NextRequest) {
     }
 
     await upsertUser(identity);
-    return setAuthCookies(request.headers, authConfig);
+    const response = setAuthCookies(request.headers, authConfig);
+    return response;
   } catch (error) {
-    console.error("Login failed: ", error);
+    console.error("[createSession] Login failed:", error);
+
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
   }
 }
