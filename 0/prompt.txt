@@ -1,0 +1,13 @@
+for now can we comment out the dashboard page? and make the default page to runs, and remove the items from sidebar @web/src/components/layout/sidebar.tsx @web/src/config/routes.ts  and check other files also while u are at it
+
+---
+
+For the code present, we get this error:
+```
+This comparison appears to be unintentional because the types '"/dashboard/runs"' and '"/dashboard"' have no overlap.
+```
+Fix it, verify, and then give a concise explanation. @web/src/components/layout/sidebar.tsx:62-65
+
+---
+
+dude keep settings please
