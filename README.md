@@ -29,9 +29,9 @@ The loop runs from the website through the deployed agent. Visitor numbers are s
 
 - The website is the Next.js app in `web/`. **Start run** calls the agent. It does not call Render from the browser.
 - The agent is a Render web service. Build `pip install -r agent/requirements.txt`, start `python -m agent.server`, Python 3.13, health check `/`. The live service is [friction-fixer.onrender.com](https://friction-fixer.onrender.com).
-- Each round is one neatlogs trace, workflow `friction-fix-round`. The agent sends it to `https://ingest.neatlogs.com`. You read it in the neatlogs dashboard. A public link is a share you turn on for that trace. The code does not publish one.
-- Daytona is the sandbox the agent can open instead of a long-lived machine. `open_repo` clones the project there, and a new run is refused while two sandboxes are already open. The Builder does not use that clone yet. It still edits the checkout on the Render service.
-- Entire records the Cursor sessions that built this repo. It is not called by the agent loop. After `git push`, a checkpoint opens at `https://entire.io/gh/shivam-taneja/friction-fixer/commit/<commit-sha>` when that commit has an `Entire-Checkpoint` trailer.
+- Each round is one neatlogs trace, workflow `friction-fix-round`. The agent sends it to `https://ingest.neatlogs.com`. You read traces on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3). That URL is the project home, not a public share of one trace. A public link is a share you turn on for that trace in the dashboard. The code does not publish one.
+- Daytona is where the edit happens. Each run clones that user's repository into a sandbox, changes the source folder there, and pushes the pull request from that clone. Render only runs the agent process. A new run is refused while two sandboxes are already open.
+- Entire records the Cursor sessions that built this repo. It is not called by the agent loop. Every checkpoint is listed on the [commits page](https://entire.io/gh/shivam-taneja/friction-fixer/commits). After `git push`, a checkpoint opens at `https://entire.io/gh/shivam-taneja/friction-fixer/commit/<commit-sha>` when that commit has an `Entire-Checkpoint` trailer.
 
 ## Project structure
 
@@ -115,10 +115,10 @@ copy agent\.env.example agent\.env
 
 ## Evidence
 
-- neatlogs traces, before vs after improving the agent: open the trace in the neatlogs dashboard, turn on public sharing, and paste that link
+- neatlogs traces, before vs after improving the agent: open the trace on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3), turn on public sharing, and paste that link. The project home is not a public share of one trace.
 - A run where the agent's change failed and it undid it: the pull request URL, plus the neatlogs trace for that `run_id`
 - Website results, before vs after (mock data): _numbers_
-- Entire checkpoints: _link or screenshot_
+- Entire checkpoints: [commits page](https://entire.io/gh/shivam-taneja/friction-fixer/commits)
 - cfo.ai business plan: _link_
 - Demo video: _link_
 - Posts shared while building (#neatHack): _links_

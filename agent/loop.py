@@ -7,6 +7,7 @@ from agent.builder import apply_plan
 from agent.builder import git
 from agent.builder.git import NeedsPerson
 from agent.builder.github_app import installation_token
+from agent.builder.sandbox import open_repo
 from agent.builder.text import plan_text
 from agent.history import load_saved
 from agent.progress import RunLog
@@ -66,69 +67,78 @@ def _round(case: str, user_id: str, log: RunLog) -> None:
     saved, history = load_saved(user_id, log.run_id)
     if saved:
         before = saved
-        baseline_detail = "Continued from the latest saved mock numbers.\n" + _numbers(before)
+        baseline_detail = "Continued from the latest saved mock numbers.\n" + _numbers(
+            before
+        )
     else:
         before = generate_baseline()
         baseline_detail = "First saved numbers for this project.\n" + _numbers(before)
-    log.step("baseline", "Baseline", baseline_detail, {"before": _saved_numbers(before)})
-
-    plan = write_plan(before, history, project)
-    log.step("plan", "Plan", plan_text(plan), {"plan": _saved_plan(plan)})
-
-    pr_url = apply_plan(plan, project, token)
-    _merge(pr_url, token, project.repository, undo=False)
     log.step(
-        "pull-request",
-        "Pull request",
-        pr_url + "\nMerged, so the site can go live.",
-        {"pullRequestUrl": pr_url},
+        "baseline", "Baseline", baseline_detail, {"before": _saved_numbers(before)}
     )
 
-    after = generate_outcomes(plan.change, before)[case]
-    log.step(
-        "after",
-        "After numbers",
-        _numbers(after),
-        {"after": _saved_numbers(after)},
-    )
+    box = open_repo(project, token)
+    try:
+        repo = box.materialize(project)
+        plan = write_plan(before, history, project, repo)
+        log.step("plan", "Plan", plan_text(plan), {"plan": _saved_plan(plan)})
 
-    verdict = review(plan.change, before, after)
-    log.step(
-        "verdict",
-        "Verdict",
-        verdict_text(verdict),
-        {
-            "verdict": {
-                "decision": verdict.decision,
-                "reason": verdict.reason,
-                "siteCheck": verdict.site_check,
-            }
-        },
-    )
+        pr_url = apply_plan(plan, project, token, box, repo)
+        _merge(pr_url, token, project.repository, undo=False)
+        log.step(
+            "pull-request",
+            "Pull request",
+            pr_url + "\nMerged, so the site can go live.",
+            {"pullRequestUrl": pr_url},
+        )
 
-    if verdict.decision == "KEEP":
-        log.step("action", "Keep", "Kept the change. No second pull request.")
-        log.finish("kept")
-        return
+        after = generate_outcomes(plan.change, before)[case]
+        log.step(
+            "after",
+            "After numbers",
+            _numbers(after),
+            {"after": _saved_numbers(after)},
+        )
 
-    revert_url = git.revert_pr(
-        pr_url, verdict.reason, token, project.repository, project.branch
-    )
-    _merge(revert_url, token, project.repository, undo=True)
-    log.step(
-        "action",
-        "Undo",
-        "Opened a pull request that undoes the change, then merged it.\n" + revert_url,
-        {"revertPullRequestUrl": revert_url},
-    )
-    log.finish("undone")
+        verdict = review(plan.change, before, after)
+        log.step(
+            "verdict",
+            "Verdict",
+            verdict_text(verdict),
+            {
+                "verdict": {
+                    "decision": verdict.decision,
+                    "reason": verdict.reason,
+                    "siteCheck": verdict.site_check,
+                }
+            },
+        )
+
+        if verdict.decision == "KEEP":
+            log.step("action", "Keep", "Kept the change. No second pull request.")
+            log.finish("kept")
+            return
+
+        revert_url = box.undo(
+            pr_url, verdict.reason, token, project.repository, project.branch
+        )
+        _merge(revert_url, token, project.repository, undo=True)
+        log.step(
+            "action",
+            "Undo",
+            "Opened a pull request that undoes the change, then merged it.\n"
+            + revert_url,
+            {"revertPullRequestUrl": revert_url},
+        )
+        log.finish("undone")
+    finally:
+        box.delete()
 
 
 def _continue(user_id: str, log: RunLog) -> None:
     data = log.resume()
     project = load_project(user_id)
     token = installation_token(project.installation_id)
-    git.prepare_remote(project.repository)
     verdict = data.get("verdict") if isinstance(data.get("verdict"), dict) else {}
     if verdict.get("decision") == "UNDO":
         _continue_undo(data, project, token, log, str(verdict.get("reason") or ""))
@@ -177,9 +187,13 @@ def _continue(user_id: str, log: RunLog) -> None:
         log.step("action", "Keep", "Kept the change. No second pull request.")
         log.finish("kept")
         return
-    revert_url = git.revert_pr(
-        pr_url, verdict_result.reason, token, project.repository, project.branch
-    )
+    box = open_repo(project, token)
+    try:
+        revert_url = box.undo(
+            pr_url, verdict_result.reason, token, project.repository, project.branch
+        )
+    finally:
+        box.delete()
     _merge(revert_url, token, project.repository, undo=True)
     log.step(
         "action",
@@ -196,9 +210,13 @@ def _continue_undo(data: dict, project, token: str, log: RunLog, reason: str) ->
     if not revert_url.startswith("https://"):
         if not original.startswith("https://"):
             raise RuntimeError("This run has no pull request to undo.")
-        revert_url = git.revert_pr(
-            original, reason, token, project.repository, project.branch
-        )
+        box = open_repo(project, token)
+        try:
+            revert_url = box.undo(
+                original, reason, token, project.repository, project.branch
+            )
+        finally:
+            box.delete()
     _merge(revert_url, token, project.repository, undo=True)
     log.step(
         "action",
@@ -237,7 +255,9 @@ def _stored_visitors(value: object) -> VisitorData | None:
     seconds = value.get("timeOnPage")
     visits = value.get("pricingPageVisits")
     values = (bounce, scroll, seconds, visits)
-    if not all(isinstance(item, (int, float)) and not isinstance(item, bool) for item in values):
+    if not all(
+        isinstance(item, (int, float)) and not isinstance(item, bool) for item in values
+    ):
         return None
     return VisitorData(
         bounce_rate=float(bounce),

@@ -47,7 +47,7 @@ READ_LIMIT = 8
 TURN_LIMIT = 6
 
 
-def file_loop(system: str, task: str, root: Path, done, hint: str) -> dict:
+def file_loop(system: str, task: str, root: Path, done, hint: str, repo: Path) -> dict:
     """Let the model ask for files until it returns a finished answer.
 
     {"read":["path"]} opens those files and continues. A finished answer,
@@ -59,7 +59,7 @@ def file_loop(system: str, task: str, root: Path, done, hint: str) -> dict:
         {"role": "system", "content": system},
         {
             "role": "user",
-            "content": task + "\n\nFile list:\n" + list_source_text(root),
+            "content": task + "\n\nFile list:\n" + list_source_text(root, repo),
         },
     ]
     last_error = "The model did not finish."
@@ -82,7 +82,7 @@ def file_loop(system: str, task: str, root: Path, done, hint: str) -> dict:
         names = _read_names(data)
         if names:
             try:
-                note = "Opened files:\n\n" + read_named(root, names[:READ_LIMIT])
+                note = "Opened files:\n\n" + read_named(root, names[:READ_LIMIT], repo)
             except RuntimeError as error:
                 note = f"{error} {hint}"
             _reply(messages, text, note)
@@ -92,8 +92,8 @@ def file_loop(system: str, task: str, root: Path, done, hint: str) -> dict:
     raise RuntimeError(last_error)
 
 
-def edit_site(plan: Plan, project: Project) -> list[Path]:
-    root = source_root(project.source_folder)
+def edit_site(plan: Plan, project: Project, repo: Path) -> list[Path]:
+    root = source_root(project.source_folder, repo)
     mistake = ""
     last_error = "The model did not change any files."
     for _ in range(2):
@@ -105,8 +105,9 @@ def edit_site(plan: Plan, project: Project) -> list[Path]:
                 root,
                 _edit_ready,
                 _EDIT_HINT,
+                repo,
             )
-            edits = _edits(data, root)
+            edits = _edits(data, root, repo)
         except RuntimeError as error:
             last_error = str(error)
             mistake = last_error
@@ -220,19 +221,24 @@ def _file_items(data: dict) -> list[dict]:
             continue
         path = item.get("path") or item.get("file")
         content = item.get("content")
-        if isinstance(path, str) and path.strip() and isinstance(content, str) and content:
+        if (
+            isinstance(path, str)
+            and path.strip()
+            and isinstance(content, str)
+            and content
+        ):
             ready.append(item)
     return ready
 
 
-def _edits(data: dict, root: Path) -> list[tuple[Path, str]]:
+def _edits(data: dict, root: Path, repo: Path) -> list[tuple[Path, str]]:
     files = _file_items(data)
     if not files:
         raise RuntimeError("The model did not return any files to change.")
     edits: list[tuple[Path, str]] = []
     for item in files:
         raw = str(item.get("path") or item.get("file") or "")
-        path = resolve_in_source(raw, root)
+        path = resolve_in_source(raw, root, repo)
         if path.is_dir():
             raise RuntimeError(f"Refusing a directory: {path.name}")
         content = item.get("content")

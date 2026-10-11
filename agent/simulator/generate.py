@@ -67,9 +67,9 @@ def _ask_baseline(mistake: str) -> dict:
                 "role": "system",
                 "content": (
                     "You simulate a first batch of mock PostHog numbers for a homepage "
-                    "where most visitors leave. Return JSON only: "
-                    '{"bounce_rate":0.71,"scroll_depth":0.12,'
-                    '"pricing_page_visits":2,"time_on_page":8.6}. '
+                    "where most visitors leave. Return one JSON object with the keys "
+                    "bounce_rate, scroll_depth, pricing_page_visits, and time_on_page. "
+                    "Choose a fresh set inside the ranges below. "
                     "bounce_rate and scroll_depth are fractions from 0 to 1, not percents. "
                     "bounce_rate must be from 0.65 to 0.90. "
                     "scroll_depth must be from 0.05 to 0.25. "

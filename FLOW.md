@@ -45,8 +45,8 @@ The website saves every step on the Firestore `runs` document. One click is one 
 
 ### 2. Builder
 
-- **Gets:** the plan and the project's `sourceFolder`.
-- **Does:** asks for the files it needs, writes the new file contents, commits, pushes, and opens a pull request against the project's branch. The pull request body includes the plan.
+- **Gets:** the plan and the project's `sourceFolder`, from a Daytona clone of that repository.
+- **Does:** asks for the files it needs, writes the new file contents, commits, pushes, and opens a pull request against the project's branch. The pull request body includes the plan. Render only hosts this process. It does not edit its own checkout.
 - **Auth:** a short-lived GitHub App installation token. The app needs Contents and Pull requests set to Read and write.
 - **Rules:** only source files inside the source folder. No dependency files or lockfiles.
 
@@ -120,10 +120,10 @@ reason:           why this decision was made, including the change text
 
 ## What gets recorded
 
-| What | Where |
-| --- | --- |
-| Every agent run, step by step | neatlogs, one trace per round. Share that trace from the dashboard when the link should be public. |
-| Each dashboard step, the plan, the numbers, and the verdict | Firestore `runs` |
-| Every change, kept or undone | Pull requests on the project's repository |
-| Reasoning behind a code change | Entire checkpoints |
-| Business plan for the product | cfo.ai |
+| What                                                        | Where                                                                                                                                                                                                                                                                                                             |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Every agent run, step by step                               | neatlogs, one trace per round, on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3). That URL is the project home, not a public share of one trace. Share that trace from the dashboard when the link should be public. |
+| Each dashboard step, the plan, the numbers, and the verdict | Firestore `runs`                                                                                                                                                                                                                                                                                                  |
+| Every change, kept or undone                                | Pull requests on the project's repository                                                                                                                                                                                                                                                                         |
+| Reasoning behind a code change                              | Entire checkpoints on the [commits page](https://entire.io/gh/shivam-taneja/friction-fixer/commits)                                                                                                                                                                                                               |
+| Business plan for the product                               | cfo.ai                                                                                                                                                                                                                                                                                                            |

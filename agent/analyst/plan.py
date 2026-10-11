@@ -1,23 +1,28 @@
 """Asks the configured model for one plan. Visitor numbers stay mock."""
 
+from pathlib import Path
+
 from agent.builder.edit import READ_LIMIT, file_loop
-from agent.config import BOUNCE_RATE_DROP, REPO_ROOT
+from agent.config import BOUNCE_RATE_DROP
 from agent.project import Project
 from agent.schemas import Plan, Verdict, VisitorData
 from agent.source import resolve_in_source, source_root
 
 
-def choose(visitors: VisitorData, history: list[Verdict], project: Project) -> Plan:
+def choose(
+    visitors: VisitorData, history: list[Verdict], project: Project, repo: Path
+) -> Plan:
     """Ask the model for one change. It must not repeat a change already undone."""
-    root = source_root(project.source_folder)
+    root = source_root(project.source_folder, repo)
     data = file_loop(
         _system(project),
         _brief(visitors, history, project),
         root,
         _plan_ready,
         _PLAN_HINT,
+        repo,
     )
-    return _parse_plan(data, visitors, history, project)
+    return _parse_plan(data, visitors, history, project, repo)
 
 
 def _system(project: Project) -> str:
@@ -107,13 +112,17 @@ def _plan_ready(data: dict) -> bool:
 
 
 def _parse_plan(
-    data: dict, visitors: VisitorData, history: list[Verdict], project: Project
+    data: dict,
+    visitors: VisitorData,
+    history: list[Verdict],
+    project: Project,
+    repo: Path,
 ) -> Plan:
     plan = Plan(
         problem=_text(data, "problem"),
         evidence=_evidence(visitors),
         change=_text(data, "change"),
-        file=_check_file(_file_name(data), project),
+        file=_check_file(_file_name(data), project, repo),
         expected_effect=_text(data, "expected_effect"),
     )
     undone = [item.reason for item in history if item.decision == "UNDO"]
@@ -138,17 +147,18 @@ def _text(data: dict, key: str) -> str:
     return value.strip()
 
 
-def _check_file(raw: str, project: Project) -> str:
-    root = source_root(project.source_folder)
+def _check_file(raw: str, project: Project, repo: Path) -> str:
+    root = source_root(project.source_folder, repo)
+    base = repo.resolve()
     parts: list[str] = []
     for part in raw.split(" and "):
         if not part.strip():
             continue
-        path = resolve_in_source(part, root)
-        if path == REPO_ROOT.resolve():
+        path = resolve_in_source(part, root, repo)
+        if path == base:
             parts.append(".")
         else:
-            parts.append(path.relative_to(REPO_ROOT).as_posix())
+            parts.append(path.relative_to(base).as_posix())
     if not parts:
         raise RuntimeError("The model did not name a file.")
     return " and ".join(parts)
