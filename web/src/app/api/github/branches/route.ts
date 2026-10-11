@@ -10,12 +10,18 @@ export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
   const user = await getServerUser();
   if (!user) {
-    return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
+    return NextResponse.json(
+      { error: "Sign in to continue." },
+      { status: 401 },
+    );
   }
 
   const fullName = new URL(request.url).searchParams.get("repo") ?? "";
   if (!parseRepoFullName(fullName)) {
-    return NextResponse.json({ error: "Choose a repository." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Choose a repository." },
+      { status: 400 },
+    );
   }
 
   try {

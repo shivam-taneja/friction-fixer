@@ -43,7 +43,10 @@ export async function GET(request: Request) {
   try {
     const account = await getInstallationAccount(installationId);
     if (!account) {
-      return finish(origin, "GitHub did not return an account for that install.");
+      return finish(
+        origin,
+        "GitHub did not return an account for that install.",
+      );
     }
 
     await saveGithubInstallation({
@@ -56,7 +59,9 @@ export async function GET(request: Request) {
     return finish(origin);
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Could not save the GitHub install.";
+      error instanceof Error
+        ? error.message
+        : "Could not save the GitHub install.";
     return finish(origin, message);
   }
 }

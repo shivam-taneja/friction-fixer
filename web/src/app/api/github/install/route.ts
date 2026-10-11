@@ -21,7 +21,11 @@ export async function GET(request: Request) {
   try {
     const state = createGithubState(user.userId);
     const response = NextResponse.redirect(githubInstallUrl(state));
-    response.cookies.set(GITHUB_STATE_COOKIE, state, githubStateCookieOptions());
+    response.cookies.set(
+      GITHUB_STATE_COOKIE,
+      state,
+      githubStateCookieOptions(),
+    );
     return response;
   } catch (error) {
     const message =

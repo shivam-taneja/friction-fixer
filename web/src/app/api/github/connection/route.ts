@@ -13,7 +13,10 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const user = await getServerUser();
   if (!user) {
-    return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
+    return NextResponse.json(
+      { error: "Sign in to continue." },
+      { status: 401 },
+    );
   }
 
   try {

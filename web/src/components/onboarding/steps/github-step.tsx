@@ -164,7 +164,9 @@ export function GithubStep({
   }
 
   const repos = connection?.connected ? connection.repos : [];
-  const selectedRepo = repos.find((repo) => repo.fullName === selection?.fullName);
+  const selectedRepo = repos.find(
+    (repo) => repo.fullName === selection?.fullName,
+  );
   const branchNames =
     selection && !branches.includes(selection.branch)
       ? [selection.branch, ...branches]
@@ -190,6 +192,7 @@ export function GithubStep({
               variant="ghost"
               disabled={authorizing}
               onClick={connect}
+              className="cursor-pointer"
             >
               {authorizing ? "Waiting…" : "Change"}
             </Button>
@@ -263,7 +266,9 @@ export function GithubStep({
                       {branchNames.map((branch) => (
                         <SelectItem key={branch} value={branch}>
                           {branch}
-                          {branch === selection.defaultBranch ? " · default" : ""}
+                          {branch === selection.defaultBranch
+                            ? " · default"
+                            : ""}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -283,7 +288,7 @@ export function GithubStep({
           <Button
             type="button"
             variant="outline"
-            className="h-14 w-full justify-start px-4"
+            className="h-14 w-full justify-start px-4 cursor-pointer"
             disabled={authorizing}
             onClick={connect}
           >
@@ -304,18 +309,6 @@ export function GithubStep({
           {error}
         </p>
       ) : null}
-
-      <div className="flex items-center justify-between gap-4 rounded-lg border border-border px-4 py-3">
-        <div>
-          <p className="text-sm font-semibold">
-            Review changes before they go live
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            You approve. The agent measures.
-          </p>
-        </div>
-        <Check size={18} className="shrink-0 text-success" />
-      </div>
     </div>
   );
 }

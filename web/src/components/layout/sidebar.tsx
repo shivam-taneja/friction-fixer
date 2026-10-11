@@ -18,7 +18,8 @@ import {
   SidebarSeparator,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Brand } from "../layout/brand";
+import { reviewCount } from "@/components/dashboard/workspace";
+import { Brand } from "./brand";
 import { NavUser } from "./nav-user";
 
 const items = [
@@ -67,8 +68,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <span>{item.title}</span>
                   </SidebarMenuButton>
 
-                  {item.title === "Changes" && (
-                    <SidebarMenuBadge>4</SidebarMenuBadge>
+                  {item.title === "Changes" && reviewCount > 0 && (
+                    <SidebarMenuBadge>{reviewCount}</SidebarMenuBadge>
                   )}
                 </SidebarMenuItem>
               );
