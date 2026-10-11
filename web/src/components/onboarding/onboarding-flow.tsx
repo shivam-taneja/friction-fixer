@@ -9,12 +9,11 @@ import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { OnboardingProgress } from "@/components/onboarding/onboarding-progress";
 import {
   onboardingSteps,
+  parseProjectGoal,
   type AnalyticsProvider,
-  type ProjectGoal,
 } from "@/components/onboarding/logic";
 import { AnalyticsStep } from "@/components/onboarding/steps/analytics-step";
 import { GoalStep } from "@/components/onboarding/steps/goal-step";
-import { WebsiteStep } from "@/components/onboarding/steps/website-step";
 import { Button } from "@/components/ui/button";
 import type { GithubSelection } from "@/lib/github/types";
 
@@ -22,16 +21,14 @@ export function OnboardingFlow() {
   const router = useRouter();
 
   const [step, setStep] = useState(0);
-  const [site, setSite] = useState("");
   const [saving, setSaving] = useState(false);
   const [analytics, setAnalytics] = useState<AnalyticsProvider>("posthog");
   const [github, setGithub] = useState<GithubSelection | null>(null);
-  const [goal, setGoal] = useState<ProjectGoal>("signup_conversion");
+  const [goal, setGoal] = useState("");
   const [error, setError] = useState("");
 
   const current = onboardingSteps[step];
   const lastStep = step === onboardingSteps.length - 1;
-  const siteReady = site.trim().length > 0;
   const githubReady = Boolean(
     github?.fullName &&
     github.branch &&
@@ -41,11 +38,6 @@ export function OnboardingFlow() {
 
   async function next() {
     setError("");
-
-    if (current.id === "website" && !siteReady) {
-      setError("Add your website before continuing.");
-      return;
-    }
 
     if (current.id === "github" && !githubReady) {
       setError("Choose a repository, branch, and source folder.");
@@ -62,10 +54,16 @@ export function OnboardingFlow() {
       return;
     }
 
+    const parsedGoal = await parseProjectGoal(goal);
+    if (!parsedGoal.ok) {
+      setError(parsedGoal.error);
+      return;
+    }
+
     setSaving(true);
 
     try {
-      await finishOnboarding({ site, analytics, github, goal });
+      await finishOnboarding({ analytics, github, goal: parsedGoal.goal });
       router.replace("/dashboard");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save.");
@@ -94,27 +92,24 @@ export function OnboardingFlow() {
             void next();
           }}
         >
-          {step === 0 && <WebsiteStep site={site} onSiteChange={setSite} />}
-
-          {step === 1 && (
+          {current.id === "analytics" && (
             <AnalyticsStep
               analytics={analytics}
               onAnalyticsChange={setAnalytics}
             />
           )}
 
-          {step === 2 && (
+          {current.id === "github" && (
             <GithubConnection
               selection={github}
               onSelectionChange={setGithub}
             />
           )}
 
-          {step === 3 && (
+          {current.id === "goal" && (
             <GoalStep
               goal={goal}
               onGoalChange={setGoal}
-              site={site}
               analytics={analytics}
               github={github}
             />
@@ -153,11 +148,7 @@ export function OnboardingFlow() {
               type="submit"
               size="lg"
               className="h-11 px-4"
-              disabled={
-                saving ||
-                (current.id === "website" && !siteReady) ||
-                (current.id === "github" && !githubReady)
-              }
+              disabled={saving || (current.id === "github" && !githubReady)}
             >
               {saving ? "Saving…" : lastStep ? "Start my agent" : "Continue"}
               {lastStep ? <Rocket /> : <ArrowRight />}

@@ -6,7 +6,6 @@ import { OnboardingStatus } from "@/lib/db/schema/user";
 
 export async function createProject(input: {
   userId: string;
-  siteUrl: string;
   analyticsProvider: AnalyticsProvider;
   goal: ProjectGoal;
   repository: string;
@@ -23,7 +22,6 @@ export async function createProject(input: {
 
   batch.set(projectRef, {
     userId: input.userId,
-    siteUrl: input.siteUrl,
     analyticsProvider: input.analyticsProvider,
     goal: input.goal,
     repository: input.repository,

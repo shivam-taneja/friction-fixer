@@ -2,7 +2,6 @@ import type { AnalyticsProvider, ProjectGoal } from "@/components/onboarding/log
 
 export type ProjectRecord = {
   userId: string;
-  siteUrl: string;
   analyticsProvider: AnalyticsProvider;
   goal: ProjectGoal;
   repository: string;

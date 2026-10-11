@@ -3,7 +3,7 @@
 import { getServerUser } from "@/lib/auth/request-user";
 import {
   analyticsChoices,
-  goalChoices,
+  parseProjectGoal,
   type AnalyticsProvider,
   type ProjectGoal,
 } from "@/components/onboarding/logic";
@@ -17,7 +17,6 @@ import {
 import { isGithubSelection, type GithubSelection } from "@/lib/github/types";
 
 export async function finishOnboarding(input: {
-  site: string;
   analytics: AnalyticsProvider;
   github: GithubSelection;
   goal: ProjectGoal;
@@ -28,16 +27,12 @@ export async function finishOnboarding(input: {
     throw new Error("Sign in to continue.");
   }
 
-  const site = input.site.trim();
-  if (!site) throw new Error("Add your website before continuing.");
-
   if (!analyticsChoices.some((choice) => choice.id === input.analytics)) {
     throw new Error("Choose an analytics provider.");
   }
 
-  if (!goalChoices.some((choice) => choice.id === input.goal)) {
-    throw new Error("Choose a goal.");
-  }
+  const parsedGoal = await parseProjectGoal(input.goal);
+  if (!parsedGoal.ok) throw new Error(parsedGoal.error);
 
   if (!isGithubSelection(input.github)) {
     throw new Error("Choose a repository, branch, and source folder.");
@@ -76,9 +71,8 @@ export async function finishOnboarding(input: {
 
   await createProject({
     userId: user.userId,
-    siteUrl: site,
     analyticsProvider: input.analytics,
-    goal: input.goal,
+    goal: parsedGoal.goal,
     repository: input.github.fullName,
     branch: input.github.branch,
     framework: input.github.framework ?? "",

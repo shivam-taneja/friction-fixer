@@ -4,39 +4,34 @@ import {
   analyticsLabel,
   goalChoices,
   type AnalyticsProvider,
-  type ProjectGoal,
 } from "@/components/onboarding/logic";
 import { folderLabel, frameworkLabel } from "@/lib/github/framework";
 import type { GithubSelection } from "@/lib/github/types";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export function GoalStep({
   goal,
   onGoalChange,
-  site,
   analytics,
   github,
 }: {
-  goal: ProjectGoal;
-  onGoalChange: (value: ProjectGoal) => void;
-  site: string;
+  goal: string;
+  onGoalChange: (value: string) => void;
   analytics: AnalyticsProvider;
   github: GithubSelection | null;
 }) {
   const details = [
-    ["Website", site],
     ["Analytics", analyticsLabel(analytics)],
     ["Repository", github?.fullName || "Not connected"],
     ["Branch", github?.branch || "Not chosen"],
-    ["Framework", github?.framework ? frameworkLabel(github.framework) : "Not detected"],
+    [
+      "Framework",
+      github?.framework ? frameworkLabel(github.framework) : "Not detected",
+    ],
     [
       "Source folder",
       github?.sourceFolder ? folderLabel(github.sourceFolder) : "Not chosen",
@@ -44,31 +39,38 @@ export function GoalStep({
     ["Change approval", "Review before publishing"],
   ] as const;
 
-  const selectedGoal = goalChoices.find((choice) => choice.id === goal);
-
   return (
     <div className="grid gap-6">
       <div className="grid gap-2">
         <Label htmlFor="project-goal">Primary goal</Label>
-
-        <Select
+        <Input
+          id="project-goal"
           value={goal}
-          onValueChange={(value) => onGoalChange(value as ProjectGoal)}
-        >
-          <SelectTrigger id="project-goal" className="w-full">
-            <SelectValue placeholder="Select a goal">
-              {selectedGoal?.label ?? "Select a goal"}
-            </SelectValue>
-          </SelectTrigger>
-
-          <SelectContent>
-            {goalChoices.map((choice) => (
-              <SelectItem key={choice.id} value={choice.id}>
-                {choice.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          placeholder="What should the agent improve?"
+          className="h-11"
+          onChange={(event) => onGoalChange(event.target.value)}
+        />
+        <div className="flex flex-wrap gap-2">
+          {goalChoices.map((choice) => {
+            const selected = goal.trim() === choice;
+            return (
+              <Button
+                key={choice}
+                type="button"
+                variant="outline"
+                size="sm"
+                aria-pressed={selected}
+                className={cn(selected && "border-foreground bg-secondary")}
+                onClick={() => onGoalChange(choice)}
+              >
+                {choice}
+              </Button>
+            );
+          })}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Pick a starting point, or write your own.
+        </p>
       </div>
 
       <Card className="py-0">

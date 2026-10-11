@@ -1,17 +1,32 @@
+import * as z from "zod";
+
 export type AnalyticsProvider = "posthog" | "mixpanel" | "amplitude";
 
-export type ProjectGoal =
-  | "signup_conversion"
-  | "checkout_completion"
-  | "contact_form";
+export const projectGoalSchema = z
+  .string()
+  .trim()
+  .min(1, "Write a goal before continuing.")
+  .max(120, "Keep the goal under 120 characters.")
+  .check(
+    z.refine(
+      async (goal) => goal.length >= 3,
+      "Write a goal of at least 3 characters.",
+    ),
+    z.refine(async (goal) => /\p{L}/u.test(goal), "Write a goal in words."),
+  );
+
+export type ProjectGoal = z.infer<typeof projectGoalSchema>;
+
+export async function parseProjectGoal(value: string) {
+  const result = await projectGoalSchema.safeParseAsync(value);
+  if (result.success) return { ok: true as const, goal: result.data };
+  return {
+    ok: false as const,
+    error: result.error.issues[0]?.message ?? "Write a goal before continuing.",
+  };
+}
 
 export const onboardingSteps = [
-  {
-    id: "website",
-    label: "YOUR WEBSITE",
-    title: "Start with your website.",
-    description: "Connect the website you want your agent to improve.",
-  },
   {
     id: "analytics",
     label: "ANALYTICS",
@@ -41,11 +56,11 @@ export const analyticsChoices: { id: AnalyticsProvider; label: string }[] = [
   { id: "amplitude", label: "Amplitude" },
 ];
 
-export const goalChoices: { id: ProjectGoal; label: string }[] = [
-  { id: "signup_conversion", label: "Signup conversion" },
-  { id: "checkout_completion", label: "Checkout completion" },
-  { id: "contact_form", label: "Contact form submissions" },
-];
+export const goalChoices = [
+  "Signup conversion",
+  "Checkout completion",
+  "Contact form submissions",
+] as const;
 
 export function analyticsLabel(id: AnalyticsProvider) {
   return analyticsChoices.find((choice) => choice.id === id)?.label ?? id;
