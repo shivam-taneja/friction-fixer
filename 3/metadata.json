@@ -1,0 +1,60 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NTQQ9STS1QXCKGPE456AQ1",
+  "session_id": "c6734d3a-69c1-48cc-922c-0afefd84a651",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T15:54:06.550368Z",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "save_step_count": 1,
+  "files_touched": [
+    "FLOW.md",
+    "README.md",
+    "agent/README.md"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "1a783618d1f7",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 23426,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1152,
+    "output_tokens": 281,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 2
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T15:54:06.54496Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 22,
+    "human_modified": 4,
+    "human_removed": 0,
+    "total_committed": 22,
+    "total_lines_changed": 50,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 14,
+      "user_lines_removed": 4,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "FLOW.md": 1,
+        "README.md": 10,
+        "agent/README.md": 3
+      },
+      "user_removed_per_file": {
+        "FLOW.md": 1,
+        "README.md": 2,
+        "agent/README.md": 1
+      }
+    }
+  ]
+}
