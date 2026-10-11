@@ -16,8 +16,15 @@ def require_clean_tree() -> None:
         )
 
 
-def current_branch() -> str:
-    return run(["git", "branch", "--show-current"])
+def current_point() -> str:
+    """Branch name, or the commit id when the checkout has no branch.
+
+    Render checks out a commit with no branch, so the branch name is blank.
+    """
+    branch = run(["git", "branch", "--show-current"])
+    if branch:
+        return branch
+    return run(["git", "rev-parse", "HEAD"])
 
 
 def branch_name(change: str) -> str:
@@ -41,6 +48,8 @@ def checkout_new_branch(name: str) -> None:
 
 
 def checkout(name: str) -> None:
+    if not name.strip():
+        raise RuntimeError("There is no branch or commit to switch back to.")
     run(["git", "checkout", name])
 
 
@@ -51,7 +60,20 @@ def commit_files(paths: list[Path], title: str, body: str) -> None:
     if not run(["git", "diff", "--cached", "--name-only"]):
         raise RuntimeError("The model made no visible change.")
 
-    run(["git", "commit", "-m", title, "-m", body])
+    run(
+        [
+            "git",
+            "-c",
+            "user.email=friction-fixer@users.noreply.github.com",
+            "-c",
+            "user.name=Friction Fixer",
+            "commit",
+            "-m",
+            title,
+            "-m",
+            body,
+        ]
+    )
 
 
 def delete_branch(name: str) -> None:

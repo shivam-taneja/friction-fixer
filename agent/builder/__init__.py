@@ -18,7 +18,7 @@ def apply_plan(plan: Plan, project: Project) -> str:
     _require_keys()
     git.require_clean_tree()
 
-    original = git.current_branch()
+    original = git.current_point()
     branch = git.branch_name(plan.change)
     written: list[Path] = []
     committed = False
@@ -36,10 +36,17 @@ def apply_plan(plan: Plan, project: Project) -> str:
             git.restore(written)
         raise
     finally:
-        if git.current_branch() != original:
-            git.checkout(original)
+        _return_to_start(original)
         if not committed:
             git.delete_branch(branch)
+
+
+def _return_to_start(original: str) -> None:
+    try:
+        if git.current_point() != original:
+            git.checkout(original)
+    except Exception as error:
+        print(f"Could not return to the starting checkout: {error}")
 
 
 def _require_keys() -> None:
