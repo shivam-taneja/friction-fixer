@@ -1,0 +1,82 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4P8ABV57VWP0PTRGTE83C1G",
+  "session_id": "057385b5-fa39-4b45-b524-5b9dc0652590",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T19:51:28.647944Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "agent/history.py",
+    "agent/progress.py",
+    "web/src/app/api/runs/[id]/continue/route.ts",
+    "web/src/app/api/settings/route.ts",
+    "web/src/components/auth/auth-form.tsx",
+    "web/src/components/dashboard/runs-page.tsx",
+    "web/src/components/settings/settings-page.tsx",
+    "web/src/components/settings/use-settings.ts",
+    "web/src/lib/db/projects.ts",
+    "web/src/lib/db/runs.ts",
+    "web/src/lib/db/schema/run.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "d12b800aeacd",
+  "checkpoint_transcript_start": 37,
+  "transcript_lines_at_start": 37,
+  "compact_transcript_start": 6,
+  "token_usage": {
+    "input_tokens": 118270,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 693120,
+    "output_tokens": 4537,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "duration_ms": 2839704,
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T19:51:28.637384Z",
+    "agent_lines": 276,
+    "agent_removed": 196,
+    "human_added": 424,
+    "human_modified": 26,
+    "human_removed": 0,
+    "total_committed": 726,
+    "total_lines_changed": 967,
+    "agent_percentage": 48.81075491209928,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 228,
+      "user_lines_removed": 26,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "agent/history.py": 8,
+        "agent/progress.py": 14,
+        "web/src/app/api/runs/[id]/continue/route.ts": 12,
+        "web/src/app/api/settings/route.ts": 8,
+        "web/src/components/dashboard/runs-page.tsx": 61,
+        "web/src/components/settings/settings-page.tsx": 3,
+        "web/src/components/settings/use-settings.ts": 2,
+        "web/src/lib/db/projects.ts": 16,
+        "web/src/lib/db/runs.ts": 45,
+        "web/src/lib/db/schema/run.ts": 59
+      },
+      "user_removed_per_file": {
+        "agent/history.py": 2,
+        "agent/progress.py": 1,
+        "web/src/app/api/runs/[id]/continue/route.ts": 1,
+        "web/src/app/api/settings/route.ts": 2,
+        "web/src/components/dashboard/runs-page.tsx": 18,
+        "web/src/components/settings/settings-page.tsx": 1,
+        "web/src/lib/db/schema/run.ts": 1
+      }
+    }
+  ]
+}
