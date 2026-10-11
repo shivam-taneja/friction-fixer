@@ -6,6 +6,7 @@ import {
   type AnalyticsProvider,
   type ProjectGoal,
 } from "@/components/onboarding/logic";
+import { folderLabel, frameworkLabel } from "@/lib/github/framework";
 import type { GithubSelection } from "@/lib/github/types";
 import {
   Select,
@@ -35,6 +36,11 @@ export function GoalStep({
     ["Analytics", analyticsLabel(analytics)],
     ["Repository", github?.fullName || "Not connected"],
     ["Branch", github?.branch || "Not chosen"],
+    ["Framework", github?.framework ? frameworkLabel(github.framework) : "Not detected"],
+    [
+      "Source folder",
+      github?.sourceFolder ? folderLabel(github.sourceFolder) : "Not chosen",
+    ],
     ["Change approval", "Review before publishing"],
   ] as const;
 

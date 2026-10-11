@@ -7,6 +7,8 @@ export type ProjectRecord = {
   goal: ProjectGoal;
   repository: string;
   branch: string;
+  framework: string;
+  sourceFolder: string;
   installationId: number;
   accountLogin: string;
   createdAt: unknown;

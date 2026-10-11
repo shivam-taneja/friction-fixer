@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { saveGithubInstallResult } from "@/components/github/install-result";
 import { GITHUB_INSTALL_MESSAGE } from "@/lib/github/types";
 
 export function GithubConnected() {
@@ -18,10 +19,8 @@ export function GithubConnected() {
       return;
     }
 
-    const next = new URL("/onboarding", window.location.origin);
-    if (error) next.searchParams.set("github_error", error);
-    else next.searchParams.set("github", "connected");
-    router.replace(`${next.pathname}${next.search}`);
+    saveGithubInstallResult(error);
+    router.replace("/onboarding");
   }, [params, router]);
 
   return (

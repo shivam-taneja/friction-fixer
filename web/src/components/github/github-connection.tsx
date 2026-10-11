@@ -1,33 +1,47 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import { GithubIcon } from "@/components/icons/github-icon";
-import { Button } from "@/components/ui/button";
-import { GithubAccount } from "@/components/onboarding/steps/github/github-account";
-import { GithubBranchSelect } from "@/components/onboarding/steps/github/github-branch-select";
-import { GithubConnectPrompt } from "@/components/onboarding/steps/github/github-connect-prompt";
-import { GithubRepoSelect } from "@/components/onboarding/steps/github/github-repo-select";
+import { GithubAccount } from "@/components/github/github-account";
+import { GithubBranchSelect } from "@/components/github/github-branch-select";
+import { GithubConnectPrompt } from "@/components/github/github-connect-prompt";
+import { GithubConnectionSkeleton } from "@/components/github/github-connection-skeleton";
 import {
-  GITHUB_INSTALL_MESSAGE,
-  type GithubConnection,
-  type GithubInstallMessage,
+  isInstallMessage,
+  messageFrom,
+  readJson,
+  setSelectionFromConnection,
+} from "@/components/github/github-connection-helpers";
+import { GithubProjectSetup } from "@/components/github/github-project-setup";
+import { GithubRepoSelect } from "@/components/github/github-repo-select";
+import { takeGithubInstallResult } from "@/components/github/install-result";
+import { Button } from "@/components/ui/button";
+import {
+  type GithubConnection as GithubConnectionState,
   type GithubSelection,
 } from "@/lib/github/types";
 
-export function GithubStep({
-  selection,
+export function GithubConnection({
+  selection: selectionProp,
   onSelectionChange,
 }: {
-  selection: GithubSelection | null;
-  onSelectionChange: (value: GithubSelection | null) => void;
+  selection?: GithubSelection | null;
+  onSelectionChange?: (value: GithubSelection | null) => void;
 }) {
-  const [connection, setConnection] = useState<GithubConnection | null>(null);
+  const [uncontrolled, setUncontrolled] = useState<GithubSelection | null>(
+    null,
+  );
+  const selection = selectionProp !== undefined ? selectionProp : uncontrolled;
+  const [connection, setConnection] = useState<GithubConnectionState | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [authorizing, setAuthorizing] = useState(false);
-  const [error, setError] = useState("");
+  const [disconnecting, setDisconnecting] = useState(false);
+  const [error, setError] = useState(
+    () => takeGithubInstallResult()?.error ?? "",
+  );
   const [refreshKey, setRefreshKey] = useState(0);
-  const selectionRef = useRef(selection);
-  selectionRef.current = selection;
 
   const selectedRepo = selection?.fullName ?? "";
   const [branchLoad, setBranchLoad] = useState<{
@@ -44,15 +58,24 @@ export function GithubStep({
     });
   }
 
+  function setSelection(value: GithubSelection | null) {
+    if (selectionProp === undefined) setUncontrolled(value);
+    onSelectionChange?.(value);
+  }
+
+  const syncSelection = useEffectEvent((next: GithubConnectionState) => {
+    setSelectionFromConnection(next, selection, setSelection);
+  });
+
   useEffect(() => {
     let cancelled = false;
 
-    readJson<GithubConnection>("/api/github/connection")
+    readJson<GithubConnectionState>("/api/github/connection")
       .then((next) => {
         if (cancelled) return;
         setConnection(next);
         setLoading(false);
-        reconcileSelection(next, selectionRef.current, onSelectionChange);
+        syncSelection(next);
       })
       .catch((loadError) => {
         if (cancelled) return;
@@ -64,7 +87,7 @@ export function GithubStep({
     return () => {
       cancelled = true;
     };
-  }, [onSelectionChange, refreshKey]);
+  }, [refreshKey]);
 
   useEffect(() => {
     if (!selectedRepo) return;
@@ -118,7 +141,7 @@ export function GithubStep({
         setError(event.data.error);
         return;
       }
-      onSelectionChange(null);
+      setSelection(null);
       setConnection(null);
       setLoading(true);
       setRefreshKey((value) => value + 1);
@@ -137,24 +160,40 @@ export function GithubStep({
     window.addEventListener("message", onMessage);
   }
 
+  async function disconnect() {
+    setError("");
+    setDisconnecting(true);
+    try {
+      const next = await readJson<GithubConnectionState>(
+        "/api/github/connection",
+        "DELETE",
+      );
+      setSelection(null);
+      setConnection(next);
+    } catch (disconnectError) {
+      setError(messageFrom(disconnectError));
+    } finally {
+      setDisconnecting(false);
+    }
+  }
+
   const repos = connection?.connected ? connection.repos : [];
-  const branches =
-    branchLoad.repo === selectedRepo ? branchLoad.branches : [];
+  const branches = branchLoad.repo === selectedRepo ? branchLoad.branches : [];
   const branchesLoading =
     branchLoad.repo === selectedRepo ? branchLoad.loading : false;
 
   return (
     <div className="grid gap-6">
-      {loading && !connection?.connected ? (
-        <p className="text-sm text-muted-foreground">Checking GitHub…</p>
-      ) : null}
+      {loading && !connection?.connected ? <GithubConnectionSkeleton /> : null}
 
       {connection?.connected ? (
         <div className="grid gap-5">
           <GithubAccount
             login={connection.accountLogin}
             authorizing={authorizing}
+            disconnecting={disconnecting}
             onChange={connect}
+            onDisconnect={() => void disconnect()}
           />
 
           {repos.length === 0 ? (
@@ -174,17 +213,41 @@ export function GithubStep({
                 repos={repos}
                 installationId={connection.installationId}
                 selection={selection}
-                onSelectionChange={onSelectionChange}
+                onSelectionChange={setSelection}
               />
               {selection ? (
-                <GithubBranchSelect
-                  selection={selection}
-                  branches={branches}
-                  loading={branchesLoading}
-                  onBranchChange={(branch) =>
-                    onSelectionChange({ ...selection, branch })
-                  }
-                />
+                <>
+                  <GithubBranchSelect
+                    selection={selection}
+                    branches={branches}
+                    loading={branchesLoading}
+                    onBranchChange={(branch) =>
+                      setSelection({
+                        installationId: selection.installationId,
+                        fullName: selection.fullName,
+                        defaultBranch: selection.defaultBranch,
+                        branch,
+                      })
+                    }
+                  />
+                  {branchesLoading ? null : (
+                    <GithubProjectSetup
+                      key={`${selection.fullName}@${selection.branch}`}
+                      fullName={selection.fullName}
+                      branch={selection.branch}
+                      onResolved={(project) =>
+                        setSelection({
+                          installationId: selection.installationId,
+                          fullName: selection.fullName,
+                          defaultBranch: selection.defaultBranch,
+                          branch: selection.branch,
+                          framework: project.framework,
+                          sourceFolder: project.sourceFolder,
+                        })
+                      }
+                    />
+                  )}
+                </>
               ) : null}
             </>
           )}
@@ -203,68 +266,4 @@ export function GithubStep({
       ) : null}
     </div>
   );
-}
-
-function reconcileSelection(
-  connection: GithubConnection,
-  selection: GithubSelection | null,
-  onSelectionChange: (value: GithubSelection | null) => void,
-) {
-  if (!connection.connected) return;
-
-  const match = selection
-    ? connection.repos.find((repo) => repo.fullName === selection.fullName)
-    : undefined;
-
-  if (selection && !match) {
-    onSelectionChange(null);
-    return;
-  }
-
-  if (
-    selection &&
-    match &&
-    selection.installationId !== connection.installationId
-  ) {
-    onSelectionChange({
-      ...selection,
-      installationId: connection.installationId,
-      defaultBranch: match.defaultBranch,
-    });
-    return;
-  }
-
-  if (!selection && connection.repos.length === 1) {
-    const repo = connection.repos[0];
-    onSelectionChange({
-      installationId: connection.installationId,
-      fullName: repo.fullName,
-      defaultBranch: repo.defaultBranch,
-      branch: repo.defaultBranch,
-    });
-  }
-}
-
-function isInstallMessage(value: unknown): value is GithubInstallMessage {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "type" in value &&
-    value.type === GITHUB_INSTALL_MESSAGE
-  );
-}
-
-async function readJson<T>(path: string): Promise<T> {
-  const response = await fetch(path, { cache: "no-store" });
-  const body = (await response.json().catch(() => ({}))) as {
-    error?: string;
-  } & T;
-  if (!response.ok) {
-    throw new Error(body.error || "Could not reach GitHub.");
-  }
-  return body;
-}
-
-function messageFrom(error: unknown) {
-  return error instanceof Error ? error.message : "Could not reach GitHub.";
 }

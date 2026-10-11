@@ -1,3 +1,5 @@
+import { isFrameworkId, isRepoFolder } from "@/lib/github/framework";
+
 export const GITHUB_INSTALL_MESSAGE = "github-app-installed";
 
 export type GithubInstallMessage = {
@@ -26,6 +28,8 @@ export type GithubSelection = {
   fullName: string;
   defaultBranch: string;
   branch: string;
+  framework?: string;
+  sourceFolder?: string;
 };
 
 export function parseRepoFullName(fullName: string) {
@@ -34,7 +38,9 @@ export function parseRepoFullName(fullName: string) {
   return { owner: match[1], repo: match[2] };
 }
 
-export function isGithubSelection(value: unknown): value is GithubSelection {
+export function isGithubSelection(
+  value: unknown,
+): value is GithubSelection & { framework: string; sourceFolder: string } {
   if (!value || typeof value !== "object") return false;
   const selection = value as Partial<GithubSelection>;
   return (
@@ -45,6 +51,10 @@ export function isGithubSelection(value: unknown): value is GithubSelection {
     typeof selection.defaultBranch === "string" &&
     selection.defaultBranch.length > 0 &&
     typeof selection.branch === "string" &&
-    selection.branch.length > 0
+    selection.branch.length > 0 &&
+    typeof selection.framework === "string" &&
+    isFrameworkId(selection.framework) &&
+    typeof selection.sourceFolder === "string" &&
+    isRepoFolder(selection.sourceFolder)
   );
 }

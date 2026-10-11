@@ -4,11 +4,15 @@ import { Button } from "@/components/ui/button";
 export function GithubAccount({
   login,
   authorizing,
+  disconnecting,
   onChange,
+  onDisconnect,
 }: {
   login: string;
   authorizing: boolean;
+  disconnecting: boolean;
   onChange: () => void;
+  onDisconnect: () => void;
 }) {
   const initial = login.slice(0, 1).toUpperCase();
 
@@ -27,15 +31,26 @@ export function GithubAccount({
           <p className="mt-1 text-sm text-muted-foreground">GitHub connected</p>
         </div>
       </div>
-      <Button
-        type="button"
-        variant="ghost"
-        disabled={authorizing}
-        onClick={onChange}
-        className="cursor-pointer"
-      >
-        {authorizing ? "Waiting…" : "Change"}
-      </Button>
+      <div className="flex shrink-0 items-center gap-1">
+        <Button
+          type="button"
+          variant="ghost"
+          disabled={authorizing || disconnecting}
+          onClick={onChange}
+          className="cursor-pointer"
+        >
+          {authorizing ? "Waiting…" : "Change"}
+        </Button>
+        <Button
+          type="button"
+          variant="destructive"
+          disabled={authorizing || disconnecting}
+          onClick={onDisconnect}
+          className="cursor-pointer"
+        >
+          {disconnecting ? "Disconnecting…" : "Disconnect"}
+        </Button>
+      </div>
     </div>
   );
 }

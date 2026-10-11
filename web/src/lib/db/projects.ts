@@ -11,6 +11,8 @@ export async function createProject(input: {
   goal: ProjectGoal;
   repository: string;
   branch: string;
+  framework: string;
+  sourceFolder: string;
   installationId: number;
   accountLogin: string;
 }) {
@@ -26,6 +28,8 @@ export async function createProject(input: {
     goal: input.goal,
     repository: input.repository,
     branch: input.branch,
+    framework: input.framework,
+    sourceFolder: input.sourceFolder,
     installationId: input.installationId,
     accountLogin: input.accountLogin,
     createdAt: FieldValue.serverTimestamp(),

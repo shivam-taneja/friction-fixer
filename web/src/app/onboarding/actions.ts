@@ -9,7 +9,11 @@ import {
 } from "@/components/onboarding/logic";
 import { getGithubInstallation } from "@/lib/db/github-installations";
 import { createProject } from "@/lib/db/projects";
-import { assertRepoBranch, GithubRequestError } from "@/lib/github/app";
+import {
+  assertRepoBranch,
+  assertRepoFolder,
+  GithubRequestError,
+} from "@/lib/github/app";
 import { isGithubSelection, type GithubSelection } from "@/lib/github/types";
 
 export async function finishOnboarding(input: {
@@ -36,7 +40,7 @@ export async function finishOnboarding(input: {
   }
 
   if (!isGithubSelection(input.github)) {
-    throw new Error("Choose a repository and branch.");
+    throw new Error("Choose a repository, branch, and source folder.");
   }
 
   const installation = await getGithubInstallation(user.userId);
@@ -53,10 +57,16 @@ export async function finishOnboarding(input: {
       fullName: input.github.fullName,
       branch: input.github.branch,
     });
+    await assertRepoFolder({
+      installationId: installation.installationId,
+      fullName: input.github.fullName,
+      branch: input.github.branch,
+      path: input.github.sourceFolder ?? "",
+    });
   } catch (error) {
     if (error instanceof GithubRequestError && error.status === 404) {
       throw new Error(
-        "That repository or branch is not available to the GitHub App.",
+        "That repository, branch, or source folder is not available to the GitHub App.",
       );
     }
     throw error instanceof Error
@@ -71,6 +81,8 @@ export async function finishOnboarding(input: {
     goal: input.goal,
     repository: input.github.fullName,
     branch: input.github.branch,
+    framework: input.github.framework ?? "",
+    sourceFolder: input.github.sourceFolder ?? "",
     installationId: installation.installationId,
     accountLogin: installation.accountLogin,
   });

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Rocket } from "lucide-react";
 import { finishOnboarding } from "@/app/onboarding/actions";
+import { GithubConnection } from "@/components/github/github-connection";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { OnboardingProgress } from "@/components/onboarding/onboarding-progress";
 import {
@@ -12,83 +13,36 @@ import {
   type ProjectGoal,
 } from "@/components/onboarding/logic";
 import { AnalyticsStep } from "@/components/onboarding/steps/analytics-step";
-import { GithubStep } from "@/components/onboarding/steps/github-step";
 import { GoalStep } from "@/components/onboarding/steps/goal-step";
 import { WebsiteStep } from "@/components/onboarding/steps/website-step";
 import { Button } from "@/components/ui/button";
-import {
-  isGithubSelection,
-  type GithubSelection,
-} from "@/lib/github/types";
-
-const draftKey = "ff-onboarding-draft";
+import type { GithubSelection } from "@/lib/github/types";
 
 export function OnboardingFlow() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [step, setStep] = useState(0);
   const [site, setSite] = useState("");
   const [saving, setSaving] = useState(false);
-  const [ready, setReady] = useState(false);
   const [analytics, setAnalytics] = useState<AnalyticsProvider>("posthog");
   const [github, setGithub] = useState<GithubSelection | null>(null);
   const [goal, setGoal] = useState<ProjectGoal>("signup_conversion");
   const [error, setError] = useState("");
-  const restored = useRef(false);
 
   const current = onboardingSteps[step];
   const lastStep = step === onboardingSteps.length - 1;
-  const githubReady = Boolean(github?.fullName && github.branch);
-
-  useEffect(() => {
-    if (restored.current) return;
-    restored.current = true;
-
-    const draft = readDraft();
-    const githubStep = onboardingSteps.findIndex((item) => item.id === "github");
-    const githubError = searchParams.get("github_error");
-    const returningFromGithub =
-      searchParams.get("github") === "connected" || Boolean(githubError);
-    const nextStep = returningFromGithub ? githubStep : (draft?.step ?? 0);
-
-    if (draft) {
-      setSite(draft.site);
-      setAnalytics(draft.analytics);
-      setGithub(draft.github);
-      setGoal(draft.goal);
-    }
-
-    setStep(nextStep);
-    if (githubError) setError(githubError);
-    sessionStorage.setItem(
-      draftKey,
-      JSON.stringify({
-        step: nextStep,
-        site: draft?.site ?? "",
-        analytics: draft?.analytics ?? "posthog",
-        github: draft?.github ?? null,
-        goal: draft?.goal ?? "signup_conversion",
-      }),
-    );
-    setReady(true);
-
-    if (returningFromGithub) router.replace("/onboarding");
-  }, [router, searchParams]);
-
-  useEffect(() => {
-    if (!ready) return;
-    sessionStorage.setItem(
-      draftKey,
-      JSON.stringify({ step, site, analytics, github, goal }),
-    );
-  }, [analytics, github, goal, ready, site, step]);
+  const githubReady = Boolean(
+    github?.fullName &&
+      github.branch &&
+      github.framework &&
+      github.sourceFolder,
+  );
 
   async function next() {
     setError("");
 
     if (current.id === "github" && !githubReady) {
-      setError("Choose a repository and branch.");
+      setError("Choose a repository, branch, and source folder.");
       return;
     }
 
@@ -98,7 +52,7 @@ export function OnboardingFlow() {
     }
 
     if (!github) {
-      setError("Choose a repository and branch.");
+      setError("Choose a repository, branch, and source folder.");
       return;
     }
 
@@ -106,8 +60,7 @@ export function OnboardingFlow() {
 
     try {
       await finishOnboarding({ site, analytics, github, goal });
-      sessionStorage.removeItem(draftKey);
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not save.");
     } finally {
@@ -145,7 +98,10 @@ export function OnboardingFlow() {
           )}
 
           {step === 2 && (
-            <GithubStep selection={github} onSelectionChange={setGithub} />
+            <GithubConnection
+              selection={github}
+              onSelectionChange={setGithub}
+            />
           )}
 
           {step === 3 && (
@@ -200,53 +156,5 @@ export function OnboardingFlow() {
         </form>
       </main>
     </div>
-  );
-}
-
-function readDraft() {
-  const raw = sessionStorage.getItem(draftKey);
-  if (!raw) return null;
-
-  try {
-    const draft = JSON.parse(raw) as {
-      step?: unknown;
-      site?: unknown;
-      analytics?: unknown;
-      github?: unknown;
-      goal?: unknown;
-    };
-    const step = typeof draft.step === "number" ? draft.step : 0;
-    if (
-      step < 0 ||
-      step >= onboardingSteps.length ||
-      typeof draft.site !== "string" ||
-      !isAnalytics(draft.analytics) ||
-      !isGoal(draft.goal) ||
-      (draft.github != null && !isGithubSelection(draft.github))
-    ) {
-      return null;
-    }
-
-    return {
-      step,
-      site: draft.site,
-      analytics: draft.analytics,
-      github: isGithubSelection(draft.github) ? draft.github : null,
-      goal: draft.goal,
-    };
-  } catch {
-    return null;
-  }
-}
-
-function isAnalytics(value: unknown): value is AnalyticsProvider {
-  return value === "posthog" || value === "mixpanel" || value === "amplitude";
-}
-
-function isGoal(value: unknown): value is ProjectGoal {
-  return (
-    value === "signup_conversion" ||
-    value === "checkout_completion" ||
-    value === "contact_form"
   );
 }

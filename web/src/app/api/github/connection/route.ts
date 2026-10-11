@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerUser } from "@/lib/auth/request-user";
-import { GithubRequestError, listInstallationRepos } from "@/lib/github/app";
+import {
+  deleteInstallation,
+  GithubRequestError,
+  listInstallationRepos,
+} from "@/lib/github/app";
 import {
   deleteGithubInstallation,
   getGithubInstallation,
@@ -43,6 +47,32 @@ export async function GET() {
 
     const message =
       error instanceof Error ? error.message : "Could not load GitHub.";
+    const status = error instanceof GithubRequestError ? error.status : 500;
+    return NextResponse.json({ error: message }, { status });
+  }
+}
+
+export async function DELETE() {
+  const user = await getServerUser();
+  if (!user) {
+    return NextResponse.json(
+      { error: "Sign in to continue." },
+      { status: 401 },
+    );
+  }
+
+  try {
+    const installation = await getGithubInstallation(user.userId);
+    if (installation) {
+      await deleteInstallation(installation.installationId);
+      await deleteGithubInstallation(user.userId);
+    }
+
+    const body: GithubConnection = { connected: false };
+    return NextResponse.json(body);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Could not disconnect GitHub.";
     const status = error instanceof GithubRequestError ? error.status : 500;
     return NextResponse.json({ error: message }, { status });
   }
