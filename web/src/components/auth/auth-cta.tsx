@@ -5,18 +5,18 @@ import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function AuthCta({
+  signedIn,
   signedOutLabel,
   variant,
   size,
   className,
 }: {
+  signedIn: boolean;
   signedOutLabel: string;
   variant: "ink" | "hero";
   size?: "lg";
   className?: string;
 }) {
-  const signedIn = false;
-
   return (
     <Button
       nativeButton={false}

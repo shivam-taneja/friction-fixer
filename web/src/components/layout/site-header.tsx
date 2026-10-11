@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 const navLinkClass =
   "text-muted-foreground no-underline transition-colors hover:text-foreground max-md:hidden";
 
-export function SiteHeader() {
+export function SiteHeader({ signedIn }: { signedIn: boolean }) {
   return (
     <header
       className={cn(
@@ -29,6 +29,7 @@ export function SiteHeader() {
           FAQs
         </a>
         <AuthCta
+          signedIn={signedIn}
           signedOutLabel="Meet your agent"
           variant="ink"
           className="max-sm:px-3 max-sm:text-[11px]"

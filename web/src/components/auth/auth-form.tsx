@@ -84,7 +84,7 @@ export function AuthForm() {
         type="button"
         variant="outline"
         size="lg"
-        className="h-11 w-full"
+        className="h-11 w-full cursor-pointer"
         disabled={pending !== null}
         onClick={() => void signIn(new GoogleAuthProvider(), "google")}
       >
@@ -95,7 +95,7 @@ export function AuthForm() {
         type="button"
         variant="outline"
         size="lg"
-        className="h-11 w-full"
+        className="h-11 w-full cursor-pointer"
         disabled={pending !== null}
         onClick={() => void signIn(new GithubAuthProvider(), "github")}
       >

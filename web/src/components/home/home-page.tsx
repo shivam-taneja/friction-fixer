@@ -6,18 +6,21 @@ import { SafetySection } from "@/components/home/safety-section";
 import { WorkflowSection } from "@/components/home/workflow-section";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { getServerUser } from "@/lib/auth/request-user";
 
-export function HomePage() {
+export async function HomePage() {
+  const signedIn = Boolean(await getServerUser());
+
   return (
     <>
-      <SiteHeader />
+      <SiteHeader signedIn={signedIn} />
       <main>
-        <HeroSection />
+        <HeroSection signedIn={signedIn} />
         <IntegrationsSection />
         <WorkflowSection />
         <SafetySection />
         <FaqSection />
-        <FinalCta />
+        <FinalCta signedIn={signedIn} />
       </main>
       <SiteFooter />
     </>

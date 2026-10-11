@@ -4,7 +4,7 @@ import { AuthCta } from "@/components/auth/auth-cta";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
 
-export function HeroSection() {
+export function HeroSection({ signedIn }: { signedIn: boolean }) {
   return (
     <section className="relative isolate min-h-162.5 overflow-hidden border-b border-border bg-hero max-sm:min-h-156.25">
       <Image
@@ -35,6 +35,7 @@ export function HeroSection() {
         </p>
         <div className="flex justify-center gap-3.25 max-sm:gap-2">
           <AuthCta
+            signedIn={signedIn}
             signedOutLabel="Meet your agent"
             variant="hero"
             size="lg"

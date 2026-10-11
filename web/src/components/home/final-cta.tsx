@@ -1,6 +1,6 @@
 import { AuthCta } from "@/components/auth/auth-cta";
 
-export function FinalCta() {
+export function FinalCta({ signedIn }: { signedIn: boolean }) {
   return (
     <section className="bg-primary px-5 py-17.5 text-center text-primary-foreground">
       <h2 className="mb-4.25 font-display text-[40px] leading-[1.2] font-semibold max-sm:text-[31px]">
@@ -12,6 +12,7 @@ export function FinalCta() {
         Give your website an agent that closes the loop.
       </p>
       <AuthCta
+        signedIn={signedIn}
         signedOutLabel="Meet Friction Fixer"
         variant="ink"
         size="lg"
