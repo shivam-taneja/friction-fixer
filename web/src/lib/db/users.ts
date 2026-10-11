@@ -24,14 +24,6 @@ export async function upsertUser(input: {
   provider: AuthProviderName;
   accountId: string;
 }) {
-  console.info("[upsertUser] Starting", {
-    provider: input.provider,
-    accountId: input.accountId,
-    hasEmail: Boolean(input.email),
-    hasName: Boolean(input.name),
-    hasImage: Boolean(input.image),
-  });
-
   try {
     const id = userDocId(input.email, input.provider, input.accountId);
     const ref = db().collection(COLLECTIONS.USERS).doc(id);
@@ -48,8 +40,6 @@ export async function upsertUser(input: {
     };
 
     if (!snap.exists) {
-      console.info("[upsertUser] Creating new user", { id });
-
       await ref.set({
         email: input.email?.trim().toLowerCase() ?? null,
         name: input.name ?? null,
