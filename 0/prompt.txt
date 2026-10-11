@@ -1,0 +1,24 @@
+For the code present, we get this error:
+```
+Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/shivamtaneja/projects/neat-hack/friction-fixer/web/src/components/settings/settings-page.tsx:188:5
+  186 |
+  187 |   useEffect(() => {
+> 188 |     setValue(String(hours));
+      |     ^^^^^^^^ Avoid calling setState() directly within an effect
+  189 |   }, [hours]);
+  190 |
+  191 |   const parsed = Number(value);
+```
+Fix it, verify, and then give a concise explanation. @web/src/components/settings/settings-page.tsx:187-190
+
+---
+
+@web/src/components/settings/settings-page.tsx:176-191 make this selector better please! keeping in mind the range im telling u
