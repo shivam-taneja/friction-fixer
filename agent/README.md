@@ -2,7 +2,7 @@
 
 Python code for the Friction Fixer loop. The full loop is described in [FLOW.md](../FLOW.md).
 
-The Analyst reads a mock PostHog export and writes one plan. The Builder can edit `demo-site/` and open a pull request. The Reviewer compares mock before and after numbers and returns KEEP or UNDO. The simulator and the loop are still placeholders.
+The Analyst reads a mock PostHog export and writes one plan. The Builder can edit `demo-site/` and open a pull request. The simulator asks the model for one improved outcome and one worse outcome. The Reviewer asks the simulator for those numbers and returns KEEP or UNDO. The loop is still a placeholder.
 
 ## Files
 
@@ -11,8 +11,8 @@ The Analyst reads a mock PostHog export and writes one plan. The Builder can edi
 | `loop.py`      | Runs Analyst, Builder, merge, then Reviewer. Stops after 5 rounds, or when bounce rate hits the goal.                                  |
 | `analyst/`     | Reads mock PostHog events and past verdicts. Writes one plan. `events.py` loads `fixtures/events.json`. `plan.py` asks the configured model for the change. |
 | `builder/`     | Makes that one change inside `demo-site/`, commits, and opens a pull request. `edit.py` calls Groq. `git.py` commits and opens the PR. |
-| `reviewer/`    | Compares one change with mock before and after numbers. Returns KEEP or UNDO for the loop to pass back to the Analyst. `fixtures/increased.json` clears the margin. `fixtures/decreased.json` misses it. |
-| `simulator.py` | Mock visitor numbers. They must change when the page changes.                                                                          |
+| `reviewer/`    | Asks the simulator for one outcome, then returns KEEP or UNDO. The verdict goes back to the Analyst through the loop.                  |
+| `simulator/`   | Asks the model for two mock outcomes and writes `fixtures/increased.json` and `fixtures/decreased.json`. The Reviewer does not read those files. |
 | `schemas.py`   | The plan and the verdict the agents pass to each other.                                                                                |
 | `tracing.py`   | neatlogs. One round is one trace.                                                                                                      |
 | `config.py`    | Round limit (5) and the keep margin (bounce rate down by at least 5 percentage points).                                                |
@@ -33,7 +33,13 @@ To print the Analyst plan from the mock PostHog export:
 python -m agent.analyst
 ```
 
-To judge the two temp result files:
+To ask the model for both mock outcomes:
+
+```bash
+python -m agent.simulator
+```
+
+To have the Reviewer ask the simulator for one of those outcomes and judge it:
 
 ```bash
 python -m agent.reviewer increased

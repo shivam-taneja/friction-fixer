@@ -1,27 +1,7 @@
 """Compares one change with mock before and after numbers. Returns KEEP or UNDO."""
 
-import json
-from pathlib import Path
-
 from agent.config import BOUNCE_RATE_DROP
 from agent.schemas import Verdict, VisitorData
-
-FIXTURES = Path(__file__).resolve().parent / "fixtures"
-CASES = ("increased", "decreased")
-
-
-def load_case(name: str) -> tuple[str, VisitorData, VisitorData]:
-    """Load one temp angle: the change, the numbers before, and the numbers after."""
-    if name not in CASES:
-        known = " or ".join(CASES)
-        raise RuntimeError(f"Case must be {known}.")
-    data = json.loads((FIXTURES / f"{name}.json").read_text())
-    if data.get("source") != "mock":
-        raise RuntimeError("Expected mock review data.")
-    change = data.get("change")
-    if not isinstance(change, str) or not change.strip():
-        raise RuntimeError("The mock case has no change.")
-    return change.strip(), _visitors(data.get("before")), _visitors(data.get("after"))
 
 
 def decide(change: str, before: VisitorData, after: VisitorData) -> Verdict:
@@ -89,38 +69,3 @@ def _numbers(visitors: VisitorData) -> str:
         f"scroll depth {visitors.scroll_depth:.0%}, "
         f"pricing page visits {visitors.pricing_page_visits}"
     )
-
-
-def _visitors(raw: object) -> VisitorData:
-    if not isinstance(raw, dict):
-        raise RuntimeError("Mock review data is missing numbers.")
-    return VisitorData(
-        bounce_rate=_rate(raw, "bounce_rate"),
-        scroll_depth=_rate(raw, "scroll_depth"),
-        pricing_page_visits=_count(raw, "pricing_page_visits"),
-        time_on_page=_time(raw, "time_on_page"),
-        source="mock",
-    )
-
-
-def _rate(raw: dict, key: str) -> float:
-    value = raw.get(key)
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise RuntimeError(f"Mock review data is missing {key}.")
-    if not 0 <= float(value) <= 1:
-        raise RuntimeError(f"{key} must be between 0 and 1.")
-    return float(value)
-
-
-def _count(raw: dict, key: str) -> int:
-    value = raw.get(key)
-    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-        raise RuntimeError(f"Mock review data is missing {key}.")
-    return value
-
-
-def _time(raw: dict, key: str) -> float:
-    value = raw.get(key)
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or value < 0:
-        raise RuntimeError(f"Mock review data is missing {key}.")
-    return float(value)

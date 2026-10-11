@@ -2,21 +2,20 @@
 
 import argparse
 
-from agent.reviewer import load_case, review, verdict_text
+from agent.reviewer import review_case, verdict_text
 from agent.tracing import flush_tracing, init_tracing
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Judge one mock before/after result."
+        description="Ask the simulator for one mock outcome, then judge it."
     )
     parser.add_argument("case", choices=["increased", "decreased"])
     args = parser.parse_args()
 
     init_tracing()
     try:
-        change, before, after = load_case(args.case)
-        print(verdict_text(review(change, before, after)))
+        print(verdict_text(review_case(args.case)))
     finally:
         flush_tracing()
 
