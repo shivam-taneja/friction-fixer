@@ -1,0 +1,91 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NN64WQE3RY991VVJVP1QZ6",
+  "session_id": "9d91cc99-be2f-482a-9451-9383d5dd0682",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T14:17:07.836737Z",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "save_step_count": 3,
+  "files_touched": [
+    "agent/builder/git.py",
+    "agent/history.py",
+    "agent/loop.py",
+    "agent/progress.py",
+    "agent/server.py",
+    "web/src/app/api/runs/[id]/continue/route.ts",
+    "web/src/components/dashboard/run-detail.tsx",
+    "web/src/components/dashboard/runs-page.tsx",
+    "web/src/lib/db/runs.ts",
+    "web/src/lib/db/schema/run.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "8dabd54f6577",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 17320,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1534720,
+    "output_tokens": 13997,
+    "api_call_count": 2
+  },
+  "session_metrics": {
+    "turn_count": 87,
+    "context_tokens": 230978,
+    "context_window_size": 256000
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T14:17:07.749112Z",
+    "agent_lines": 379,
+    "agent_removed": 21,
+    "human_added": 36,
+    "human_modified": 15,
+    "human_removed": 0,
+    "total_committed": 426,
+    "total_lines_changed": 451,
+    "agent_percentage": 88.69179600886919,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 23,
+      "user_lines_removed": 7,
+      "agent_lines_added": 421,
+      "agent_lines_removed": 32,
+      "user_added_per_file": {
+        "agent/builder/git.py": 3,
+        "web/src/app/api/runs/[id]/continue/route.ts": 14,
+        "web/src/components/dashboard/run-detail.tsx": 3,
+        "web/src/components/dashboard/runs-page.tsx": 3
+      },
+      "user_removed_per_file": {
+        "agent/builder/git.py": 1,
+        "web/src/app/api/runs/[id]/continue/route.ts": 4,
+        "web/src/components/dashboard/run-detail.tsx": 1,
+        "web/src/components/dashboard/runs-page.tsx": 1
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 14,
+      "user_lines_removed": 4,
+      "agent_lines_added": 427,
+      "agent_lines_removed": 32,
+      "user_added_per_file": {
+        "web/src/app/api/runs/[id]/continue/route.ts": 14
+      },
+      "user_removed_per_file": {
+        "web/src/app/api/runs/[id]/continue/route.ts": 4
+      }
+    }
+  ]
+}

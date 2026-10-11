@@ -1,0 +1,35 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NN64WQE3RY991VVJVP1QZ6",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 3,
+  "files_touched": [
+    "agent/builder/git.py",
+    "agent/history.py",
+    "agent/loop.py",
+    "agent/progress.py",
+    "agent/server.py",
+    "web/src/app/api/runs/[id]/continue/route.ts",
+    "web/src/components/dashboard/run-detail.tsx",
+    "web/src/components/dashboard/runs-page.tsx",
+    "web/src/lib/db/runs.ts",
+    "web/src/lib/db/schema/run.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 17320,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1534720,
+    "output_tokens": 13997,
+    "api_call_count": 2
+  }
+}
