@@ -1,0 +1,13 @@
+@web/src/components/onboarding/steps/goal-step.tsx allow user to create custom goal! and i wanna store the full goal rather than the id, and make sure we have proper validation for this, use zod and async safepareawait logic from zod so that it's not sync, do the same for the url @web/src/components/onboarding/steps/website-step.tsx
+
+---
+
+actually change of plans, i dont need the url. so can u please remove it. we start with the connectors and we dont need url checking etc. so clean it up please!
+
+---
+
+dude where is the custom goal input?? i told u to add that... like user can get prefilled options if they want to select but wihtout that they can also write their goal with proper validation!
+
+---
+
+@web/src/app/onboarding/actions.ts for finish onboarding now mark the onboarding status as completed with project id and completedAt value also to this please! thanks!
