@@ -1,0 +1,136 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4MWB5JT42XXGPPM5JWSHEFX",
+  "session_id": "3a087a34-1762-4894-8d4b-a31999b675cf",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T07:02:57.802625Z",
+  "branch": "main",
+  "checkpoints_count": 12,
+  "save_step_count": 11,
+  "files_touched": [
+    "web/src/lib/db/users.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "8a388c1e7e15",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 399041,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 6117632,
+    "output_tokens": 90108,
+    "api_call_count": 8
+  },
+  "session_metrics": {
+    "turn_count": 12
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T07:02:57.772717Z",
+    "agent_lines": 7,
+    "agent_removed": 4,
+    "human_added": 13,
+    "human_modified": 32,
+    "human_removed": 0,
+    "total_committed": 52,
+    "total_lines_changed": 56,
+    "agent_percentage": 19.642857142857142,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 592,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 4,
+      "user_lines_removed": 1,
+      "agent_lines_added": 592,
+      "agent_lines_removed": 1,
+      "user_added_per_file": {
+        "web/src/components/onboarding/steps/goal-step.tsx": 4
+      },
+      "user_removed_per_file": {
+        "web/src/components/onboarding/steps/goal-step.tsx": 1
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 674,
+      "agent_lines_removed": 35
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 0,
+      "user_lines_removed": 2,
+      "agent_lines_added": 892,
+      "agent_lines_removed": 129,
+      "user_removed_per_file": {
+        "web/src/app/api/onboarding/route.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 0,
+      "user_lines_removed": 2,
+      "agent_lines_added": 895,
+      "agent_lines_removed": 128,
+      "user_removed_per_file": {
+        "web/src/app/api/onboarding/route.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1,
+      "agent_lines_removed": 1
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 1,
+      "user_lines_removed": 1,
+      "agent_lines_added": 15,
+      "agent_lines_removed": 12,
+      "user_added_per_file": {
+        "web/src/components/auth/auth-form.tsx": 1
+      },
+      "user_removed_per_file": {
+        "web/src/components/auth/auth-form.tsx": 1
+      }
+    }
+  ]
+}
