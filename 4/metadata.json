@@ -1,0 +1,176 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4MWB5JT42XXGPPM5JWSHEFX",
+  "session_id": "9d91cc99-be2f-482a-9451-9383d5dd0682",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T07:02:58.22563Z",
+  "branch": "main",
+  "checkpoints_count": 9,
+  "save_step_count": 9,
+  "files_touched": [
+    "web/src/lib/db/users.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "de112e48bc24",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 377466,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1362176,
+    "output_tokens": 41222,
+    "api_call_count": 8
+  },
+  "session_metrics": {
+    "turn_count": 9
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T07:02:58.212678Z",
+    "agent_lines": 0,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 74,
+    "human_removed": 5,
+    "total_committed": 4,
+    "total_lines_changed": 79,
+    "agent_percentage": 0,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 16,
+      "user_lines_removed": 13,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "web/src/app/onboarding/page.tsx": 8,
+        "web/src/config/routes.ts": 1,
+        "web/src/lib/auth/request-user.ts": 1,
+        "web/src/lib/onboarding/load.ts": 6
+      },
+      "user_removed_per_file": {
+        "web/src/app/onboarding/page.tsx": 2,
+        "web/src/components/auth/auth-form.tsx": 1,
+        "web/src/config/routes.ts": 1,
+        "web/src/lib/onboarding/load.ts": 9
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 29,
+      "user_lines_removed": 1,
+      "agent_lines_added": 398,
+      "agent_lines_removed": 23,
+      "user_added_per_file": {
+        "web/package.json": 2,
+        "web/pnpm-lock.yaml": 27
+      },
+      "user_removed_per_file": {
+        "web/package.json": 1
+      }
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 427,
+      "agent_lines_removed": 28
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 427,
+      "agent_lines_removed": 28
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 427,
+      "agent_lines_removed": 28
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 534,
+      "agent_lines_removed": 28
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 76,
+      "user_lines_removed": 2,
+      "agent_lines_added": 855,
+      "agent_lines_removed": 103,
+      "user_added_per_file": {
+        "web/src/app/onboarding/layout.tsx": 24,
+        "web/src/lib/auth/server-auth.ts": 21,
+        "web/src/lib/db/collections.ts": 4,
+        "web/src/lib/db/users.ts": 27
+      },
+      "user_removed_per_file": {
+        "web/src/lib/db/users.ts": 2
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 139,
+      "user_lines_removed": 743,
+      "agent_lines_added": 710,
+      "agent_lines_removed": 145,
+      "user_added_per_file": {
+        "web/src/app/dashboard/signed-in-as.tsx": 1,
+        "web/src/app/onboarding/layout.tsx": 24,
+        "web/src/app/onboarding/page.tsx": 1,
+        "web/src/components/auth/auth-cta.tsx": 1,
+        "web/src/components/auth/auth-form.tsx": 5,
+        "web/src/components/auth/auth-provider.tsx": 15,
+        "web/src/components/onboarding/onboarding-flow.tsx": 26,
+        "web/src/config/routes.ts": 5,
+        "web/src/lib/auth/identity.ts": 16,
+        "web/src/lib/auth/request-user.ts": 22,
+        "web/src/lib/db/collections.ts": 4,
+        "web/src/lib/db/users.ts": 2,
+        "web/src/lib/onboarding/load.ts": 2,
+        "web/src/proxy.ts": 15
+      },
+      "user_removed_per_file": {
+        "web/src/app/api/onboarding/route.ts": 99,
+        "web/src/app/dashboard/signed-in-as.tsx": 8,
+        "web/src/app/onboarding/page.tsx": 19,
+        "web/src/components/auth/auth-cta.tsx": 4,
+        "web/src/components/auth/auth-form.tsx": 12,
+        "web/src/components/auth/auth-provider.tsx": 17,
+        "web/src/components/onboarding/onboarding-flow.tsx": 123,
+        "web/src/components/onboarding/save.ts": 31,
+        "web/src/config/routes.ts": 1,
+        "web/src/lib/auth/identity.ts": 4,
+        "web/src/lib/auth/request-user.ts": 14,
+        "web/src/lib/db/projects.ts": 281,
+        "web/src/lib/db/schema/goal.ts": 11,
+        "web/src/lib/db/schema/project.ts": 46,
+        "web/src/lib/db/schema/site.ts": 16,
+        "web/src/lib/db/users.ts": 45,
+        "web/src/lib/onboarding/load.ts": 2,
+        "web/src/proxy.ts": 10
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 29,
+      "user_lines_removed": 4,
+      "agent_lines_added": 698,
+      "agent_lines_removed": 762,
+      "user_added_per_file": {
+        "web/src/app/onboarding/layout.tsx": 24,
+        "web/src/components/auth/auth-cta.tsx": 1,
+        "web/src/lib/db/collections.ts": 4
+      },
+      "user_removed_per_file": {
+        "web/src/components/auth/auth-cta.tsx": 4
+      }
+    }
+  ]
+}
