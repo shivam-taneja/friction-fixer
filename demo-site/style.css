@@ -20,3 +20,32 @@ main {
   font-size: 0.85rem;
   text-decoration: none;
 }
+
+.benefits {
+  margin: 1.5rem 0 0;
+  padding-left: 1.2rem;
+  line-height: 1.8;
+}
+
+.benefits li {
+  margin-bottom: 0.25rem;
+}
+
+.testimonial {
+  margin: 2rem 0 1.5rem;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid #bbb;
+  background: #f9f9f9;
+}
+
+.testimonial p {
+  margin: 0 0 0.5rem;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.testimonial cite {
+  font-size: 0.85rem;
+  color: #555;
+  font-style: normal;
+}
