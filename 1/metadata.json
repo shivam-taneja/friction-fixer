@@ -1,0 +1,58 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NY44PHQD9HRJFNRG7FTEDQ",
+  "session_id": "c6734d3a-69c1-48cc-922c-0afefd84a651",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T16:53:19.362226Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 1,
+  "files_touched": [
+    "agent/builder/git.py",
+    "agent/builder/sandbox.py"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "6effd1f5b9a1",
+  "checkpoint_transcript_start": 13,
+  "transcript_lines_at_start": 13,
+  "compact_transcript_start": 6,
+  "token_usage": {
+    "input_tokens": 63284,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 135552,
+    "output_tokens": 1977,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T16:53:19.354563Z",
+    "agent_lines": 46,
+    "agent_removed": 15,
+    "human_added": 47,
+    "human_modified": 2,
+    "human_removed": 0,
+    "total_committed": 95,
+    "total_lines_changed": 138,
+    "agent_percentage": 44.20289855072464,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 11,
+      "user_lines_removed": 2,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "agent/builder/git.py": 8,
+        "agent/builder/sandbox.py": 3
+      },
+      "user_removed_per_file": {
+        "agent/builder/sandbox.py": 2
+      }
+    }
+  ]
+}
