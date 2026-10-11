@@ -31,15 +31,21 @@ export function OnboardingFlow() {
 
   const current = onboardingSteps[step];
   const lastStep = step === onboardingSteps.length - 1;
+  const siteReady = site.trim().length > 0;
   const githubReady = Boolean(
     github?.fullName &&
-      github.branch &&
-      github.framework &&
-      github.sourceFolder,
+    github.branch &&
+    github.framework &&
+    github.sourceFolder,
   );
 
   async function next() {
     setError("");
+
+    if (current.id === "website" && !siteReady) {
+      setError("Add your website before continuing.");
+      return;
+    }
 
     if (current.id === "github" && !githubReady) {
       setError("Choose a repository, branch, and source folder.");
@@ -147,7 +153,11 @@ export function OnboardingFlow() {
               type="submit"
               size="lg"
               className="h-11 px-4"
-              disabled={saving || (current.id === "github" && !githubReady)}
+              disabled={
+                saving ||
+                (current.id === "website" && !siteReady) ||
+                (current.id === "github" && !githubReady)
+              }
             >
               {saving ? "Saving…" : lastStep ? "Start my agent" : "Continue"}
               {lastStep ? <Rocket /> : <ArrowRight />}
