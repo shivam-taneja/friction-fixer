@@ -1,0 +1,23 @@
+@web/src/components/dashboard/runs-page.tsx have it load with skeleton please for this file
+
+---
+
+sorry continue
+
+---
+
+also in the @web/src/components/dashboard/runs-page.tsx page if the user hasn't done the onboarding dont allow to run anything show a button saing complete first!
+
+@web/src/components/dashboard/run-detail.tsx add skeleton loading for this also!
+
+---
+
+show the id in the skeleton since we can get that from the url. full page being emtpy is weird and the all runs should say back to all runs or add some arrows or something like that!
+
+---
+
+@web/src/components/dashboard/runs-page.tsx:153 use date-fns please. for this
+
+---
+
+@web/src/components/dashboard/run-detail.tsx:181 add this to the left side please below the heading and that thing on the right side it's fucked
