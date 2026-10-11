@@ -1,0 +1,298 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4MWB5JT42XXGPPM5JWSHEFX",
+  "session_id": "6e70f6a9-14e8-43c8-9ac0-af27d4c4940e",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T07:02:58.068937Z",
+  "branch": "main",
+  "checkpoints_count": 25,
+  "save_step_count": 20,
+  "files_touched": [
+    "web/src/lib/db/users.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "092a93760d42",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 109267,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 9738240,
+    "output_tokens": 59177,
+    "api_call_count": 17
+  },
+  "session_metrics": {
+    "turn_count": 25
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T07:02:58.025338Z",
+    "agent_lines": 6,
+    "agent_removed": 0,
+    "human_added": 50,
+    "human_modified": 29,
+    "human_removed": 0,
+    "total_committed": 56,
+    "total_lines_changed": 85,
+    "agent_percentage": 7.0588235294117645,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 1714,
+      "user_lines_removed": 26,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40,
+        ".cursorignore": 2,
+        ".env.example": 5,
+        ".gitignore": 3,
+        "web/.env.example": 13,
+        "web/.gitignore": 1,
+        "web/next.config.ts": 1,
+        "web/package.json": 1,
+        "web/pnpm-lock.yaml": 1212,
+        "web/src/app/api/auth/[...nextauth]/route.ts": 6,
+        "web/src/app/auth/page.tsx": 60,
+        "web/src/app/dashboard/page.tsx": 12,
+        "web/src/app/page.tsx": 11,
+        "web/src/components/auth/auth-form.tsx": 62,
+        "web/src/components/home/final-cta.tsx": 3,
+        "web/src/components/home/hero-section.tsx": 3,
+        "web/src/components/home/home-page.tsx": 4,
+        "web/src/components/layout/site-header.tsx": 3,
+        "web/src/lib/auth.ts": 58,
+        "web/src/lib/db/firebase.ts": 25,
+        "web/src/lib/db/schema.ts": 76,
+        "web/src/lib/db/users.ts": 52,
+        "web/src/lib/session.ts": 6,
+        "web/src/proxy.ts": 40,
+        "web/src/types/next-auth.d.ts": 15
+      },
+      "user_removed_per_file": {
+        ".cursorignore": 1,
+        ".env.example": 5,
+        "web/next.config.ts": 1,
+        "web/pnpm-lock.yaml": 5,
+        "web/src/app/page.tsx": 1,
+        "web/src/components/home/final-cta.tsx": 3,
+        "web/src/components/home/hero-section.tsx": 3,
+        "web/src/components/home/home-page.tsx": 4,
+        "web/src/components/layout/site-header.tsx": 3
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 40,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2427,
+      "agent_lines_removed": 27,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40
+      }
+    },
+    {
+      "checkpoint_number": 4,
+      "user_lines_added": 44,
+      "user_lines_removed": 6,
+      "agent_lines_added": 2427,
+      "agent_lines_removed": 27,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40,
+        "web/src/lib/db/firebase.ts": 2,
+        "web/src/lib/firebase/auth-config.ts": 2
+      },
+      "user_removed_per_file": {
+        "web/.env.example": 1,
+        "web/src/lib/db/firebase.ts": 2,
+        "web/src/lib/firebase/auth-config.ts": 3
+      }
+    },
+    {
+      "checkpoint_number": 5,
+      "user_lines_added": 44,
+      "user_lines_removed": 6,
+      "agent_lines_added": 2427,
+      "agent_lines_removed": 27,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40,
+        "web/src/lib/db/firebase.ts": 2,
+        "web/src/lib/firebase/auth-config.ts": 2
+      },
+      "user_removed_per_file": {
+        "web/.env.example": 1,
+        "web/src/lib/db/firebase.ts": 2,
+        "web/src/lib/firebase/auth-config.ts": 3
+      }
+    },
+    {
+      "checkpoint_number": 6,
+      "user_lines_added": 40,
+      "user_lines_removed": 0,
+      "agent_lines_added": 2437,
+      "agent_lines_removed": 27,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40
+      }
+    },
+    {
+      "checkpoint_number": 7,
+      "user_lines_added": 40,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3021,
+      "agent_lines_removed": 35,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40
+      }
+    },
+    {
+      "checkpoint_number": 8,
+      "user_lines_added": 40,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3059,
+      "agent_lines_removed": 35,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40
+      }
+    },
+    {
+      "checkpoint_number": 9,
+      "user_lines_added": 43,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3059,
+      "agent_lines_removed": 35,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40,
+        "web/src/components/legal/legal-page.tsx": 3
+      }
+    },
+    {
+      "checkpoint_number": 10,
+      "user_lines_added": 40,
+      "user_lines_removed": 0,
+      "agent_lines_added": 3063,
+      "agent_lines_removed": 35,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40
+      }
+    },
+    {
+      "checkpoint_number": 11,
+      "user_lines_added": 577,
+      "user_lines_removed": 9,
+      "agent_lines_added": 3130,
+      "agent_lines_removed": 22,
+      "user_added_per_file": {
+        ".cursor/hooks.json": 40,
+        ".python-version": 1,
+        "FLOW.md": 121,
+        "README.md": 5,
+        "agent/README.md": 2,
+        "agent/__init__.py": 1,
+        "agent/__main__.py": 12,
+        "agent/analyst.py": 8,
+        "agent/builder/__init__.py": 1,
+        "agent/builder/edit.py": 1,
+        "agent/config.py": 12,
+        "agent/loop.py": 11,
+        "agent/requirements.txt": 78,
+        "agent/reviewer.py": 13,
+        "agent/schemas.py": 37,
+        "agent/simulator.py": 8,
+        "agent/tracing.py": 24,
+        "demo-site/index.html": 15,
+        "demo-site/pricing.html": 19,
+        "demo-site/style.css": 22,
+        "web/README.md": 2,
+        "web/eslint.config.mjs": 18,
+        "web/pnpm-workspace.yaml": 3,
+        "web/public/logo.svg": 1,
+        "web/src/app/error.tsx": 41,
+        "web/src/app/not-found.tsx": 25,
+        "web/src/components/home/faqs.ts": 22,
+        "web/tsconfig.json": 34
+      },
+      "user_removed_per_file": {
+        "README.md": 4,
+        "agent/README.md": 2,
+        "agent/builder/__init__.py": 1,
+        "agent/builder/edit.py": 1,
+        "web/README.md": 1
+      }
+    },
+    {
+      "checkpoint_number": 12,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 13,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 48,
+      "agent_lines_removed": 35
+    },
+    {
+      "checkpoint_number": 14,
+      "user_lines_added": 1,
+      "user_lines_removed": 0,
+      "agent_lines_added": 154,
+      "agent_lines_removed": 165,
+      "user_added_per_file": {
+        "web/src/lib/db/users.ts": 1
+      }
+    },
+    {
+      "checkpoint_number": 15,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 155,
+      "agent_lines_removed": 165
+    },
+    {
+      "checkpoint_number": 16,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 172,
+      "agent_lines_removed": 135
+    },
+    {
+      "checkpoint_number": 17,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 172,
+      "agent_lines_removed": 135
+    },
+    {
+      "checkpoint_number": 18,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 172,
+      "agent_lines_removed": 135
+    },
+    {
+      "checkpoint_number": 19,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 172,
+      "agent_lines_removed": 135
+    },
+    {
+      "checkpoint_number": 20,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}

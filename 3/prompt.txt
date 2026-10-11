@@ -1,0 +1,757 @@
+import { NextRequest, NextResponse } from "next/server";
+import { authMiddleware } from "next-firebase-auth-edge";
+import { authConfig } from "./lib/firebase/auth-config";
+import {
+  PUBLIC_PATHS,
+  AUTH_API_PATHS,
+  LOGIN_PATH,
+  DEFAULT_LOGIN_REDIRECT,
+  redirectToLogin,
+} from "./config/routes";
+
+export async function proxy(request: NextRequest) {
+  return authMiddleware(request, {
+    loginPath: AUTH_API_PATHS.login,
+    logoutPath: AUTH_API_PATHS.logout,
+    apiKey: authConfig.apiKey,
+    cookieName: authConfig.cookieName,
+    cookieSignatureKeys: authConfig.cookieSignatureKeys,
+    cookieSerializeOptions: authConfig.cookieSerializeOptions,
+    serviceAccount: authConfig.serviceAccount,
+    handleValidToken: async ({}, headers) => {
+      if (
+        PUBLIC_PATHS.includes(request.nextUrl.pathname) &&
+        request.nextUrl.pathname === LOGIN_PATH
+      ) {
+        return NextResponse.redirect(
+          new URL(DEFAULT_LOGIN_REDIRECT, request.url),
+        );
+      }
+
+      return NextResponse.next({
+        request: {
+          headers,
+        },
+      });
+    },
+    handleInvalidToken: async (reason) => {
+      if (!PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
+        console.info("Missing or invalid credentials", { reason });
+      }
+
+      return redirectToLogin(request);
+    },
+    handleError: async (error) => {
+      console.error("Unhandled authentication error", { error });
+
+      return redirectToLogin(request);
+    },
+  });
+}
+
+export const config = {
+  matcher: [
+    "/",
+    "/((?!_next|favicon.ico|api|.*\\.).*)",
+    "/api/login",
+    "/api/logout",
+  ],
+};
+
+
+/**
+ * These routes do not require authentication.
+ */
+export const PUBLIC_PATHS = [
+  "/auth",
+  "/",
+  "/privacy",
+  "/terms",
+  "/api/login",
+  "/api/logout",
+];
+
+/**
+ * These are the login and logout paths used by Next.js Firebase Auth Edge.
+ */
+export const AUTH_API_PATHS = {
+  login: "/api/login",
+  logout: "/api/logout",
+};
+
+/**
+ * The default path to redirect unauthenticated users to.
+ */
+export const LOGIN_PATH = "/auth";
+
+/**
+ * The default path to redirect authenticated users to after login.
+ */
+export const DEFAULT_LOGIN_REDIRECT = "/app";
+
+import { NextRequest, NextResponse } from "next/server";
+
+export function redirectToLogin(request: NextRequest) {
+  if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
+  const url = request.nextUrl.clone();
+  url.pathname = LOGIN_PATH;
+  url.searchParams.set("redirect", request.nextUrl.pathname);
+  return NextResponse.redirect(url);
+}
+
+import { authConfig } from "@/lib/firebase/auth-config";
+import { NextResponse } from "next/server";
+
+export async function GET() {
+  const response = new NextResponse(JSON.stringify({ status: "success" }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+
+  // Remove cookies
+  response.cookies.set(authConfig.cookieName, "", {
+    ...authConfig.cookieSerializeOptions,
+    maxAge: 0,
+  });
+
+  response.cookies.set(`${authConfig.cookieName}-refresh`, "", {
+    ...authConfig.cookieSerializeOptions,
+    maxAge: 0,
+  });
+
+  return response;
+}
+
+import { authConfig } from "@/lib/firebase/auth-config";
+import { getFirebaseAuth } from "next-firebase-auth-edge/lib/auth";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  const auth = request.headers.get("Authorization");
+  const token = auth?.split("Bearer ")[1];
+
+  if (!token) {
+    return NextResponse.json({ error: "Missing token" }, { status: 401 });
+  }
+
+  const { getCustomIdAndRefreshTokens } = getFirebaseAuth(
+    authConfig.serviceAccount,
+    authConfig.apiKey,
+  );
+
+  try {
+    const { idToken, refreshToken } = await getCustomIdAndRefreshTokens(token);
+
+    const response = new NextResponse(JSON.stringify({ status: "success" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+
+    response.cookies.set(authConfig.cookieName, idToken, {
+      ...authConfig.cookieSerializeOptions,
+    });
+
+    if (refreshToken) {
+      response.cookies.set(`${authConfig.cookieName}-refresh`, refreshToken, {
+        ...authConfig.cookieSerializeOptions,
+      });
+    }
+
+    return response;
+  } catch (e) {
+    console.error("Login failed: ", e);
+    return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+  }
+}
+
+import { getServerEnv } from "@/env";
+import { getClientEnv } from "@/env";
+
+const serverEnv = getServerEnv();
+const clientEnv = getClientEnv();
+
+export const authConfig = {
+  apiKey: clientEnv.NEXT_PUBLIC_FIREBASE_API_KEY,
+  cookieName: "pegfolio-session",
+  cookieSignatureKeys: [serverEnv.COOKIE_SECRET_KEY],
+  cookieSerializeOptions: {
+    path: "/",
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    maxAge: 12 * 60 * 60 * 24, // 12 days
+  },
+  serviceAccount: {
+    projectId: clientEnv.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    clientEmail: serverEnv.FIREBASE_CLIENT_EMAIL!,
+    privateKey: serverEnv.FIREBASE_PRIVATE_KEY
+      ? serverEnv.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
+      : "",
+  },
+};
+
+import { z } from "zod";
+
+const clientEnvSchema = z.object({
+  NEXT_PUBLIC_FIREBASE_API_KEY: z.string().min(1),
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: z.string().min(1),
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID: z.string().min(1),
+  NEXT_PUBLIC_FIREBASE_APP_ID: z.string().min(1),
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: z.string().optional(),
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: z.string().optional(),
+});
+
+export type ClientEnv = z.infer<typeof clientEnvSchema>;
+
+export function getClientEnv(): ClientEnv {
+  return clientEnvSchema.parse({
+    NEXT_PUBLIC_FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN:
+      process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    NEXT_PUBLIC_FIREBASE_PROJECT_ID:
+      process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    NEXT_PUBLIC_FIREBASE_APP_ID: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET:
+      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID:
+      process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  });
+}
+
+const serverEnvSchema = z.object({
+  FIREBASE_CLIENT_EMAIL: z.string().email().optional(),
+  FIREBASE_PRIVATE_KEY: z.string().min(1).optional(),
+  COOKIE_SECRET_KEY: z.string().min(1),
+  RESEND_API_KEY: z.string().optional(),
+});
+
+export type ServerEnv = z.infer<typeof serverEnvSchema>;
+
+export function getServerEnv(): ServerEnv {
+  return serverEnvSchema.parse({
+    FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL,
+    FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY,
+    COOKIE_SECRET_KEY: process.env.COOKIE_SECRET_KEY,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+  });
+}
+
+
+take ref from this project and setup my auth like this, next-auth is is fucking it up and i dont want it!
+
+if u need any other file from this project which im giving u as ref ask me! dont change the login logic and stuff like that. i'll still have just one /auth page 
+
+"use client";
+
+import { useState } from "react";
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  type AuthProvider as FirebaseAuthProvider,
+  type AuthError,
+} from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { getFirebaseAuth } from "@/lib/firebase/client-app";
+import { mapFirebaseError } from "@/lib/firebase/errors";
+import { Button } from "@/components/ui/button";
+
+type ProviderType = "google";
+
+export function AuthForm() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState<ProviderType | null>(null);
+
+  async function signIn(
+    provider: FirebaseAuthProvider,
+    providerName: ProviderType,
+  ) {
+    setError(null);
+    setPending(providerName);
+
+    try {
+      const auth = getFirebaseAuth();
+      const credential = await signInWithPopup(auth, provider);
+      const token = await credential.user.getIdToken();
+
+      // Explicitly wait for the backend to set the cookies before redirecting
+      await fetch("/api/login", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      router.refresh(); // Refresh Next.js server component state with the new cookie
+      router.replace("/app");
+    } catch (e) {
+      const err = e as AuthError;
+      setError(mapFirebaseError(err));
+    } finally {
+      setPending(null);
+    }
+  }
+
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-6 p-8 shadow-sm border border-border rounded-2xl bg-card text-card-foreground mx-auto relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-primary/40 via-primary to-primary/40" />
+
+      <div className="space-y-2 text-center">
+        <h1 className="text-3xl font-display font-semibold tracking-tight">
+          Welcome to <span className="text-primary">Pegfolio</span>
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Sign in or create an account
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-3 mt-2">
+        <Button
+          type="button"
+          size="lg"
+          variant="outline"
+          className="w-full font-medium h-12 border-border hover:bg-secondary/50 cursor-pointer"
+          disabled={pending !== null}
+          onClick={() => void signIn(new GoogleAuthProvider(), "google")}
+        >
+          {pending === "google" ? (
+            "Continuing…"
+          ) : (
+            <>
+              <svg
+                className="w-5 h-5 mr-2"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  fill="#4285F4"
+                />
+                <path
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  fill="#34A853"
+                />
+                <path
+                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  fill="#FBBC05"
+                />
+                <path
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  fill="#EA4335"
+                />
+                <path d="M1 1h22v22H1z" fill="none" />
+              </svg>
+              Continue with Google
+            </>
+          )}
+        </Button>
+      </div>
+
+      {error && (
+        <p
+          className="text-center text-sm text-destructive bg-destructive/10 border border-destructive/20 p-3 rounded-lg mt-2"
+          role="alert"
+        >
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+
+"use client";
+
+import { useEffect } from "react";
+import { getFirebaseAuth } from "@/lib/firebase/client-app";
+import { onIdTokenChanged } from "firebase/auth";
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    const auth = getFirebaseAuth();
+
+    return onIdTokenChanged(auth, async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+
+        await fetch("/api/login", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      } else {
+        await fetch("/api/logout");
+      }
+    });
+  }, []);
+
+  return <>{children}</>;
+}
+
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html
+      lang="en"
+      className={`${fontDisplay.variable} ${fontSans.variable} h-full antialiased`}
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+    >
+      <body className="flex min-h-full flex-col font-sans">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>{children}</AuthProvider>
+        </ThemeProvider>
+      </body>
+    </html>
+  );
+}
+
+ignore whatever is not told to you to do
+
+---
+
+dude wut u doing. give the code fasttttttttttttttttttterrrrrrrrrrrrrrrrrrr
+
+---
+
+how do i get all of these?
+NEXT_PUBLIC_FIREBASE_API_KEY=""
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=""
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=""
+NEXT_PUBLIC_FIREBASE_APP_ID=""
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=""
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=""
+
+COOKIE_SECRET_KEY=""
+
+FIREBASE_PROJECT_ID=""
+FIREBASE_CLIENT_EMAIL=""
+FIREBASE_PRIVATE_KEY=""
+
+---
+
+dont i need the url also? like the next js url site one?
+
+---
+
+this is what i have for the github app - 
+
+Skip to content
+Settings
+Developer Settings
+Settings Developer settings GitHub Apps Friction Fixer
+About
+Owned by: @shivam-taneja
+
+App ID: 5263576
+
+Using your App ID to get installation tokens? You can now use your Client ID instead.
+
+Client ID: Iv23lisUNKsb0hTLgIVl
+
+GitHub Apps can use OAuth credentials to identify users. Learn more about identifying users by reading our integration developer documentation.
+
+Public link
+https://github.com/apps/friction-fixer
+Basic information
+GitHub App name
+Friction Fixer
+The name of your GitHub App.
+
+ Markdown supported
+Write
+Preview
+Friction Fixer connects only to the repository you authorize or add, reads its code, opens a pull request with a change, and can revert that change. It cannot access any other repositories unless you explicitly grant access.
+Homepage URL
+https://friction-fixer.shivamtaneja.com
+The full URL to your GitHub App’s website.
+
+Identifying and authorizing users
+The URIs to redirect to after a user authorizes your application. You may add up to 10 redirect URIs. Wildcard matching allows tokens to be sent to all subdomains and additional paths of the redirect URI. Only enable this if you are sure you have control over all possible matches. Learn more about secure use of redirect URIs.
+Redirect URI
+https://friction-fixer.shivamtaneja.com/api/github/callback
+ Allow wildcard matching
+ Request user authorization (OAuth) during installation
+Requests that the installing user grants access to their identity during installation of your App.
+
+ Enable Device Flow
+Allow this GitHub App to authorize users via the device flow.
+
+Post installation
+Setup URL (optional)
+https://friction-fixer.shivamtaneja.com/dashboard
+Users will be redirected to this URL after installing your GitHub App to complete additional setup.
+
+ Redirect on update
+Redirect users to the 'Setup URL' after installations are updated (E.g. repositories added/removed).
+
+Webhook
+
+Active
+We will deliver event details when this hook is triggered.
+Webhook URL
+https://friction-fixer.shivamtaneja.com/api/github/webhook
+Events will POST to this URL with a webhook.
+
+
+There is currently a secret configured for this webhook. If you've lost or forgotten this secret, you can change it, but be aware that any integrations using this secret will need to be updated.
+
+Set a secret to secure your webhooks.
+
+SSL verification
+ By default, we verify SSL certificates when delivering payloads.
+
+ Enable SSL verification  Disable (not recommended)
+ 
+Display information
+
+You can also drag and drop a picture from your computer.
+
+
+Badge background color
+#C1EE49
+The hex value of the badge background color. Hex colors should only contain numbers and letters from a-f.
+
+ Saved
+
+Marketplace
+List your GitHub App in the GitHub Marketplace so that other users can discover it.
+
+List in Marketplace
+IP allow list
+Enter the IP addresses of your GitHub App to allow organizations with IP allow lists to selectively inherit the App's IP allow list when installed. Learn more about App IP allow lists.
+
+There are no IP addresses on the allow list yet.
+IP address or CIDR range
+Short description
+Check IP address
+Enter an IP address to check whether it is permitted by enabled entries on the IP allow list.
+
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+
+can u check if everything is setup properly? and for firebase i have enabled github and i have added the secret. if u need any other details ask me!
+
+---
+
+add the privacy and terms page now! make sure u mention about dpdp and everything since im using firebase! and terms page also. /terms and /privacy also make sure u add proper seo related stuff!
+
+---
+
+for the contact ask them to reach out to https://www.shivamtaneja.com/contact rather than the email please!
+
+---
+
+and dude move it to 1 single file no. maybe seo file or whatever. cause why u write it again and again
+
+---
+
+the page opens in new tab jesus bro!!!
+
+---
+
+FUCKING NEW TAB!!!!!!!!!!!!!!! i want it to open in new tab bro that's what i meant
+
+---
+
+bro why is the github popup so ugly :)
+
+---
+
+but i think it casue it's the app right... not just the auth logic right ?
+
+---
+
+so maybe i create two apps? one for just the auth... cause it's only req so that users can log into the platform the repo linking and everything is seperate...
+
+---
+
+should i cleanup the url i added from old one?
+
+---
+
+Skip to content
+Settings
+Developer Settings
+Register a new OAuth app
+Application name
+Friction Fixer
+Something users will recognize and trust.
+
+Homepage URL
+https://friction-fixer.shivamtaneja.com/
+The full URL to your application homepage.
+
+Application description
+Application description is optional
+
+This is displayed to all users of your application.
+
+Redirect URIs
+The URIs to redirect to after a user authorizes an app. You may add up to 10 redirect URIs. Wildcard matching allows tokens to be sent to all subdomains and additional paths of the redirect URI. Only enable this if you are sure you have control over all possible matches. Learn more about secure use of redirect URIs.
+Redirect URI
+e.g. https://example.com/auth
+ Allow wildcard matching
+ Enable Device Flow
+Allow this OAuth App to authorize users via the device flow.
+
+ Expire user access tokens
+This will provide a refresh_token which can be used to request an updated access token when this access token expires.
+
+ 
+
+Footer
+© 2026 GitHub, Inc.
+Footer navigation
+Terms
+Privacy
+Security
+Status
+Community
+Docs
+Contact
+Manage cookies
+Do not share my personal information
+giv e
+
+---
+
+ok so lets' create the firestore also otherwise user collection would not work after sign in lol
+
+---
+
+should we use server actions instead of api endpoints? and also u are clubbing some logic in the login page.... which i dont really like. split it out no? and also in the db folder we have just 1 schema file. it should be seperate as per the schema so that it's easier to maintain going fwd if i need to do any changes!
+
+---
+
+POST /auth 500 in 368ms (next.js: 13ms, proxy.ts: 3ms, application-code: 352ms)
+  └─ ƒ createSession("REDACTED..REDACTED") in 337ms src/lib/auth/session.ts
+[browser] ⨯ unhandledRejection: Error: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+    at upsertUser (src/lib/db/users.ts:24:26)
+    at createSession (src/lib/auth/session.ts:25:19)
+  22 |   const id = userDocId(input.email, input.provider, input.accountId);
+  23 |   const ref = db().collection("users").doc(id);
+> 24 |   const snap = await ref.get();
+     |                          ^
+  25 |   const providerLink = { accountId: input.accountId };
+  26 |
+
+do i need to setup some rules in firebase db? i mean in firestore?
+
+---
+
+roll back to it being api, but keep the scheam changes and file structure as it is please!
+
+---
+
+Login failed:  Error: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+    at upsertUser (src/lib/db/users.ts:24:26)
+    at createSession (src/lib/auth/session.ts:35:21)
+  22 |   const id = userDocId(input.email, input.provider, input.accountId);
+  23 |   const ref = db().collection("users").doc(id);
+> 24 |   const snap = await ref.get();
+     |                          ^
+  25 |   const providerLink = { accountId: input.accountId };
+  26 |
+  27 |   if (!snap.exists) { {
+  code: 7,
+  details: 'Missing or insufficient permissions.',
+  metadata: Metadata {
+    internalRepr: Map(1) { 'x-debug-tracking-id' => [Array] },
+    options: {}
+  }
+}
+ GET /api/login 401 in 862ms (next.js: 12ms, proxy.ts: 5ms, application-code: 845ms)
+Login failed:  Error: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+    at upsertUser (src/lib/db/users.ts:24:26)
+    at createSession (src/lib/auth/session.ts:35:21)
+  22 |   const id = userDocId(input.email, input.provider, input.accountId);
+  23 |   const ref = db().collection("users").doc(id);
+> 24 |   const snap = await ref.get();
+     |                          ^
+  25 |   const providerLink = { accountId: input.accountId };
+  26 |
+  27 |   if (!snap.exists) { {
+  code: 7,
+  details: 'Missing or insufficient permissions.',
+  metadata: Metadata {
+    internalRepr: Map(1) { 'x-debug-tracking-id' => [Array] },
+    options: {}
+  }
+}
+
+soo what's wrong?
+
+NEXT_PUBLIC_FIREBASE_API_KEY="REDACTED"
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="friction-fixer.firebaseapp.com"
+NEXT_PUBLIC_FIREBASE_PROJECT_ID="friction-fixer"
+NEXT_PUBLIC_FIREBASE_APP_ID="1:912923143215:web:3d908664db4f17bd432ada"
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="friction-fixer.firebasestorage.app"
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="912923143215"
+
+Database ID: (default)
+Location: nam5
+Edition: Standard
+Configuration: Firestore Native
+Scheduled backups: Disabled
+Realtime updates: Enabled
+
+---
+
+GET /auth 200 in 467ms (next.js: 244ms, proxy.ts: 83ms, application-code: 140ms)
+Login failed:  Error: 7 PERMISSION_DENIED: Missing or insufficient permissions.
+    at upsertUser (src/lib/db/users.ts:24:26)
+    at createSession (src/lib/auth/session.ts:35:21)
+  22 |   const id = userDocId(input.email, input.provider, input.accountId);
+  23 |   const ref = db().collection("users").doc(id);
+> 24 |   const snap = await ref.get();
+     |                          ^
+  25 |   const providerLink = { accountId: input.accountId };
+  26 |
+  27 |   if (!snap.exists) { {
+  code: 7,
+  details: 'Missing or insufficient permissions.',
+  metadata: Metadata {
+    internalRepr: Map(1) { 'x-debug-tracking-id' => [Array] },
+    options: {}
+  }
+}
+ GET /api/login 401 in 921ms (next.js: 57ms, proxy.ts: 1.6ms, application-code: 863ms)
+
+added it yet the same result
+
+---
+
+and bro i have it saved.... the values
+
+FIREBASE_CLIENT_EMAIL="firebase-adminsdk-fbsvc@friction-fixer.iam.gserviceaccount.com"
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhk
+
+---
+
+lol it's workign now, tell me one thing web/src/lib/db/users.ts for this file we get the collection added as users and then email. so is that the right logic? should we not check via the id? what do u suggest? and if suppose i log in via google with acct a and then github is also that same email so it'll link the same user? ... talk to me
+
+---
+
+didnt get the error and i can see two providers for the email, and for each provider add a connectedAt please
