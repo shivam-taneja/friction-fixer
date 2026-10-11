@@ -1,6 +1,6 @@
-import { clearSession } from "@/lib/auth/session";
 import { NextRequest } from "next/server";
+import { clearSession } from "@/lib/auth/session";
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   return clearSession(request);
 }

@@ -57,7 +57,7 @@ export function AuthForm() {
 
       const token = await credential.user.getIdToken();
 
-      const response = await fetch("/api/auth/session", {
+      const response = await fetch("/api/login", {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });

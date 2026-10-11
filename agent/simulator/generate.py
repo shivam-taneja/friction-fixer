@@ -18,6 +18,22 @@ DEFAULT_CHANGE = (
 )
 
 
+def generate_baseline() -> VisitorData:
+    """Ask the model for the mock numbers from before any edit."""
+    mistake = ""
+    last_error = "The model did not return a usable baseline."
+    for _ in range(2):
+        try:
+            visitors = _baseline(_ask_baseline(mistake))
+        except RuntimeError as error:
+            last_error = str(error)
+            mistake = last_error
+            continue
+        _write_baseline(visitors)
+        return visitors
+    raise RuntimeError(last_error)
+
+
 def generate_outcomes(change: str, before: VisitorData) -> dict[str, VisitorData]:
     """Ask the model for both outcomes, check them, and write the two JSON files."""
     change = change.strip()
@@ -36,6 +52,36 @@ def generate_outcomes(change: str, before: VisitorData) -> dict[str, VisitorData
         _write(change, before, outcomes)
         return outcomes
     raise RuntimeError(last_error)
+
+
+def _ask_baseline(mistake: str) -> dict:
+    api_key, base_url, model = provider_settings()
+    client = neatlogs.wrap(OpenAI(api_key=api_key, base_url=base_url))
+    correction = f"\n\nYour last answer was rejected: {mistake}" if mistake else ""
+    response = client.chat.completions.create(
+        model=model,
+        temperature=0.2,
+        response_format={"type": "json_object"},
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You simulate a first batch of mock PostHog numbers for a homepage "
+                    "where most visitors leave. Return JSON only: "
+                    '{"bounce_rate":0.71,"scroll_depth":0.12,'
+                    '"pricing_page_visits":2,"time_on_page":8.6}. '
+                    "bounce_rate and scroll_depth are fractions from 0 to 1, not percents. "
+                    "bounce_rate must be from 0.65 to 0.90. "
+                    "scroll_depth must be from 0.05 to 0.25. "
+                    "time_on_page must be from 3 to 12 seconds. "
+                    "pricing_page_visits must be a whole number from 1 to 4. "
+                    "These numbers are mock."
+                ),
+            },
+            {"role": "user", "content": "Write the starting numbers." + correction},
+        ],
+    )
+    return _json_object(response.choices[0].message.content or "")
 
 
 def _ask(change: str, before: VisitorData, mistake: str) -> dict:
@@ -77,17 +123,41 @@ def _ask(change: str, before: VisitorData, mistake: str) -> dict:
             },
         ],
     )
-    text = (response.choices[0].message.content or "").strip()
-    if text.startswith("```"):
-        text = re.sub(r"^```(?:json)?\s*", "", text)
-        text = re.sub(r"\s*```$", "", text)
+    return _json_object(response.choices[0].message.content or "")
+
+
+def _json_object(text: str) -> dict:
+    cleaned = text.strip()
+    if cleaned.startswith("```"):
+        cleaned = re.sub(r"^```(?:json)?\s*", "", cleaned)
+        cleaned = re.sub(r"\s*```$", "", cleaned)
     try:
-        data = json.loads(text)
+        data = json.loads(cleaned)
     except json.JSONDecodeError as error:
         raise RuntimeError("The model did not return JSON.") from error
     if not isinstance(data, dict):
-        raise RuntimeError("The model did not return the two outcomes.")
+        raise RuntimeError("The model did not return JSON.")
     return data
+
+
+def _baseline(raw: dict) -> VisitorData:
+    numbers = raw.get("baseline") if isinstance(raw.get("baseline"), dict) else raw
+    visitors = _visitors(numbers)
+    if not 0.65 <= visitors.bounce_rate <= 0.90:
+        raise RuntimeError("baseline bounce_rate must be from 0.65 to 0.90.")
+    if not 0.05 <= visitors.scroll_depth <= 0.25:
+        raise RuntimeError("baseline scroll_depth must be from 0.05 to 0.25.")
+    if not 3 <= visitors.time_on_page <= 12:
+        raise RuntimeError("baseline time_on_page must be from 3 to 12.")
+    if not 1 <= visitors.pricing_page_visits <= 4:
+        raise RuntimeError("baseline pricing_page_visits must be from 1 to 4.")
+    return visitors
+
+
+def _write_baseline(visitors: VisitorData) -> None:
+    FIXTURES.mkdir(parents=True, exist_ok=True)
+    payload = {"source": "mock", "provider": "posthog", **_fields(visitors)}
+    (FIXTURES / "baseline.json").write_text(json.dumps(payload, indent=2) + "\n")
 
 
 def _outcomes(raw: dict, before: VisitorData) -> dict[str, VisitorData]:

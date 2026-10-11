@@ -2,17 +2,17 @@
 
 Python code for the Friction Fixer loop. The full loop is described in [FLOW.md](../FLOW.md).
 
-The Analyst reads a mock PostHog export and writes one plan. The Builder can edit `demo-site/` and open a pull request. The simulator asks the model for one improved outcome and one worse outcome. The Reviewer asks the simulator for those numbers and returns KEEP or UNDO. The loop is still a placeholder.
+The loop runs one local round. The Builder opens a pull request and the loop merges it before the review, so the site is live. The after-numbers are still mock. On KEEP the change stays. On UNDO the loop opens a second pull request that reverts it, then merges that too. The Reviewer does not touch git.
 
 ## Files
 
 | File           | Job                                                                                                                                    |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| `loop.py`      | Runs Analyst, Builder, merge, then Reviewer. Stops after 5 rounds, or when bounce rate hits the goal.                                  |
+| `loop.py`      | One local round. Merges the Builder pull request, then reviews the mock after-numbers. On UNDO, opens and merges a revert pull request. |
 | `analyst/`     | Reads mock PostHog events and past verdicts. Writes one plan. `events.py` loads `fixtures/events.json`. `plan.py` asks the configured model for the change. |
 | `builder/`     | Makes that one change inside `demo-site/`, commits, and opens a pull request. `edit.py` calls Groq. `git.py` commits and opens the PR. |
 | `reviewer/`    | Asks the simulator for one outcome, then returns KEEP or UNDO. The verdict goes back to the Analyst through the loop.                  |
-| `simulator/`   | Asks the model for two mock outcomes and writes `fixtures/increased.json` and `fixtures/decreased.json`. The Reviewer does not read those files. |
+| `simulator/`   | Asks the model for the starting numbers and, after the edit, for one improved outcome and one worse outcome.                             |
 | `schemas.py`   | The plan and the verdict the agents pass to each other.                                                                                |
 | `tracing.py`   | neatlogs. One round is one trace.                                                                                                      |
 | `config.py`    | Round limit (5) and the keep margin (bounce rate down by at least 5 percentage points).                                                |
@@ -24,8 +24,11 @@ Python 3.13 is required. Mac and Windows setup, including pyenv and the virtuale
 From the repo root, with `venv` activated and `agent/.env` filled in:
 
 ```bash
-python -m agent
+python -m agent increased
+python -m agent decreased
 ```
+
+Both commands merge the Builder pull request before the review. `increased` keeps that change. `decreased` opens a second pull request that undoes it and merges that too. The working tree must be clean, because the Builder commits only the new edit.
 
 To print the Analyst plan from the mock PostHog export:
 

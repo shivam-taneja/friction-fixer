@@ -29,9 +29,7 @@ export async function proxy(request: NextRequest) {
       }
 
       return NextResponse.next({
-        request: {
-          headers,
-        },
+        request: { headers },
       });
     },
     handleInvalidToken: async (reason) => {
@@ -43,17 +41,11 @@ export async function proxy(request: NextRequest) {
     },
     handleError: async (error) => {
       console.error("Unhandled authentication error", { error });
-
       return redirectToLogin(request);
     },
   });
 }
 
 export const config = {
-  matcher: [
-    "/",
-    "/((?!_next|favicon.ico|api|.*\\.).*)",
-    "/api/login",
-    "/api/logout",
-  ],
+  matcher: ["/", "/((?!_next|favicon.ico|api|.*\\.).*)"],
 };

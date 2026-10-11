@@ -86,6 +86,28 @@ def push(branch: str) -> None:
     )
 
 
+def merge_pr(url: str) -> None:
+    """Merge a pull request so the site can go live."""
+    run(["gh", "pr", "merge", url, "--merge"], env=_github_env())
+
+
+def revert_pr(url: str, reason: str) -> str:
+    """Open a new pull request that undoes a merged one, and return its URL."""
+    return run(
+        [
+            "gh",
+            "pr",
+            "revert",
+            url,
+            "--title",
+            "Undo the last change",
+            "--body",
+            reason,
+        ],
+        env=_github_env(),
+    )
+
+
 def open_pr(branch: str, title: str, body: str) -> str:
     token = os.environ["GITHUB_TOKEN"].strip()
     env = os.environ.copy()
@@ -125,6 +147,14 @@ def restore(paths: list[Path]) -> None:
             )
         elif path.exists():
             path.unlink()
+
+
+def _github_env() -> dict[str, str]:
+    token = os.environ["GITHUB_TOKEN"].strip()
+    env = os.environ.copy()
+    env["GITHUB_TOKEN"] = token
+    env["GH_TOKEN"] = token
+    return env
 
 
 def run(cmd: list[str], env: dict[str, str] | None = None) -> str:

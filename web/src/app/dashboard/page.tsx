@@ -1,6 +1,6 @@
 import { PageContainer } from "@/components/layout/page-container";
-import { LogoutButton } from "./logout-button";
 import { SignedInAs } from "./signed-in-as";
+import { LogoutButton } from "@/components/auth/logout-button";
 
 export default function DashboardPage() {
   return (
