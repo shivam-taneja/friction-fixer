@@ -2,20 +2,15 @@
 
 import json
 import re
-from pathlib import Path
 
 import neatlogs
 from openai import OpenAI
 
 from agent.builder.edit import provider_settings
-from agent.config import BOUNCE_RATE_DROP, REPO_ROOT
+from agent.config import BOUNCE_RATE_DROP
 from agent.schemas import VisitorData
 
-FIXTURES = Path(__file__).resolve().parent / "fixtures"
 CASES = ("increased", "decreased")
-DEFAULT_CHANGE = (
-    "Add a short benefit-focused subheadline and three feature bullets on the homepage."
-)
 
 
 def generate_baseline() -> VisitorData:
@@ -29,13 +24,12 @@ def generate_baseline() -> VisitorData:
             last_error = str(error)
             mistake = last_error
             continue
-        _write_baseline(visitors)
         return visitors
     raise RuntimeError(last_error)
 
 
 def generate_outcomes(change: str, before: VisitorData) -> dict[str, VisitorData]:
-    """Ask the model for both outcomes, check them, and write the two JSON files."""
+    """Ask the model for both outcomes and check them."""
     change = change.strip()
     if not change:
         raise RuntimeError("The simulator has no change to react to.")
@@ -49,7 +43,6 @@ def generate_outcomes(change: str, before: VisitorData) -> dict[str, VisitorData
             last_error = str(error)
             mistake = last_error
             continue
-        _write(change, before, outcomes)
         return outcomes
     raise RuntimeError(last_error)
 
@@ -154,12 +147,6 @@ def _baseline(raw: dict) -> VisitorData:
     return visitors
 
 
-def _write_baseline(visitors: VisitorData) -> None:
-    FIXTURES.mkdir(parents=True, exist_ok=True)
-    payload = {"source": "mock", "provider": "posthog", **_fields(visitors)}
-    (FIXTURES / "baseline.json").write_text(json.dumps(payload, indent=2) + "\n")
-
-
 def _outcomes(raw: dict, before: VisitorData) -> dict[str, VisitorData]:
     increased = _visitors(raw.get("increased"))
     decreased = _visitors(raw.get("decreased"))
@@ -195,32 +182,6 @@ def _check_decreased(before: VisitorData, after: VisitorData) -> None:
         raise RuntimeError(
             "decreased must lower scroll, time on page, and pricing visits."
         )
-
-
-def _write(change: str, before: VisitorData, outcomes: dict[str, VisitorData]) -> None:
-    FIXTURES.mkdir(parents=True, exist_ok=True)
-    for name, after in outcomes.items():
-        payload = {
-            "source": "mock",
-            "change": change,
-            "before": _fields(before),
-            "after": _fields(after),
-        }
-        path = FIXTURES / f"{name}.json"
-        path.write_text(json.dumps(payload, indent=2) + "\n")
-
-
-def fixture_path(name: str) -> Path:
-    return (FIXTURES / f"{name}.json").relative_to(REPO_ROOT)
-
-
-def _fields(visitors: VisitorData) -> dict:
-    return {
-        "bounce_rate": visitors.bounce_rate,
-        "scroll_depth": visitors.scroll_depth,
-        "pricing_page_visits": visitors.pricing_page_visits,
-        "time_on_page": visitors.time_on_page,
-    }
 
 
 def _visitors(raw: object) -> VisitorData:

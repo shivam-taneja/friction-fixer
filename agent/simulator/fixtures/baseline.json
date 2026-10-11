@@ -1,8 +1,0 @@
-{
-  "source": "mock",
-  "provider": "posthog",
-  "bounce_rate": 0.71,
-  "scroll_depth": 0.12,
-  "pricing_page_visits": 2,
-  "time_on_page": 8.6
-}
