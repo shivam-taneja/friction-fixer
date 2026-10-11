@@ -1,9 +1,10 @@
-"""Reads a connected PostHog project and turns the last 7 days into visitor numbers."""
+"""Reads a connected PostHog project and turns a 7-day window into visitor numbers."""
 
 import json
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime, timezone
 
 from agent.project import _client
 from agent.schemas import VisitorData
@@ -67,6 +68,18 @@ def readiness(user_id: str) -> dict:
     return {"ready": True, "mock": False}
 
 
+def load_window(user_id: str, start: datetime, end: datetime) -> VisitorData | None:
+    """Return PostHog numbers for [start, end), or None when PostHog is not connected."""
+    saved = _connection(user_id)
+    if not saved:
+        return None
+    access, refresh = _refresh(saved["refreshToken"])
+    if refresh != saved["refreshToken"]:
+        _store_refresh(user_id, refresh)
+    row = _query(saved["apiHost"], saved["projectId"], access, _range_query(start, end))
+    return _visitors(row, empty="PostHog has no pageview sessions in this check window.")
+
+
 def load_baseline(user_id: str) -> VisitorData | None:
     """Return the last 7 days from PostHog, or None when this user has not connected."""
     saved = _connection(user_id)
@@ -76,22 +89,7 @@ def load_baseline(user_id: str) -> VisitorData | None:
     if refresh != saved["refreshToken"]:
         _store_refresh(user_id, refresh)
     row = _query(saved["apiHost"], saved["projectId"], access)
-    sessions = _number(row, 0)
-    if sessions <= 0:
-        raise RuntimeError("PostHog has no pageview sessions in the last 7 days.")
-    bounced = _number(row, 1)
-    seconds = _number(row, 2)
-    scroll = _number(row, 3)
-    if scroll > 1:
-        scroll = scroll / 100
-    pageviews = int(round(_number(row, 4)))
-    return VisitorData(
-        bounce_rate=min(1.0, max(0.0, bounced / sessions)),
-        scroll_depth=min(1.0, max(0.0, scroll)),
-        pricing_page_visits=max(0, pageviews),
-        time_on_page=max(0.0, round(seconds, 1)),
-        source="posthog",
-    )
+    return _visitors(row, empty="PostHog has no pageview sessions in the last 7 days.")
 
 
 def _connection(user_id: str) -> dict[str, str] | None:
@@ -133,8 +131,43 @@ def _store_refresh(user_id: str, refresh_token: str) -> None:
     )
 
 
-def _query(api_host: str, project_id: str, access_token: str) -> list:
-    payload = json.dumps({"query": {"kind": "HogQLQuery", "query": QUERY}}).encode()
+def _range_query(start: datetime, end: datetime) -> str:
+    return QUERY.replace(
+        "WHERE timestamp > now() - INTERVAL 7 DAY",
+        "WHERE timestamp >= toDateTime('"
+        + _stamp(start)
+        + "', 'UTC')\n    AND timestamp < toDateTime('"
+        + _stamp(end)
+        + "', 'UTC')",
+    )
+
+
+def _stamp(value: datetime) -> str:
+    when = value if value.tzinfo else value.replace(tzinfo=timezone.utc)
+    return when.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def _visitors(row: list, *, empty: str) -> VisitorData:
+    sessions = _number(row, 0)
+    if sessions <= 0:
+        raise RuntimeError(empty)
+    bounced = _number(row, 1)
+    seconds = _number(row, 2)
+    scroll = _number(row, 3)
+    if scroll > 1:
+        scroll = scroll / 100
+    pageviews = int(round(_number(row, 4)))
+    return VisitorData(
+        bounce_rate=min(1.0, max(0.0, bounced / sessions)),
+        scroll_depth=min(1.0, max(0.0, scroll)),
+        pricing_page_visits=max(0, pageviews),
+        time_on_page=max(0.0, round(seconds, 1)),
+        source="posthog",
+    )
+
+
+def _query(api_host: str, project_id: str, access_token: str, query: str = QUERY) -> list:
+    payload = json.dumps({"query": {"kind": "HogQLQuery", "query": query}}).encode()
     request = urllib.request.Request(
         f"{api_host}/api/projects/{project_id}/query/",
         data=payload,

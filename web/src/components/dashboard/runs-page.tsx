@@ -422,7 +422,7 @@ function RunsSkeleton() {
 
 function outcomeLabel(run: RunRecord) {
   if (run.case === "live") {
-    return run.checkAfter
+    return run.status === "measuring" && run.checkAfter
       ? `PostHog • check ${when(run.checkAfter)}`
       : "PostHog";
   }

@@ -9,7 +9,7 @@ from agent.builder import apply_plan
 from agent.builder import git
 from agent.builder.git import NeedsPerson
 from agent.builder.github_app import installation_token
-from agent.builder.sandbox import open_repo
+from agent.builder.sandbox import demand_message, open_repo
 from agent.builder.text import plan_text
 from agent.history import load_saved
 from agent.posthog import (
@@ -241,6 +241,75 @@ def _continue_undo(data: dict, project, token: str, log: RunLog, reason: str) ->
             )
         finally:
             box.delete()
+    _merge(revert_url, token, project.repository, undo=True)
+    log.step(
+        "action",
+        "Undo",
+        "Opened a pull request that undoes the change, then merged it.\n" + revert_url,
+        {"revertPullRequestUrl": revert_url},
+    )
+    log.finish("undone")
+
+
+def settle_live(
+    user_id: str,
+    log: RunLog,
+    before: VisitorData,
+    after: VisitorData,
+    change: str,
+    pr_url: str,
+) -> None:
+    """Save the PostHog after numbers, then KEEP or UNDO. UNDO opens a revert."""
+    try:
+        _settle_live(user_id, log, before, after, change, pr_url)
+    except NeedsPerson as error:
+        _hand_off(log, error)
+
+
+def _settle_live(
+    user_id: str,
+    log: RunLog,
+    before: VisitorData,
+    after: VisitorData,
+    change: str,
+    pr_url: str,
+) -> None:
+    log.step(
+        "after",
+        "After numbers",
+        after.describe(lead="PostHog, the 7 days after the change."),
+        {"after": _saved_numbers(after)},
+    )
+    verdict = review(change, before, after)
+    log.step(
+        "verdict",
+        "Verdict",
+        verdict_text(verdict),
+        {
+            "verdict": {
+                "decision": verdict.decision,
+                "reason": verdict.reason,
+                "siteCheck": verdict.site_check,
+            }
+        },
+    )
+    if verdict.decision == "KEEP":
+        log.step("action", "Keep", "Kept the change. No second pull request.")
+        log.finish("kept")
+        return
+
+    waiting = demand_message()
+    if waiting:
+        raise RuntimeError(waiting)
+    project = load_project(user_id)
+    token = installation_token(project.installation_id)
+    box = open_repo(project, token)
+    try:
+        revert_url = box.undo(
+            pr_url, verdict.reason, token, project.repository, project.branch
+        )
+    finally:
+        box.delete()
     _merge(revert_url, token, project.repository, undo=True)
     log.step(
         "action",

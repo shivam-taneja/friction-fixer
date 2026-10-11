@@ -1,4 +1,4 @@
-"""Compares one change with mock before and after numbers. Returns KEEP or UNDO."""
+"""Compares one change with before and after numbers. Returns KEEP or UNDO."""
 
 from agent.config import BOUNCE_RATE_DROP
 from agent.schemas import Verdict, VisitorData
@@ -44,11 +44,13 @@ def _reason(
 ) -> str:
     margin = int(BOUNCE_RATE_DROP * 100)
     change = change.rstrip(".")
+    source = "PostHog" if before.source == "posthog" else "Mock"
+    fourth = "Pageviews" if before.source == "posthog" else "Pricing page visits"
     moved = (
-        f"Mock bounce rate {before.bounce_rate:.0%} -> {after.bounce_rate:.0%}. "
+        f"{source} bounce rate {before.bounce_rate:.0%} -> {after.bounce_rate:.0%}. "
         f"Scroll depth {before.scroll_depth:.0%} -> {after.scroll_depth:.0%}. "
         f"Time on page {before.time_on_page:.1f}s -> {after.time_on_page:.1f}s. "
-        f"Pricing page visits {before.pricing_page_visits} -> {after.pricing_page_visits}."
+        f"{fourth} {before.pricing_page_visits} -> {after.pricing_page_visits}."
     )
     if decision == "KEEP":
         return (
@@ -67,5 +69,6 @@ def _numbers(visitors: VisitorData) -> str:
     return (
         f"bounce rate {visitors.bounce_rate:.0%}, "
         f"scroll depth {visitors.scroll_depth:.0%}, "
-        f"pricing page visits {visitors.pricing_page_visits}"
+        f"{'pageviews' if visitors.source == 'posthog' else 'pricing page visits'} "
+        f"{visitors.pricing_page_visits}"
     )

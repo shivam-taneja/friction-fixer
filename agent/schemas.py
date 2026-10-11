@@ -14,13 +14,10 @@ class VisitorData:
     time_on_page: float
     source: Literal["mock", "posthog"] = "mock"
 
-    def describe(self) -> str:
-        if self.source == "posthog":
-            lead = "PostHog, last 7 days."
-            fourth = "Pageviews"
-        else:
-            lead = "Mock data."
-            fourth = "Pricing page visits"
+    def describe(self, *, lead: str | None = None) -> str:
+        if lead is None:
+            lead = "PostHog, last 7 days." if self.source == "posthog" else "Mock data."
+        fourth = "Pageviews" if self.source == "posthog" else "Pricing page visits"
         return (
             f"{lead} Bounce rate {self.bounce_rate:.0%}. "
             f"Average scroll depth {self.scroll_depth:.0%}. "

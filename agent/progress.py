@@ -62,6 +62,18 @@ class RunLog:
         self._refuse_if_stopped()
         self._run().update({"status": "measuring", "error": ""})
 
+    def release_measuring(self, message: str) -> None:
+        """The check could not finish. Leave the run waiting for the next cron."""
+        print(f"--- check later ---\n{message}")
+        try:
+            current = self._run().get()
+            status = (current.to_dict() or {}).get("status") if current.exists else None
+            if status != "running":
+                return
+            self._run().update({"status": "measuring", "error": message})
+        except Exception as error:
+            print(error)
+
     def finish(self, status: str) -> None:
         self._refuse_if_stopped()
         self._run().update({"status": status, "finishedAt": _now(), "error": ""})
