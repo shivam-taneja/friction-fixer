@@ -21,7 +21,7 @@ def load_saved(user_id: str, run_id: str) -> tuple[VisitorData | None, list[Verd
         if doc.id == run_id:
             continue
         data = doc.to_dict() or {}
-        if data.get("status") in {"queued", "running"}:
+        if data.get("status") in {"queued", "running", "blocked"}:
             continue
         rows.append(data)
     rows.sort(key=_stamp)

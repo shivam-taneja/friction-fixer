@@ -44,9 +44,15 @@ export async function createRun(userId: string, runCase: RunCase) {
       const activeStatus = activeSnap.get("status");
       if (
         activeSnap.exists &&
-        (activeStatus === "queued" || activeStatus === "running")
+        (activeStatus === "queued" ||
+          activeStatus === "running" ||
+          activeStatus === "blocked")
       ) {
-        throw new RunRejected("A run is already in progress.", 409, activeId);
+        const message =
+          activeStatus === "blocked"
+            ? "A run is waiting for you to resolve a pull request."
+            : "A run is already in progress.";
+        throw new RunRejected(message, 409, activeId);
       }
     }
 
@@ -155,6 +161,16 @@ export async function assertCapacity() {
   }
 }
 
+export async function continueAgent(input: { runId: string; userId: string }) {
+  const response = await agentFetch("/runs/continue", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+  if (!response.ok) {
+    throw new RunRejected(await agentError(response), response.status);
+  }
+}
+
 export async function startAgent(input: {
   runId: string;
   userId: string;
@@ -233,7 +249,8 @@ function runStatus(value: unknown): RunStatus {
     value === "running" ||
     value === "kept" ||
     value === "undone" ||
-    value === "failed"
+    value === "failed" ||
+    value === "blocked"
   ) {
     return value;
   }

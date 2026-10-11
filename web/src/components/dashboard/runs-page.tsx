@@ -39,6 +39,9 @@ export function RunsPage() {
   const [open, setOpen] = useState(false);
   const [runCase, setRunCase] = useState<RunCase>("increased");
   const locked = activeRunId(runs);
+  const waiting = runs.find(
+    (run) => run.id === locked && run.status === "blocked",
+  );
   const starting = startingNumbers(runs);
   const onboarded = data?.status === OnboardingStatus.complete;
   const needsSetup = data?.status === OnboardingStatus.not_started;
@@ -122,7 +125,9 @@ export function RunsPage() {
       ) : null}
       {locked ? (
         <p className="text-sm text-muted-foreground">
-          A run is already in progress.{" "}
+          {waiting
+            ? "A run is waiting for you to resolve a pull request. "
+            : "A run is already in progress. "}
           <Link
             className="text-foreground underline"
             href={`/dashboard/runs/${locked}`}
@@ -280,6 +285,7 @@ function label(status: RunRecord["status"]) {
   if (status === "running") return "Running";
   if (status === "kept") return "Kept";
   if (status === "undone") return "Undone";
+  if (status === "blocked") return "Needs you";
   return "Failed";
 }
 

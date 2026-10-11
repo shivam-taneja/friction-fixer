@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, Loader2 } from "lucide-react";
 import { PageHeading } from "@/components/dashboard/page-heading";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   isActiveRun,
@@ -17,6 +18,7 @@ export function RunDetail({ id }: { id: string }) {
   const [run, setRun] = useState<RunRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     let stopped = false;
@@ -45,6 +47,23 @@ export function RunDetail({ id }: { id: string }) {
       window.clearTimeout(timer);
     };
   }, [id]);
+
+  async function continueRun() {
+    setPending(true);
+    setError("");
+    const response = await fetch(`/api/runs/${id}/continue`, {
+      method: "POST",
+    });
+    const body = await response.json().catch(() => null);
+    setPending(false);
+    if (!response.ok) {
+      setError(body?.error ?? "Could not continue this run.");
+      return;
+    }
+    setRun((current) =>
+      current ? { ...current, status: "running", error: "" } : current,
+    );
+  }
 
   const saved = new Map(run?.steps.map((step) => [step.id, step]));
 
@@ -175,7 +194,18 @@ export function RunDetail({ id }: { id: string }) {
             />
           </div>
 
-          {run?.error ? (
+          {run?.status === "blocked" ? (
+            <section className="grid max-w-xl gap-3">
+              <p className="text-sm">{run.error}</p>
+              <Button
+                className="w-fit cursor-pointer"
+                disabled={pending}
+                onClick={() => void continueRun()}
+              >
+                {pending ? "Continuing" : "Continue"}
+              </Button>
+            </section>
+          ) : run?.error ? (
             <p className="text-sm text-destructive">{run.error}</p>
           ) : null}
         </>
@@ -202,6 +232,7 @@ function stepState(
   step: RunStep | undefined,
 ) {
   if (step) return "done";
+  if (run?.status === "blocked") return "pending";
   if (!run || !isActiveRun(run.status)) return "skipped";
   const firstMissing = runStepOrder.find(
     (item) => !run.steps.some((saved) => saved.id === item.id),
@@ -221,6 +252,7 @@ function title(run: RunRecord) {
   if (run.status === "kept") return `${name} • kept`;
   if (run.status === "undone") return `${name} • undone`;
   if (run.status === "failed") return `${name} • failed`;
+  if (run.status === "blocked") return `${name} • needs you`;
   if (run.status === "running") return `${name} • running`;
   return `${name} • queued`;
 }

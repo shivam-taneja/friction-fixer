@@ -33,6 +33,29 @@ class RunLog:
             payload.update(extra)
         self._run().update(payload)
 
+    def block(
+        self,
+        message: str,
+        step_id: str,
+        title: str,
+        detail: str,
+        extra: dict | None = None,
+    ) -> None:
+        """Pause for a person. The run stays locked until they continue it."""
+        print(f"--- waiting ---\n{message}")
+        self.step(step_id, title, detail, extra)
+        self._run().update({"status": "blocked", "error": message})
+
+    def resume(self) -> dict:
+        snap = self._run().get()
+        data = snap.to_dict() if snap.exists else None
+        if not data or data.get("userId") != self.user_id:
+            raise RuntimeError("This run does not belong to that user.")
+        if data.get("status") != "blocked":
+            raise RuntimeError("This run is not waiting for a person.")
+        self._run().update({"status": "running", "error": ""})
+        return data
+
     def finish(self, status: str) -> None:
         self._run().update({"status": status, "finishedAt": _now(), "error": ""})
         self._clear_lock()

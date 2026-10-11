@@ -8,6 +8,7 @@ export const runStatuses = [
   "kept",
   "undone",
   "failed",
+  "blocked",
 ] as const;
 
 export type RunStatus = (typeof runStatuses)[number];
@@ -78,7 +79,7 @@ export function isRunCase(value: string): value is RunCase {
 }
 
 export function isActiveRun(status: RunStatus) {
-  return status === "queued" || status === "running";
+  return status === "queued" || status === "running" || status === "blocked";
 }
 
 export function activeRunId(runs: RunRecord[]) {

@@ -9,7 +9,7 @@ from threading import Thread
 import neatlogs
 
 from agent.builder.sandbox import demand_message
-from agent.loop import run
+from agent.loop import continue_run, run
 from agent.simulator.generate import CASES
 from agent.tracing import init_tracing
 
@@ -41,7 +41,8 @@ class Handler(BaseHTTPRequestHandler):
         self._send(200, {"ok": True})
 
     def do_POST(self) -> None:
-        if _path(self.path) != "/runs":
+        path = _path(self.path)
+        if path not in {"/runs", "/runs/continue"}:
             self._send(404, {"error": "Not found."})
             return
         if not _authorized(self.headers.get("Authorization", "")):
@@ -58,6 +59,23 @@ class Handler(BaseHTTPRequestHandler):
 
         run_id = body.get("runId") if isinstance(body, dict) else None
         user_id = body.get("userId") if isinstance(body, dict) else None
+        if path == "/runs/continue":
+            if (
+                not isinstance(run_id, str)
+                or not run_id.strip()
+                or not isinstance(user_id, str)
+                or not user_id.strip()
+            ):
+                self._send(400, {"error": "Send runId and userId."})
+                return
+            Thread(
+                target=_serve_continue,
+                args=(user_id.strip(), run_id.strip()),
+                daemon=True,
+            ).start()
+            self._send(202, {"ok": True})
+            return
+
         case = body.get("case") if isinstance(body, dict) else None
         if (
             not isinstance(run_id, str)
@@ -96,6 +114,15 @@ class Handler(BaseHTTPRequestHandler):
 def _serve_run(case: str, user_id: str, run_id: str) -> None:
     try:
         run(case, user_id, run_id)
+    except Exception as error:
+        print(error)
+    finally:
+        neatlogs.flush(timeout_millis=10_000)
+
+
+def _serve_continue(user_id: str, run_id: str) -> None:
+    try:
+        continue_run(user_id, run_id)
     except Exception as error:
         print(error)
     finally:
