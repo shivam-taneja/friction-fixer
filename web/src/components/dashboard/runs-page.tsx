@@ -40,6 +40,7 @@ export function RunsPage() {
   const locked = activeRunId(runs);
   const saved = runs.find((run) => run.before);
   const onboarded = data?.status === OnboardingStatus.complete;
+  const needsSetup = data?.status === OnboardingStatus.not_started;
 
   useEffect(() => {
     let stopped = false;
@@ -103,19 +104,15 @@ export function RunsPage() {
         action={
           settingsLoading ? (
             <Skeleton className="h-8 w-28" />
-          ) : data?.status === OnboardingStatus.not_started ? (
-            <Button nativeButton={false} render={<Link href="/onboarding" />}>
-              Complete first
-            </Button>
-          ) : (
+          ) : onboarded ? (
             <Button
-              disabled={!onboarded || loading || Boolean(locked || pending)}
+              disabled={loading || Boolean(locked || pending)}
               onClick={() => setOpen(true)}
               className="cursor-pointer"
             >
               Start run
             </Button>
-          )
+          ) : null
         }
       />
 
@@ -180,10 +177,32 @@ export function RunsPage() {
         </DialogContent>
       </Dialog>
 
+      {needsSetup ? (
+        <section className="grid max-w-xl gap-4 rounded-lg border px-4 py-5">
+          <div>
+            <h2 className="font-display text-lg font-semibold">Finish setup</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Complete onboarding before starting a run, so the agent knows
+              which analytics and repository to use.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            className="w-fit"
+            nativeButton={false}
+            render={<Link href="/onboarding" />}
+          >
+            Complete onboarding
+          </Button>
+        </section>
+      ) : null}
+
       {loading ? (
         <RunsSkeleton />
       ) : runs.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No runs yet.</p>
+        needsSetup ? null : (
+          <p className="text-sm text-muted-foreground">No runs yet.</p>
+        )
       ) : (
         <ol>
           {runs.map((run) => (
