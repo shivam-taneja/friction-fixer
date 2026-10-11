@@ -2,7 +2,13 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-export function Brand({ className }: { className?: string }) {
+export function Brand({
+  className,
+  compact = false,
+}: {
+  className?: string;
+  compact?: boolean;
+}) {
   return (
     <Link
       href="/"
@@ -19,9 +25,11 @@ export function Brand({ className }: { className?: string }) {
         height={32}
         className="size-8"
       />
-      <span>
-        friction fixer<span className="text-success">.</span>
-      </span>
+      {!compact && (
+        <span className="brand-wordmark">
+          friction fixer<span className="text-success">.</span>
+        </span>
+      )}
     </Link>
   );
 }

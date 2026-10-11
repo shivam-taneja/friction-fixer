@@ -6,6 +6,7 @@ import {
   type AnalyticsProvider,
   type ProjectGoal,
 } from "@/components/onboarding/logic";
+import type { GithubSelection } from "@/lib/github/types";
 import {
   Select,
   SelectContent,
@@ -21,18 +22,19 @@ export function GoalStep({
   onGoalChange,
   site,
   analytics,
-  repo,
+  github,
 }: {
   goal: ProjectGoal;
   onGoalChange: (value: ProjectGoal) => void;
   site: string;
   analytics: AnalyticsProvider;
-  repo: string;
+  github: GithubSelection | null;
 }) {
   const details = [
     ["Website", site],
     ["Analytics", analyticsLabel(analytics)],
-    ["Repository", repo],
+    ["Repository", github?.fullName || "Not connected"],
+    ["Branch", github?.branch || "Not chosen"],
     ["Change approval", "Review before publishing"],
   ] as const;
 

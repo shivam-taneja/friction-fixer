@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 import { getFirebaseAuth } from "@/lib/firebase/client-app";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -12,6 +13,7 @@ export function LogoutButton() {
 
   async function logout() {
     setPending(true);
+
     try {
       await signOut(getFirebaseAuth());
 
@@ -29,13 +31,9 @@ export function LogoutButton() {
   }
 
   return (
-    <Button
-      type="button"
-      variant="outline"
-      disabled={pending}
-      onClick={() => void logout()}
-    >
+    <DropdownMenuItem disabled={pending} onClick={() => void logout()}>
+      <LogOut />
       {pending ? "Signing out…" : "Log out"}
-    </Button>
+    </DropdownMenuItem>
   );
 }
