@@ -11,10 +11,46 @@ main {
   padding: 0 1rem;
 }
 
+/* ── Plan cards ── */
+.plan {
+  margin-top: 2.5rem;
+  padding: 1.5rem 1.75rem;
+  border: 1px solid #dde3dd;
+  border-radius: 5px;
+  background: #f9fbf9;
+}
+
+.plan-name {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.plan-price {
+  font-size: 1rem;
+  font-weight: normal;
+  color: #555;
+}
+
+.plan-desc {
+  margin: 0.25rem 0 0.75rem 0;
+  color: #444;
+  font-size: 0.97rem;
+  line-height: 1.55;
+}
+
+/* ── Benefits list ── */
 .benefits {
   margin: 1.5rem 0 0 0;
   padding: 0;
   list-style: none;
+}
+
+.plan .benefits {
+  margin-top: 0;
 }
 
 .benefits li {
@@ -26,16 +62,17 @@ main {
 }
 
 .benefits li::before {
-  content: "✓";
+  content: "\2713";
   position: absolute;
   left: 0;
   color: #1a7f4b;
   font-weight: bold;
 }
 
+/* ── CTA button ── */
 .button {
   display: inline-block;
-  margin-top: 2rem;
+  margin-top: 1.25rem;
   padding: 0.85rem 2rem;
   color: #fff;
   background: #1a7f4b;
@@ -50,4 +87,19 @@ main {
 .button:hover,
 .button:focus {
   background: #145f38;
+}
+
+/* ── Back link ── */
+.back-link {
+  margin-top: 2.5rem;
+  font-size: 0.95rem;
+}
+
+.back-link a {
+  color: #1a7f4b;
+  text-decoration: none;
+}
+
+.back-link a:hover {
+  text-decoration: underline;
 }
