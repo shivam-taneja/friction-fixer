@@ -1,0 +1,5 @@
+i've just adde a new component for toast notification web/src/components/ui/toast.tsx can we use this please wherever u feel would be a good adition, check the web proejct and figure out where it should be added and then add it!
+
+---
+
+anywhere else is it req? or it's fine?

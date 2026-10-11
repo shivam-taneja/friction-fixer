@@ -1,0 +1,33 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4P8HRYERDN42GAPFXEPBMVC",
+  "strategy": "manual-commit",
+  "branch": "main",
+  "checkpoints_count": 2,
+  "files_touched": [
+    "web/src/components/auth/auth-form.tsx",
+    "web/src/components/auth/logout-button.tsx",
+    "web/src/components/dashboard/run-detail.tsx",
+    "web/src/components/dashboard/runs-page.tsx",
+    "web/src/components/github/github-connection.tsx",
+    "web/src/components/onboarding/onboarding-flow.tsx",
+    "web/src/components/posthog/posthog-connect.tsx",
+    "web/src/components/settings/use-settings.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/0/metadata.json",
+      "transcript": "/0/full.jsonl",
+      "compact_transcript": "/0/transcript.jsonl",
+      "content_hash": "/0/content_hash.txt",
+      "prompt": "/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 62563,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 682880,
+    "output_tokens": 14139,
+    "api_call_count": 2
+  }
+}
