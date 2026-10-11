@@ -3,7 +3,7 @@
   "checkpoint_id": "01M4NTQQ9STS1QXCKGPE456AQ1",
   "strategy": "manual-commit",
   "branch": "main",
-  "checkpoints_count": 6,
+  "checkpoints_count": 7,
   "files_touched": [
     "FLOW.md",
     "README.md",
@@ -31,13 +31,20 @@
       "compact_transcript": "/1/transcript.jsonl",
       "content_hash": "/1/content_hash.txt",
       "prompt": "/1/prompt.txt"
+    },
+    {
+      "metadata": "/2/metadata.json",
+      "transcript": "/2/full.jsonl",
+      "compact_transcript": "/2/transcript.jsonl",
+      "content_hash": "/2/content_hash.txt",
+      "prompt": "/2/prompt.txt"
     }
   ],
   "token_usage": {
-    "input_tokens": 75706,
+    "input_tokens": 90634,
     "cache_creation_tokens": 0,
-    "cache_read_tokens": 536320,
-    "output_tokens": 13834,
-    "api_call_count": 3
+    "cache_read_tokens": 2005120,
+    "output_tokens": 17319,
+    "api_call_count": 4
   }
 }

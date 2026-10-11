@@ -1,0 +1,56 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4NTQQ9STS1QXCKGPE456AQ1",
+  "session_id": "9d91cc99-be2f-482a-9451-9383d5dd0682",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-11T15:54:06.470453Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "save_step_count": 2,
+  "files_touched": [
+    "FLOW.md",
+    "README.md",
+    "agent/README.md",
+    "web/src/components/auth/auth-form.tsx",
+    "web/src/components/layout/sidebar.tsx",
+    "web/src/components/onboarding/onboarding-flow.tsx",
+    "web/src/config/routes.ts"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "0bd31ac84cb6",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 14928,
+    "cache_creation_tokens": 0,
+    "cache_read_tokens": 1468800,
+    "output_tokens": 3485,
+    "api_call_count": 1
+  },
+  "session_metrics": {
+    "turn_count": 91,
+    "context_tokens": 230978,
+    "context_window_size": 256000
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-11T15:54:06.421866Z",
+    "agent_lines": 31,
+    "agent_removed": 22,
+    "human_added": 25,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 56,
+    "total_lines_changed": 101,
+    "agent_percentage": 52.475247524752476,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
