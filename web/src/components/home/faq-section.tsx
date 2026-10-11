@@ -28,24 +28,25 @@ export function FaqSection() {
       <div>
         {faqs.map((faq, i) => (
           <div className="border-b border-border" key={faq.question}>
-            <Button
-              className="h-auto w-full justify-between rounded-none px-0 py-5.5 text-left text-sm font-normal whitespace-normal hover:bg-transparent"
-              variant="ghost"
-              onClick={() => setOpenFaq(openFaq === i ? null : i)}
-              aria-expanded={openFaq === i}
-              aria-controls={`faq-${i}`}
-            >
-              {faq.question}
-              {openFaq === i ? <Minus /> : <Plus />}
-            </Button>
-            {openFaq === i && (
-              <p
-                className="pr-8.75 pb-5.75 text-[13px] leading-[1.9] text-muted-foreground"
-                id={`faq-${i}`}
+            <h3 className="m-0 text-sm font-normal">
+              <Button
+                className="h-auto w-full justify-between rounded-none px-0 py-5.5 text-left text-sm font-normal whitespace-normal hover:bg-transparent"
+                variant="ghost"
+                onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                aria-expanded={openFaq === i}
+                aria-controls={`faq-${i}`}
               >
-                {faq.answer}
-              </p>
-            )}
+                {faq.question}
+                {openFaq === i ? <Minus /> : <Plus />}
+              </Button>
+            </h3>
+            <p
+              className="pr-8.75 pb-5.75 text-[13px] leading-[1.9] text-muted-foreground"
+              id={`faq-${i}`}
+              hidden={openFaq !== i}
+            >
+              {faq.answer}
+            </p>
           </div>
         ))}
       </div>

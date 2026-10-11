@@ -6,6 +6,7 @@ import {
   AUTH_API_PATHS,
   LOGIN_PATH,
   DEFAULT_LOGIN_REDIRECT,
+  isPrivatePath,
   redirectToLogin,
 } from "./config/routes";
 
@@ -33,7 +34,7 @@ export async function proxy(request: NextRequest) {
       });
     },
     handleInvalidToken: async (reason) => {
-      if (!PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
+      if (isPrivatePath(request.nextUrl.pathname)) {
         console.info("Missing or invalid credentials", { reason });
       }
 

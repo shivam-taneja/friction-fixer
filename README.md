@@ -53,6 +53,11 @@ A new session should keep these. They were chosen on purpose.
 - The local agent is `python -m agent.server` on port 8000. Restart it after a Python change. The website on port 3000 calls `AGENT_URL` from its own API routes. The browser does not call Render.
 - Do not start the dev server or the agent unless the task asks for it. Do not commit `.env` files, and do not print their values.
 - cfo.ai is the business plan, outside this repo. The handoff is [below](#cfoai). Do not add billing to the agent or the website for that work.
+- Public indexable pages are `/`, `/privacy`, and `/terms`. `/auth`, `/dashboard`, and `/onboarding` send `noindex`. Unknown URLs return 404. Only `/dashboard` and `/onboarding` redirect to sign-in. Checked 12 Oct 2026. Re-check indexing after the next deploy, then again on 26 Oct 2026 and 9 Nov 2026.
+- Do not add FAQPage or HowTo JSON-LD. Google stopped showing those rich results; the FAQ feature was removed from Search documentation in May 2026. Homepage JSON-LD is Organization, WebSite, and WebPage, and it has to match the visible page.
+- Sitemap `lastmod` is a real date: homepage `2026-10-10`, privacy and terms `legalModified` in `web/src/lib/seo.ts` (`2026-10-12`). Do not add `changefreq` or `priority`. Google ignores both.
+- Collapsed FAQ answers and workflow step descriptions stay in the HTML. The homepage “−6 pts” line is a product illustration, not a published result.
+- This audit had no Search Console or Keyword Planner access. Do not invent rankings or search volume.
 
 ## Where it runs
 

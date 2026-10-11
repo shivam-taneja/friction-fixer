@@ -5,7 +5,7 @@ import {
   LegalPage,
   LegalSection,
 } from "@/components/legal/legal-page";
-import { privacyMetadata } from "@/lib/seo";
+import { legalModified, privacyMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = privacyMetadata;
 
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
       title="Privacy policy"
       description={privacyMetadata.description ?? ""}
       path="/privacy"
-      updated="12 October 2026"
+      modified={legalModified}
     >
       <LegalSection id="who-we-are" title="Who we are">
         <p>

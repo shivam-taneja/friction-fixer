@@ -65,11 +65,12 @@ export function WorkflowSection() {
                   <strong className="block text-[17px] font-[550]">
                     {item.title}
                   </strong>
-                  {active && (
-                    <p className="mt-2.25 text-xs leading-[1.8] font-normal text-muted-foreground">
-                      {item.description}
-                    </p>
-                  )}
+                  <p
+                    className="mt-2.25 text-xs leading-[1.8] font-normal text-muted-foreground"
+                    hidden={!active}
+                  >
+                    {item.description}
+                  </p>
                 </span>
                 <ArrowRight
                   className={cn(

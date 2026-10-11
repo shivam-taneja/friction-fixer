@@ -30,8 +30,16 @@ export const LOGIN_PATH = "/auth";
  */
 export const DEFAULT_LOGIN_REDIRECT = "/dashboard/runs";
 
+const PRIVATE_PREFIXES = ["/dashboard", "/onboarding"];
+
+export function isPrivatePath(pathname: string) {
+  return PRIVATE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
 export function redirectToLogin(request: NextRequest) {
-  if (PUBLIC_PATHS.includes(request.nextUrl.pathname)) {
+  if (!isPrivatePath(request.nextUrl.pathname)) {
     return NextResponse.next();
   }
 

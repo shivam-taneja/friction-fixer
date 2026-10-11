@@ -7,6 +7,7 @@ import { WorkflowSection } from "@/components/home/workflow-section";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getServerUser } from "@/lib/auth/request-user";
+import { homeJsonLd } from "@/lib/seo";
 
 export async function HomePage() {
   const signedIn = Boolean(await getServerUser());
@@ -23,6 +24,12 @@ export async function HomePage() {
         <FinalCta signedIn={signedIn} />
       </main>
       <SiteFooter />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(homeJsonLd).replaceAll("<", "\\u003c"),
+        }}
+      />
     </>
   );
 }

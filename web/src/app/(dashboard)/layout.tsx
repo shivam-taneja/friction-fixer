@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { getServerUser } from "@/lib/auth/request-user";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  robots: noIndex,
+};
 import { AppSidebar } from "@/components/layout/sidebar";
 import {
   SidebarInset,

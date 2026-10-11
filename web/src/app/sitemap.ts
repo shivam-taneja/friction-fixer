@@ -1,27 +1,19 @@
 import type { MetadataRoute } from "next";
-import { siteUrl } from "@/lib/seo";
+import { legalModified, siteUrl } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date("2026-10-10");
-
   return [
     {
       url: siteUrl,
-      lastModified,
-      changeFrequency: "weekly",
-      priority: 1,
+      lastModified: new Date("2026-10-10"),
     },
     {
       url: `${siteUrl}/privacy`,
-      lastModified,
-      changeFrequency: "yearly",
-      priority: 0.3,
+      lastModified: new Date(legalModified),
     },
     {
       url: `${siteUrl}/terms`,
-      lastModified,
-      changeFrequency: "yearly",
-      priority: 0.3,
+      lastModified: new Date(legalModified),
     },
   ];
 }

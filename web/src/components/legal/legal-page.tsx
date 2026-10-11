@@ -39,17 +39,26 @@ export function LegalSection({
   );
 }
 
+export function formatLegalDate(isoDate: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(`${isoDate}T00:00:00Z`));
+}
+
 export function LegalPage({
   title,
   description,
   path,
-  updated,
+  modified,
   children,
 }: {
   title: string;
   description: string;
   path: "/privacy" | "/terms";
-  updated: string;
+  modified: string;
   children: ReactNode;
 }) {
   const jsonLd = {
@@ -58,7 +67,7 @@ export function LegalPage({
     name: title,
     description,
     url: `${siteUrl}${path}`,
-    dateModified: "2026-10-10",
+    dateModified: modified,
     inLanguage: "en",
     isPartOf: {
       "@type": "WebSite",
@@ -90,7 +99,7 @@ export function LegalPage({
             {title}
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            Last updated {updated}
+            Last updated {formatLegalDate(modified)}
           </p>
           <div className="mt-10 space-y-8 text-sm leading-relaxed">
             {children}
@@ -100,7 +109,9 @@ export function LegalPage({
       <SiteFooter />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd).replaceAll("<", "\\u003c"),
+        }}
       />
     </div>
   );

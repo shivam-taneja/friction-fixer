@@ -3,11 +3,20 @@ import type { Metadata } from "next";
 export const siteUrl = "https://friction-fixer.shivamtaneja.com";
 export const contactUrl = "https://www.shivamtaneja.com/contact";
 
+export const homeTitle = "Friction Fixer — Your website, better by itself";
+export const homeDescription =
+  "An AI agent that finds what drives visitors away, fixes your website through GitHub, and keeps only the changes that work.";
+
+/** Visible "Last updated" date on /privacy and /terms. */
+export const legalModified = "2026-10-12";
+
+export const noIndex: Metadata["robots"] = { index: false, follow: false };
+
 const ogImage = {
   url: "/friction-fixer-og.jpg",
   width: 1200,
   height: 640,
-  alt: "Friction Fixer",
+  alt: "Friction Fixer. Your website, better by itself.",
 } as const;
 
 function socialMetadata(
@@ -19,6 +28,7 @@ function socialMetadata(
     openGraph: {
       title,
       description,
+      siteName: "Friction Fixer",
       type: "website",
       url: path,
       images: [ogImage],
@@ -27,34 +37,68 @@ function socialMetadata(
       card: "summary_large_image",
       title,
       description,
-      images: [ogImage.url],
+      images: [ogImage],
     },
   };
 }
 
 export const rootMetadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Friction Fixer — A website that gets better, by itself",
-  description:
-    "Meet the AI agent that finds visitor friction, improves your website, and measures what works.",
-  ...socialMetadata(
-    "Friction Fixer",
-    "Turn visitor behavior into better website experiences, automatically.",
-  ),
+  title: homeTitle,
+  description: homeDescription,
+  ...socialMetadata(homeTitle, homeDescription),
   icons: {
     icon: { url: "/logo.svg", type: "image/svg+xml" },
   },
 };
 
 export const homeMetadata: Metadata = {
-  title: "Friction Fixer — Your website, better by itself",
-  description:
-    "An AI agent that finds what drives visitors away, fixes your website through GitHub, and keeps only the changes that work.",
-  ...socialMetadata(
-    "Friction Fixer — Your website, better by itself",
-    "Observe. Fix. Verify. Repeat. Turn your visitor analytics into a website that improves itself.",
-  ),
+  title: homeTitle,
+  description: homeDescription,
+  ...socialMetadata(homeTitle, homeDescription),
   alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
+};
+
+export const homeJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "Friction Fixer",
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/logo.png`,
+        width: 160,
+        height: 160,
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      name: "Friction Fixer",
+      url: siteUrl,
+      description: homeDescription,
+      inLanguage: "en",
+      publisher: { "@id": `${siteUrl}/#organization` },
+    },
+    {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/#webpage`,
+      url: siteUrl,
+      name: homeTitle,
+      description: homeDescription,
+      inLanguage: "en",
+      isPartOf: { "@id": `${siteUrl}/#website` },
+      about: { "@id": `${siteUrl}/#organization` },
+      primaryImageOfPage: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/friction-fixer-og.jpg`,
+      },
+    },
+  ],
 };
 
 const privacyTitle = "Privacy policy — Friction Fixer";

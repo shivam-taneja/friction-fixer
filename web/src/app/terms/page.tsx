@@ -5,7 +5,7 @@ import {
   LegalPage,
   LegalSection,
 } from "@/components/legal/legal-page";
-import { termsMetadata } from "@/lib/seo";
+import { legalModified, termsMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = termsMetadata;
 
@@ -15,7 +15,7 @@ export default function TermsPage() {
       title="Terms of use"
       description={termsMetadata.description ?? ""}
       path="/terms"
-      updated="12 October 2026"
+      modified={legalModified}
     >
       <LegalSection id="agreement" title="Agreement">
         <p>

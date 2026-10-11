@@ -1,4 +1,13 @@
 import { Suspense, type ReactNode } from "react";
+import type { Metadata } from "next";
+import { noIndex } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "Sign in — Friction Fixer",
+  description: "Sign in to set up the Friction Fixer agent for your website.",
+  robots: noIndex,
+  alternates: { canonical: "/auth" },
+};
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AuthForm } from "@/components/auth/auth-form";
