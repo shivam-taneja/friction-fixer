@@ -165,3 +165,7 @@ pr merge isn't there but i think that we can do in the reviwer right? or no... o
 ---
 
 but dude one thing. which is the pr has to be merged no in order for the review to test it? and until the site is live how will we get the data? i mean we are doing mock rn but the pr has to be merged... after that only we'll create new pr undoing everything if req!!
+
+---
+
+alright, let's do one thing i wanna try this flow so can we make the demo-site go back to default and like clean those things up please!
