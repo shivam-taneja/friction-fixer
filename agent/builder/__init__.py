@@ -1,6 +1,5 @@
 """Applies one change inside the project's source folder and opens a pull request."""
 
-import os
 from pathlib import Path
 
 import neatlogs
@@ -13,9 +12,10 @@ from agent.schemas import Plan
 
 
 @neatlogs.span(kind="AGENT", name="builder")
-def apply_plan(plan: Plan, project: Project) -> str:
+def apply_plan(plan: Plan, project: Project, token: str) -> str:
     """Edit inside the project's source folder, commit, open a PR, and return the URL."""
-    _require_keys()
+    provider_settings()
+    git.prepare_remote(project.repository)
     git.require_clean_tree()
 
     original = git.current_point()
@@ -29,8 +29,15 @@ def apply_plan(plan: Plan, project: Project) -> str:
         written = edit_site(plan, project)
         git.commit_files(written, subject(plan.change), plan_text(plan))
         committed = True
-        git.push(branch)
-        return git.open_pr(branch, subject(plan.change), plan_text(plan))
+        git.push(branch, token)
+        return git.open_pr(
+            branch,
+            project.branch,
+            subject(plan.change),
+            plan_text(plan),
+            token,
+            project.repository,
+        )
     except Exception:
         if not committed:
             git.restore(written)
@@ -48,9 +55,3 @@ def _return_to_start(original: str) -> None:
     except Exception as error:
         print(f"Could not return to the starting checkout: {error}")
 
-
-def _require_keys() -> None:
-    provider_settings()
-
-    if not os.getenv("GITHUB_TOKEN", "").strip():
-        raise RuntimeError("Set GITHUB_TOKEN in agent/.env before running the Builder.")

@@ -84,3 +84,19 @@ export function isActiveRun(status: RunStatus) {
 export function activeRunId(runs: RunRecord[]) {
   return runs.find((run) => isActiveRun(run.status))?.id ?? null;
 }
+
+export function startingNumbers(runs: RunRecord[]): RunNumbers | null {
+  const saved = runs
+    .filter((run) => !isActiveRun(run.status))
+    .filter((run) => run.before || run.after)
+    .sort((a, b) => stamp(a).localeCompare(stamp(b)));
+  const latest = saved[saved.length - 1];
+  if (!latest) return null;
+  if (latest.status === "kept" && latest.after) return latest.after;
+  if (latest.status === "undone" && latest.before) return latest.before;
+  return latest.before ?? latest.after;
+}
+
+function stamp(run: RunRecord) {
+  return run.finishedAt || run.startedAt || run.createdAt || "";
+}

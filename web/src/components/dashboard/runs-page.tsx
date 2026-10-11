@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   activeRunId,
   isActiveRun,
+  startingNumbers,
   type RunCase,
   type RunNumbers,
   type RunRecord,
@@ -38,7 +39,7 @@ export function RunsPage() {
   const [open, setOpen] = useState(false);
   const [runCase, setRunCase] = useState<RunCase>("increased");
   const locked = activeRunId(runs);
-  const saved = runs.find((run) => run.before);
+  const starting = startingNumbers(runs);
   const onboarded = data?.status === OnboardingStatus.complete;
   const needsSetup = data?.status === OnboardingStatus.not_started;
 
@@ -136,16 +137,14 @@ export function RunsPage() {
           <DialogHeader>
             <DialogTitle>Start run</DialogTitle>
             <DialogDescription>
-              {saved?.before
-                ? "A previous run already saved mock numbers. This run creates a new starting set, then the after set you pick."
+              {starting
+                ? "This run starts from the latest saved mock numbers, then creates the after set you pick."
                 : "This project has no mock numbers yet. This run creates the starting set, then the after set you pick."}
             </DialogDescription>
           </DialogHeader>
-          {saved?.before ? (
+          {starting ? (
             <p className="text-xs text-muted-foreground">
-              Last saved
-              {saved.createdAt ? ` ${when(saved.createdAt)}` : ""}:{" "}
-              {numbersText(saved.before)}
+              Latest saved: {numbersText(starting)}
             </p>
           ) : (
             <p className="text-xs text-muted-foreground">

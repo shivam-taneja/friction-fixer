@@ -5,6 +5,7 @@ import re
 import subprocess
 from pathlib import Path
 
+from agent.builder.github_app import github_json
 from agent.config import REPO_ROOT
 
 
@@ -85,73 +86,89 @@ def delete_branch(name: str) -> None:
     )
 
 
-def push(branch: str) -> None:
-    token = os.environ["GITHUB_TOKEN"].strip()
-    env = os.environ.copy()
-    env["GITHUB_TOKEN"] = token
-    env["GH_TOKEN"] = token
-    env["GIT_TERMINAL_PROMPT"] = "0"
+def prepare_remote(repository: str) -> None:
+    """Point origin at the project's GitHub repo.
 
-    run(
-        [
-            "git",
-            "-c",
-            "credential.helper=",
-            "-c",
-            'credential.helper=!f() { echo "username=x-access-token"; echo "password=$GITHUB_TOKEN"; }; f',
-            "push",
-            "-u",
-            "origin",
-            branch,
-        ],
-        env=env,
+    Render's checkout has no usable origin, so push names a remote that is not a repo.
+    """
+    url = _https_url(repository)
+    probe = subprocess.run(
+        ["git", "remote", "get-url", "origin"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
     )
+    if probe.returncode == 0:
+        run(["git", "remote", "set-url", "origin", url])
+        return
+    run(["git", "remote", "add", "origin", url])
 
 
-def merge_pr(url: str) -> None:
+def push(branch: str, token: str) -> None:
+    _authed(["push", "-u", "origin", branch], token)
+
+
+def merge_pr(url: str, token: str, repository: str) -> None:
     """Merge a pull request so the site can go live."""
-    run(["gh", "pr", "merge", url, "--merge"], env=_github_env())
+    number = _pull_number(url)
+    github_json(
+        "PUT",
+        f"/repos/{repository}/pulls/{number}/merge",
+        token,
+        {"merge_method": "merge"},
+    )
 
 
-def revert_pr(url: str, reason: str) -> str:
+def revert_pr(url: str, reason: str, token: str, repository: str, base: str) -> str:
     """Open a new pull request that undoes a merged one, and return its URL."""
-    return run(
-        [
-            "gh",
-            "pr",
-            "revert",
-            url,
-            "--title",
-            "Undo the last change",
-            "--body",
-            reason,
-        ],
-        env=_github_env(),
+    number = _pull_number(url)
+    pull = github_json("GET", f"/repos/{repository}/pulls/{number}", token)
+    sha = pull.get("merge_commit_sha")
+    if not isinstance(sha, str) or not sha:
+        raise RuntimeError("The pull request has no merge commit to undo.")
+
+    original = current_point()
+    branch = _fresh_branch(f"undo/{number}")
+    _authed(["fetch", "origin", base], token)
+    run(["git", "checkout", "-b", branch, f"origin/{base}"])
+    try:
+        run(
+            [
+                "git",
+                "-c",
+                "user.email=friction-fixer@users.noreply.github.com",
+                "-c",
+                "user.name=Friction Fixer",
+                "revert",
+                "-m",
+                "1",
+                "--no-edit",
+                sha,
+            ]
+        )
+        push(branch, token)
+        return open_pr(branch, base, "Undo the last change", reason, token, repository)
+    finally:
+        try:
+            if current_point() != original:
+                checkout(original)
+        except Exception as error:
+            print(f"Could not return to the starting checkout: {error}")
+
+
+def open_pr(
+    branch: str, base: str, title: str, body: str, token: str, repository: str
+) -> str:
+    created = github_json(
+        "POST",
+        f"/repos/{repository}/pulls",
+        token,
+        {"title": title, "head": branch, "base": base, "body": body},
     )
-
-
-def open_pr(branch: str, title: str, body: str) -> str:
-    token = os.environ["GITHUB_TOKEN"].strip()
-    env = os.environ.copy()
-    env["GITHUB_TOKEN"] = token
-    env["GH_TOKEN"] = token
-
-    return run(
-        [
-            "gh",
-            "pr",
-            "create",
-            "--base",
-            "main",
-            "--head",
-            branch,
-            "--title",
-            title,
-            "--body",
-            body,
-        ],
-        env=env,
-    )
+    url = created.get("html_url")
+    if not isinstance(url, str) or not url.startswith("https://"):
+        raise RuntimeError("GitHub did not return a pull request URL.")
+    return url
 
 
 def restore(paths: list[Path]) -> None:
@@ -171,11 +188,50 @@ def restore(paths: list[Path]) -> None:
             path.unlink()
 
 
-def _github_env() -> dict[str, str]:
-    token = os.environ["GITHUB_TOKEN"].strip()
+def _authed(args: list[str], token: str) -> None:
+    run(
+        [
+            "git",
+            "-c",
+            "credential.helper=",
+            "-c",
+            'credential.helper=!f() { echo "username=x-access-token"; echo "password=$GIT_PASSWORD"; }; f',
+            *args,
+        ],
+        env=_github_env(token),
+    )
+
+
+def _pull_number(url: str) -> str:
+    match = re.search(r"/pull/(\d+)", url)
+    if not match:
+        raise RuntimeError("The pull request URL has no number.")
+    return match.group(1)
+
+
+def _fresh_branch(base: str) -> str:
+    name = base
+    number = 2
+    while _branch_exists(name):
+        name = f"{base}-{number}"
+        number += 1
+    return name
+
+
+def _https_url(repository: str) -> str:
+    owner, _, name = repository.partition("/")
+    if not owner or not name or "/" in name or " " in repository:
+        raise RuntimeError("The project repository must look like owner/name.")
+    return f"https://github.com/{owner}/{name}.git"
+
+
+def _github_env(token: str) -> dict[str, str]:
+    token = token.strip()
+    if not token:
+        raise RuntimeError("A GitHub installation token is required.")
     env = os.environ.copy()
-    env["GITHUB_TOKEN"] = token
-    env["GH_TOKEN"] = token
+    env["GIT_PASSWORD"] = token
+    env["GIT_TERMINAL_PROMPT"] = "0"
     return env
 
 

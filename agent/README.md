@@ -35,7 +35,7 @@ It listens for `POST /runs` with the shared `AGENT_SECRET`. The body is the run 
 
 `increased` keeps the merged change. `decreased` opens a second pull request that undoes it and merges that too. The working tree must be clean, because the Builder commits only the new edit.
 
-`agent/.env` holds `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, `LLM_PROVIDER`, and that provider's API key. Copy it from `agent/.env.example`. It is never committed. The site keeps its own secrets in `web/.env`.
+`agent/.env` holds `NEATLOGS_API_KEY`, `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `LLM_PROVIDER`, and that provider's API key. The GitHub values match the website. Copy it from `agent/.env.example`. It is never committed. The site keeps its own secrets in `web/.env`.
 
 ## What this folder uses
 

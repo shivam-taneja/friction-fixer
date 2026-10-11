@@ -30,7 +30,7 @@ The goal right now is a complete, working loop. Because real traffic takes too l
 - `demo-site/` — the site the Builder is allowed to edit.
 - `web/` — the marketing site and the dashboard. How to run it is in [web/README.md](web/README.md).
 - `FLOW.md` — what each agent receives and hands on.
-- `agent/.env` — agent API keys and the GitHub token. Copy from `agent/.env.example`. Never commit this file.
+- `agent/.env` — agent API keys and the GitHub App id and private key. Copy from `agent/.env.example`. Never commit this file.
 - `web/.env` — Firebase and cookie secrets for the site. Copy from `web/.env.example`. Never commit this file.
 - `.python-version` — tells pyenv to use Python 3.13 in this folder only.
 
@@ -40,7 +40,7 @@ Python **3.13** is required. `neatlogs` does not install on 3.14. The `.python-v
 
 You also need git, and a virtualenv named `venv` in the repo root. `venv/` is gitignored.
 
-Fill in `agent/.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_TOKEN`, `LLM_PROVIDER`, and that provider's API key. The site uses its own file, `web/.env`.
+Fill in `agent/.env` after you copy it. It needs `NEATLOGS_API_KEY`, `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `LLM_PROVIDER`, and that provider's API key. The GitHub values match the website. The site uses its own file, `web/.env`.
 
 The loop has no local command. The deployed process calls `run(case, user_id)` in `agent/loop.py`.
 

@@ -5,7 +5,9 @@ import neatlogs
 from agent.analyst import write_plan
 from agent.builder import apply_plan
 from agent.builder import git
+from agent.builder.github_app import installation_token
 from agent.builder.text import plan_text
+from agent.history import load_saved
 from agent.progress import RunLog
 from agent.project import load_project
 from agent.reviewer import review, verdict_text
@@ -44,14 +46,21 @@ def _round(case: str, user_id: str, log: RunLog) -> None:
         f"Goal: {project.goal}",
     )
 
-    before = generate_baseline()
-    log.step("baseline", "Baseline", _numbers(before), {"before": _saved_numbers(before)})
+    token = installation_token(project.installation_id)
+    saved, history = load_saved(user_id, log.run_id)
+    if saved:
+        before = saved
+        baseline_detail = "Continued from the latest saved mock numbers.\n" + _numbers(before)
+    else:
+        before = generate_baseline()
+        baseline_detail = "First saved numbers for this project.\n" + _numbers(before)
+    log.step("baseline", "Baseline", baseline_detail, {"before": _saved_numbers(before)})
 
-    plan = write_plan(before, [], project)
+    plan = write_plan(before, history, project)
     log.step("plan", "Plan", plan_text(plan), {"plan": _saved_plan(plan)})
 
-    pr_url = apply_plan(plan, project)
-    git.merge_pr(pr_url)
+    pr_url = apply_plan(plan, project, token)
+    git.merge_pr(pr_url, token, project.repository)
     log.step(
         "pull-request",
         "Pull request",
@@ -86,8 +95,10 @@ def _round(case: str, user_id: str, log: RunLog) -> None:
         log.finish("kept")
         return
 
-    revert_url = git.revert_pr(pr_url, verdict.reason)
-    git.merge_pr(revert_url)
+    revert_url = git.revert_pr(
+        pr_url, verdict.reason, token, project.repository, project.branch
+    )
+    git.merge_pr(revert_url, token, project.repository)
     log.step(
         "action",
         "Undo",
