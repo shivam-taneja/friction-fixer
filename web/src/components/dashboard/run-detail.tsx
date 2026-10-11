@@ -53,28 +53,30 @@ export function RunDetail({ id }: { id: string }) {
       className="flex flex-1 flex-col gap-10 px-6 pt-2 pb-12 md:px-8"
       aria-busy={loading}
     >
-      <PageHeading
-        eyebrow={id}
-        title={
-          loading ? (
-            <span className="inline-block h-[1em] w-56 animate-pulse rounded-md bg-muted align-middle" />
-          ) : run ? (
-            title(run)
-          ) : (
-            "Run"
-          )
-        }
-        description={
-          loading ? (
-            <span className="inline-block h-4 w-72 animate-pulse rounded-md bg-muted align-middle" />
-          ) : run ? (
-            `${run.repository} • ${run.branch} • ${run.sourceFolder}`
-          ) : (
-            "This run could not be loaded."
-          )
-        }
-        action={<BackToRuns />}
-      />
+      <div className="flex flex-col items-start gap-4">
+        <PageHeading
+          eyebrow={id}
+          title={
+            loading ? (
+              <span className="inline-block h-[1em] w-56 animate-pulse rounded-md bg-muted align-middle" />
+            ) : run ? (
+              title(run)
+            ) : (
+              "Run"
+            )
+          }
+          description={
+            loading ? (
+              <span className="inline-block h-4 w-72 animate-pulse rounded-md bg-muted align-middle" />
+            ) : run ? (
+              `${run.repository} • ${run.branch} • ${run.sourceFolder}`
+            ) : (
+              "This run could not be loaded."
+            )
+          }
+        />
+        <BackToRuns />
+      </div>
 
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
 
@@ -87,15 +89,17 @@ export function RunDetail({ id }: { id: string }) {
             <li key={item.id} className="relative flex gap-4 pb-6 last:pb-0">
               {last ? null : (
                 <span
-                  className="absolute top-6 left-[11px] h-[calc(100%-12px)] w-px bg-border"
+                  className="absolute top-6 left-2.75 h-[calc(100%-12px)] w-px bg-border"
                   aria-hidden
                 />
               )}
               <span
                 className={cn(
                   "relative z-10 flex size-6 shrink-0 items-center justify-center rounded-full border",
-                  state === "done" && "border-success bg-success text-background",
-                  state === "current" && "border-foreground bg-foreground text-background",
+                  state === "done" &&
+                    "border-success bg-success text-background",
+                  state === "current" &&
+                    "border-foreground bg-foreground text-background",
                   (state === "pending" || state === "skipped") &&
                     "border-border bg-background text-muted-foreground",
                 )}
@@ -113,7 +117,9 @@ export function RunDetail({ id }: { id: string }) {
                   <p
                     className={cn(
                       "text-sm",
-                      state !== "done" && state !== "current" && "text-muted-foreground",
+                      state !== "done" &&
+                        state !== "current" &&
+                        "text-muted-foreground",
                     )}
                   >
                     {step?.title || item.title}
