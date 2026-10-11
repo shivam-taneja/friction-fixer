@@ -1,6 +1,11 @@
 import { NextResponse } from "next/server";
 import { getServerUser } from "@/lib/auth/request-user";
 import { savePosthogConnection } from "@/lib/db/posthog-connections";
+import {
+  CONNECT_TOGETHER,
+  getUserProfile,
+  setupComplete,
+} from "@/lib/db/users";
 import { exchangePosthogCode, findPosthogProject } from "@/lib/posthog/oauth";
 import { readRequestCookie } from "@/lib/github/state";
 import {
@@ -37,6 +42,11 @@ export async function GET(request: Request) {
   const code = url.searchParams.get("code") ?? "";
   if (!code) {
     return finish(origin, "PostHog did not return an authorization code.");
+  }
+
+  const profile = await getUserProfile(user.userId);
+  if (setupComplete(profile)) {
+    return finish(origin, CONNECT_TOGETHER);
   }
 
   try {

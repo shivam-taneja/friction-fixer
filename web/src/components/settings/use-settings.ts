@@ -8,6 +8,7 @@ import type {
 import { OnboardingStatus } from "@/lib/db/schema/user";
 
 export type SettingsProject = {
+  id: string;
   analyticsProvider: AnalyticsProvider;
   goal: ProjectGoal;
   repository: string;
@@ -15,6 +16,7 @@ export type SettingsProject = {
   framework: string;
   sourceFolder: string;
   accountLogin: string;
+  createdAt: string | null;
 };
 
 export type SettingsData =

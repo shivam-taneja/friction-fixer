@@ -5,6 +5,11 @@ import {
   getPosthogConnection,
   posthogStatus,
 } from "@/lib/db/posthog-connections";
+import {
+  DISCONNECT_TOGETHER,
+  getUserProfile,
+  setupComplete,
+} from "@/lib/db/users";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,6 +33,10 @@ export async function DELETE() {
       { error: "Sign in to continue." },
       { status: 401 },
     );
+  }
+  const profile = await getUserProfile(user.userId);
+  if (setupComplete(profile)) {
+    return NextResponse.json({ error: DISCONNECT_TOGETHER }, { status: 409 });
   }
   await deletePosthogConnection(user.userId);
   return NextResponse.json({ connected: false });

@@ -9,17 +9,23 @@ from agent.schemas import Verdict, VisitorData
 def load_saved(user_id: str, run_id: str) -> tuple[VisitorData | None, list[Verdict]]:
     """Return the latest mock numbers and the past verdicts, oldest first.
 
-    A first project has neither. A kept run continues from its after numbers.
+    A first project has neither. Only runs for this same project count. A kept run continues from its after numbers.
     An undone run continues from its before numbers, because that change was reverted.
     A run that stopped early still contributes its before numbers when nothing newer settled.
     """
-    docs = list(_client().collection("runs").where("userId", "==", user_id).stream())
+    client = _client()
+    current = client.collection("runs").document(run_id).get()
+    current_data = current.to_dict() if current.exists else {}
+    project_id = str((current_data or {}).get("projectId") or "")
+    docs = list(client.collection("runs").where("userId", "==", user_id).stream())
     rows = []
     for doc in docs:
         if doc.id == run_id:
             continue
         data = doc.to_dict() or {}
-        if data.get("status") in {"queued", "running", "blocked"}:
+        if project_id and str(data.get("projectId") or "") != project_id:
+            continue
+        if data.get("status") in {"queued", "running", "blocked", "measuring"}:
             continue
         rows.append(data)
     rows.sort(key=_stamp)

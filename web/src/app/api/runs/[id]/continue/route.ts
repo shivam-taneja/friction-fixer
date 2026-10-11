@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerUser } from "@/lib/auth/request-user";
-import { continueAgent, getRun, RunRejected } from "@/lib/db/runs";
+import { getUserProfile } from "@/lib/db/users";
+import { PROJECT_DISCONNECTED, continueAgent, getRun, RunRejected } from "@/lib/db/runs";
+import { OnboardingStatus } from "@/lib/db/schema/user";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,6 +32,15 @@ export async function POST(
       { error: "This run is not waiting for you." },
       { status: 409 },
     );
+  }
+
+  const profile = await getUserProfile(user.userId);
+  const projectId = profile?.onboarding.projectId;
+  if (
+    profile?.onboarding.status !== OnboardingStatus.complete ||
+    run.projectId !== projectId
+  ) {
+    return NextResponse.json({ error: PROJECT_DISCONNECTED }, { status: 409 });
   }
 
   try {

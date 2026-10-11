@@ -3,6 +3,11 @@ import { getServerUser } from "@/lib/auth/request-user";
 import { getInstallationAccount } from "@/lib/github/app";
 import { saveGithubInstallation } from "@/lib/db/github-installations";
 import {
+  CONNECT_TOGETHER,
+  getUserProfile,
+  setupComplete,
+} from "@/lib/db/users";
+import {
   GITHUB_STATE_COOKIE,
   githubStateCookieOptions,
   readGithubState,
@@ -33,6 +38,11 @@ export async function GET(request: Request) {
   const cookie = readRequestCookie(request, GITHUB_STATE_COOKIE);
   if (!state || state !== cookie || !readGithubState(state, user.userId)) {
     return finish(origin, "GitHub connection expired. Try connecting again.");
+  }
+
+  const profile = await getUserProfile(user.userId);
+  if (setupComplete(profile)) {
+    return finish(origin, CONNECT_TOGETHER);
   }
 
   const installationId = Number(url.searchParams.get("installation_id"));

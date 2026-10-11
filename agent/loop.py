@@ -1,5 +1,7 @@
 """One round: baseline, Analyst, Builder, simulated outcome, Reviewer."""
 
+from datetime import datetime, timedelta, timezone
+
 import neatlogs
 
 from agent.analyst import write_plan
@@ -55,7 +57,8 @@ def continue_run(user_id: str, run_id: str) -> None:
 
 
 def _round(case: str, user_id: str, log: RunLog) -> None:
-    if case not in CASES:
+    live = case == "live"
+    if not live and case not in CASES:
         raise RuntimeError("Case must be increased or decreased.")
 
     log.start(case)
@@ -105,6 +108,10 @@ def _round(case: str, user_id: str, log: RunLog) -> None:
             pr_url + "\nMerged, so the site can go live.",
             {"pullRequestUrl": pr_url},
         )
+
+        if live:
+            _schedule_check(log)
+            return
 
         after = generate_outcomes(plan.change, before)[case]
         log.step(
@@ -159,7 +166,7 @@ def _continue(user_id: str, log: RunLog) -> None:
         return
 
     case = data.get("case")
-    if case not in CASES:
+    if case != "live" and case not in CASES:
         raise RuntimeError("Case must be increased or decreased.")
     pr_url = str(data.get("pullRequestUrl") or "")
     if not pr_url.startswith("https://"):
@@ -176,6 +183,9 @@ def _continue(user_id: str, log: RunLog) -> None:
         pr_url + "\nMerged, so the site can go live.",
         {"pullRequestUrl": pr_url},
     )
+    if case == "live":
+        _schedule_check(log)
+        return
     plan = _stored_plan(data.get("plan"), change)
     after = generate_outcomes(plan.change, before)[case]
     log.step(
@@ -239,6 +249,18 @@ def _continue_undo(data: dict, project, token: str, log: RunLog, reason: str) ->
         {"revertPullRequestUrl": revert_url},
     )
     log.finish("undone")
+
+
+def _schedule_check(log: RunLog) -> None:
+    when = datetime.now(timezone.utc) + timedelta(days=7)
+    stamp = when.strftime("%Y-%m-%d %H:%M UTC")
+    log.step(
+        "after",
+        "Check later",
+        "The baseline is saved.\n" f"PostHog will be checked after {stamp}.",
+        {"checkAfter": when.isoformat()},
+    )
+    log.mark_measuring()
 
 
 def _merge(url: str, token: str, repository: str, *, undo: bool) -> None:

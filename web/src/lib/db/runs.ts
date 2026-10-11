@@ -46,12 +46,15 @@ export async function createRun(userId: string, runCase: RunCase) {
         activeSnap.exists &&
         (activeStatus === "queued" ||
           activeStatus === "running" ||
-          activeStatus === "blocked")
+          activeStatus === "blocked" ||
+          activeStatus === "measuring")
       ) {
         const message =
           activeStatus === "blocked"
             ? "A run is waiting for you to resolve a pull request."
-            : "A run is already in progress.";
+            : activeStatus === "measuring"
+              ? "A run is waiting to be checked against PostHog."
+              : "A run is already in progress.";
         throw new RunRejected(message, 409, activeId);
       }
     }
@@ -130,6 +133,54 @@ export async function failRun(userId: string, runId: string, error: string) {
       });
     }
   });
+}
+
+export const PROJECT_DISCONNECTED =
+  "This project was disconnected, so this run was stopped. It cannot be continued.";
+
+export async function stopProjectRuns(userId: string, projectId: string) {
+  const firestore = db();
+  const snap = await firestore
+    .collection(COLLECTIONS.RUNS)
+    .where("userId", "==", userId)
+    .get();
+  const targets = snap.docs.filter((doc) => {
+    const status = doc.get("status");
+    return (
+      doc.get("projectId") === projectId &&
+      (status === "queued" ||
+        status === "running" ||
+        status === "blocked" ||
+        status === "measuring")
+    );
+  });
+
+  const userRef = firestore.collection(COLLECTIONS.USERS).doc(userId);
+  if (targets.length === 0) {
+    await userRef.update({
+      activeRunId: null,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+    return;
+  }
+
+  for (let index = 0; index < targets.length; index += 400) {
+    const batch = firestore.batch();
+    for (const doc of targets.slice(index, index + 400)) {
+      batch.update(doc.ref, {
+        status: "failed",
+        error: PROJECT_DISCONNECTED,
+        finishedAt: FieldValue.serverTimestamp(),
+      });
+    }
+    if (index === 0) {
+      batch.update(userRef, {
+        activeRunId: null,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    }
+    await batch.commit();
+  }
 }
 
 export async function listRuns(userId: string) {
@@ -246,7 +297,12 @@ function toRun(id: string, data: DocumentData): RunRecord {
   return {
     id,
     userId: text(data.userId),
-    case: data.case === "decreased" ? "decreased" : "increased",
+    case:
+      data.case === "decreased"
+        ? "decreased"
+        : data.case === "live"
+          ? "live"
+          : "increased",
     status,
     projectId: text(data.projectId),
     repository: text(data.repository),
@@ -260,6 +316,7 @@ function toRun(id: string, data: DocumentData): RunRecord {
     verdict: verdict(data.verdict),
     before: numbers(data.before),
     after: numbers(data.after),
+    checkAfter: time(data.checkAfter),
     steps: steps(data.steps),
     createdAt: time(data.createdAt),
     startedAt: time(data.startedAt),
@@ -274,7 +331,8 @@ function runStatus(value: unknown): RunStatus {
     value === "kept" ||
     value === "undone" ||
     value === "failed" ||
-    value === "blocked"
+    value === "blocked" ||
+    value === "measuring"
   ) {
     return value;
   }

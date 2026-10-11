@@ -76,6 +76,23 @@ export async function upsertUser(input: {
   }
 }
 
+export const CONNECT_TOGETHER =
+  "GitHub and PostHog connect together during setup.";
+
+export const DISCONNECT_TOGETHER =
+  "GitHub and PostHog disconnect together from Settings.";
+
+export function setupComplete(
+  profile: Pick<UserRecord, "onboarding"> | null | undefined,
+) {
+  const projectId = profile?.onboarding.projectId;
+  return (
+    profile?.onboarding.status === OnboardingStatus.complete &&
+    typeof projectId === "string" &&
+    projectId.length > 0
+  );
+}
+
 export async function getUserProfile(uid: string): Promise<UserRecord | null> {
   const snap = await db().collection(COLLECTIONS.USERS).doc(uid).get();
 

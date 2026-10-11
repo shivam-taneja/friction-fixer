@@ -9,7 +9,7 @@ import {
   RunRejected,
   startAgent,
 } from "@/lib/db/runs";
-import { isRunCase } from "@/lib/db/schema/run";
+import { isMockCase, type RunCase } from "@/lib/db/schema/run";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -31,13 +31,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json().catch(() => null);
-  const runCase = body && typeof body.case === "string" ? body.case : "";
-  if (!isRunCase(runCase)) {
-    return NextResponse.json(
-      { error: "Choose increased or decreased." },
-      { status: 400 },
-    );
-  }
+  const requested = body && typeof body.case === "string" ? body.case : "";
 
   let runId = "";
   try {
@@ -51,6 +45,18 @@ export async function POST(request: Request) {
         },
         { status: 409 },
       );
+    }
+    let runCase: RunCase;
+    if (gate.mock) {
+      if (!isMockCase(requested)) {
+        return NextResponse.json(
+          { error: "Choose increased or decreased." },
+          { status: 400 },
+        );
+      }
+      runCase = requested;
+    } else {
+      runCase = "live";
     }
     await assertCapacity();
     runId = await createRun(user.userId, runCase);

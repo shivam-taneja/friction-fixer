@@ -96,7 +96,7 @@ class Handler(BaseHTTPRequestHandler):
             or not run_id.strip()
             or not isinstance(user_id, str)
             or not user_id.strip()
-            or case not in CASES
+            or case not in (*CASES, "live")
         ):
             self._send(400, {"error": "Send runId, userId, and case."})
             return

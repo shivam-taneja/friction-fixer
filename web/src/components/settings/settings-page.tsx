@@ -1,13 +1,12 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
-import { Check } from "lucide-react";
+import { useState } from "react";
 import Link from "next/link";
 import { PageHeading } from "@/components/dashboard/page-heading";
-import { SectionTitle } from "@/components/dashboard/section-title";
 import { GithubIcon } from "@/components/icons/github-icon";
 import { PosthogConnect } from "@/components/posthog/posthog-connect";
 import { useSettings } from "@/components/settings/use-settings";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -47,77 +46,92 @@ export function SettingsPage() {
       ) : null}
 
       {data?.status === OnboardingStatus.not_started ? (
-        <section className="grid max-w-xl gap-4 rounded-lg border px-4 py-5">
-          <div>
-            <h2 className="font-display text-lg font-semibold">Connections</h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+        <section className="overflow-hidden rounded-xl border bg-card">
+          <header className="grid gap-1 border-b bg-muted px-4 py-3.5">
+            <h2 className="text-sm font-semibold">Connections</h2>
+            <p className="text-xs text-muted-foreground">
               Finish setup so your agent knows which analytics and repository to
               use.
             </p>
+          </header>
+          <div className="px-4 py-3">
+            <Button
+              variant="outline"
+              className="w-fit"
+              nativeButton={false}
+              render={<Link href="/onboarding" />}
+            >
+              Complete onboarding
+            </Button>
           </div>
-          <Button
-            variant="outline"
-            className="w-fit"
-            nativeButton={false}
-            render={<Link href="/onboarding" />}
-          >
-            Complete onboarding
-          </Button>
         </section>
       ) : null}
 
       {data?.status === OnboardingStatus.complete ? (
-        <section className="grid max-w-xl gap-4">
-          <SectionTitle title="Connections" />
-          <PosthogConnect />
-          <div className="divide-y rounded-lg border">
+        <div className="grid gap-4">
+          <section className="overflow-hidden rounded-xl border bg-card">
+            <header className="border-b bg-muted px-4 py-3.5">
+              <div className="flex items-start justify-between gap-3">
+                <div className="grid min-w-0 gap-1">
+                  <h2 className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+                    <GithubIcon size={14} className="text-muted-foreground" />
+                    <span className="truncate">{data.project.repository}</span>
+                  </h2>
+                  <p className="text-xs text-muted-foreground">
+                    {data.project.branch} •{" "}
+                    {folderLabel(data.project.sourceFolder)}
+                  </p>
+                </div>
+                <Badge>Current</Badge>
+              </div>
+            </header>
+            <PosthogConnect readOnly embedded />
             <ConnectionRow
-              icon={<GithubIcon size={18} />}
-              title="GitHub"
-              detail={`${data.project.repository} • ${data.project.branch}`}
-            />
-            <ConnectionRow
-              icon={null}
               title={frameworkLabel(data.project.framework)}
               detail={folderLabel(data.project.sourceFolder)}
             />
-            <ConnectionRow
-              icon={null}
-              title="Goal"
-              detail={data.project.goal}
-            />
-          </div>
-          <section className="grid max-w-xl gap-3 rounded-lg border px-4 py-4">
-            <div>
-              <h2 className="text-sm font-semibold">Mock data</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {data.useMockData
-                  ? "On. Runs use mock numbers instead of waiting for PostHog."
-                  : "Off. A run waits until PostHog has visitor data."}
-              </p>
+            <ConnectionRow title="Goal" detail={data.project.goal} divider={false} />
+            <div className="border-t px-4 py-3">
+              <Button
+                type="button"
+                variant="destructive"
+                className="cursor-pointer"
+                onClick={() => setConfirmOpen(true)}
+              >
+                Disconnect GitHub and PostHog
+              </Button>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-fit cursor-pointer"
-              disabled={savingMock}
-              onClick={() => void setMockData(!data.useMockData)}
-            >
-              {savingMock
-                ? "Saving…"
-                : data.useMockData
-                  ? "Turn off"
-                  : "Turn on"}
-            </Button>
           </section>
-          <Button
-            type="button"
-            variant="destructive"
-            className="w-fit cursor-pointer"
-            onClick={() => setConfirmOpen(true)}
-          >
-            Remove connection
-          </Button>
+          <section className="overflow-hidden rounded-xl border bg-card">
+            <header className="flex items-start justify-between gap-3 border-b bg-muted px-4 py-3.5">
+              <div className="grid gap-1">
+                <h2 className="text-sm font-semibold">Mock data</h2>
+                <p className="text-xs text-muted-foreground">
+                  {data.useMockData
+                    ? "Runs use mock numbers instead of waiting for PostHog."
+                    : "A run waits until PostHog has visitor data."}
+                </p>
+              </div>
+              <Badge variant={data.useMockData ? "default" : "outline"}>
+                {data.useMockData ? "On" : "Off"}
+              </Badge>
+            </header>
+            <div className="px-4 py-3">
+              <Button
+                type="button"
+                variant="outline"
+                className="w-fit cursor-pointer"
+                disabled={savingMock}
+                onClick={() => void setMockData(!data.useMockData)}
+              >
+                {savingMock
+                  ? "Saving…"
+                  : data.useMockData
+                    ? "Turn off"
+                    : "Turn on"}
+              </Button>
+            </div>
+          </section>
           <RemoveConnectionDialog
             repository={data.project.repository}
             open={confirmOpen}
@@ -129,7 +143,7 @@ export function SettingsPage() {
               if (removed) setConfirmOpen(false);
             }}
           />
-        </section>
+        </div>
       ) : null}
     </main>
   );
@@ -164,9 +178,11 @@ function RemoveConnectionDialog({
     >
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Remove connection</DialogTitle>
+          <DialogTitle>Disconnect GitHub and PostHog</DialogTitle>
           <DialogDescription>
-            This deletes the project and uninstalls the GitHub app. Type{" "}
+            This disconnects GitHub and PostHog together and deletes the
+            project. Any run still going for this project will be stopped, and
+            you will not be able to continue it. Type{" "}
             <span className="font-medium text-foreground">{repository}</span> to
             confirm.
           </DialogDescription>
@@ -207,7 +223,7 @@ function RemoveConnectionDialog({
             disabled={!confirmed || removing}
             onClick={() => void onConfirm()}
           >
-            {removing ? "Removing…" : "Remove connection"}
+            {removing ? "Disconnecting…" : "Disconnect"}
           </Button>
         </div>
       </DialogContent>
@@ -216,45 +232,49 @@ function RemoveConnectionDialog({
 }
 
 function ConnectionRow({
-  icon,
   title,
   detail,
+  divider = true,
 }: {
-  icon: ReactNode;
   title: string;
   detail: string;
+  divider?: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 px-4 py-3">
-      <div className="flex min-w-0 items-center gap-3">
-        {icon ? (
-          <span className="grid size-9 shrink-0 place-items-center rounded-md border bg-muted">
-            {icon}
-          </span>
-        ) : null}
-        <div className="min-w-0">
-          <strong className="block truncate text-sm font-semibold">
-            {title}
-          </strong>
-          <small className="block truncate text-xs text-muted-foreground">
-            {detail}
-          </small>
-        </div>
-      </div>
-      <span className="flex shrink-0 items-center gap-2 text-xs text-success">
-        <Check size={14} />
-        Selected
-      </span>
+    <div className={`grid gap-1 px-4 py-3.5 ${divider ? "border-b" : ""}`}>
+      <span className="text-sm">{title}</span>
+      <span className="text-xs text-muted-foreground">{detail}</span>
     </div>
   );
 }
 
 function SettingsSkeleton() {
   return (
-    <div className="grid max-w-xl gap-3" aria-busy="true">
-      <Skeleton className="h-6 w-32" />
-      <Skeleton className="h-16 w-full rounded-lg" />
-      <Skeleton className="h-16 w-full rounded-lg" />
+    <div className="grid gap-4" aria-busy="true" aria-label="Loading settings">
+      <div className="overflow-hidden rounded-xl border">
+        <div className="grid gap-2 border-b bg-muted px-4 py-3.5">
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-3 w-32" />
+        </div>
+        {Array.from({ length: 3 }, (_, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between gap-4 border-b px-4 py-3.5"
+          >
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-5 w-16 rounded-full" />
+          </div>
+        ))}
+      </div>
+      <div className="overflow-hidden rounded-xl border">
+        <div className="grid gap-2 border-b bg-muted px-4 py-3.5">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-3 w-56" />
+        </div>
+        <div className="px-4 py-3.5">
+          <Skeleton className="h-8 w-24" />
+        </div>
+      </div>
     </div>
   );
 }

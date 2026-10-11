@@ -106,6 +106,7 @@ export async function getProject(projectId: string) {
     | "framework"
     | "sourceFolder"
     | "accountLogin"
+    | "createdAt"
   > = {
     analyticsProvider: data.analyticsProvider,
     goal: typeof data.goal === "string" ? data.goal : "",
@@ -114,7 +115,22 @@ export async function getProject(projectId: string) {
     framework: typeof data.framework === "string" ? data.framework : "",
     sourceFolder: typeof data.sourceFolder === "string" ? data.sourceFolder : "",
     accountLogin: typeof data.accountLogin === "string" ? data.accountLogin : "",
+    createdAt: time(data.createdAt),
   };
 
   return project;
+}
+
+function time(value: unknown) {
+  if (typeof value === "string" && value) return value;
+  if (
+    value &&
+    typeof value === "object" &&
+    "toDate" in value &&
+    typeof value.toDate === "function"
+  ) {
+    const date = value.toDate();
+    return date instanceof Date ? date.toISOString() : null;
+  }
+  return null;
 }

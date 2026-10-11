@@ -88,7 +88,13 @@ export function RunDetail({ id }: { id: string }) {
             loading ? (
               <span className="inline-block h-4 w-72 animate-pulse rounded-md bg-muted align-middle" />
             ) : run ? (
-              `${run.case === "increased" ? "Improved" : "Worse"} • ${run.repository} • ${run.branch} • ${run.sourceFolder}`
+              `${
+                run.case === "live"
+                  ? "PostHog"
+                  : run.case === "increased"
+                    ? "Improved"
+                    : "Worse"
+              } • ${run.repository} • ${run.branch} • ${run.sourceFolder}`
             ) : (
               "This run could not be loaded."
             )
@@ -194,6 +200,12 @@ export function RunDetail({ id }: { id: string }) {
             />
           </div>
 
+          {run?.status === "measuring" && run.checkAfter ? (
+            <p className="text-sm text-muted-foreground">
+              The baseline is saved. PostHog will be checked after{" "}
+              {new Date(run.checkAfter).toLocaleString()}.
+            </p>
+          ) : null}
           {run?.status === "blocked" ? (
             <section className="grid max-w-xl gap-3">
               <p className="text-sm">{run.error}</p>
@@ -252,6 +264,7 @@ function title(run: RunRecord) {
   if (run.status === "undone") return "Undone";
   if (run.status === "failed") return "Failed";
   if (run.status === "blocked") return "Needs you";
+  if (run.status === "measuring") return "Measuring";
   if (run.status === "running") return "Running";
   return "Queued";
 }

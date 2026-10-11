@@ -6,7 +6,11 @@ import { useRouter } from "next/navigation";
 import { formatDistanceToNow, isValid, parseISO } from "date-fns";
 import { PageHeading } from "@/components/dashboard/page-heading";
 import { useSettings } from "@/components/settings/use-settings";
+import { GithubIcon } from "@/components/icons/github-icon";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { notify } from "@/components/ui/toast";
+import { Pagination } from "@/components/ui/pagination";
 import {
   Dialog,
   DialogContent,
@@ -15,15 +19,24 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { folderLabel } from "@/lib/github/framework";
 import {
   activeRunId,
+  groupRuns,
   isActiveRun,
   startingNumbers,
   type RunCase,
+  type RunGroup,
   type RunNumbers,
   type RunRecord,
 } from "@/lib/db/schema/run";
 import { OnboardingStatus } from "@/lib/db/schema/user";
+import { DEFAULT_PAGE_SIZE, paginate } from "@/lib/pagination";
+
+type RunsResponse = {
+  runs?: RunRecord[];
+  error?: string;
+};
 
 export function RunsPage() {
   const router = useRouter();
@@ -36,16 +49,22 @@ export function RunsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
-  const [ready, setReady] = useState<boolean | null>(null);
-  const [usingMock, setUsingMock] = useState(false);
-  const [readyMessage, setReadyMessage] = useState("");
+  const [checking, setChecking] = useState(false);
   const [open, setOpen] = useState(false);
   const [runCase, setRunCase] = useState<RunCase>("increased");
+  const currentProject =
+    data?.status === OnboardingStatus.complete
+      ? { id: data.project.id, createdAt: data.project.createdAt }
+      : null;
+  const groups = groupRuns(runs, currentProject);
   const locked = activeRunId(runs);
   const waiting = runs.find(
     (run) => run.id === locked && run.status === "blocked",
   );
-  const starting = startingNumbers(runs);
+  const measuring = runs.find(
+    (run) => run.id === locked && run.status === "measuring",
+  );
+  const starting = startingNumbers(runs, currentProject?.id ?? "");
   const onboarded = data?.status === OnboardingStatus.complete;
   const needsSetup = data?.status === OnboardingStatus.not_started;
 
@@ -55,14 +74,16 @@ export function RunsPage() {
 
     async function load() {
       const response = await fetch("/api/runs");
-      const body = await response.json().catch(() => null);
+      const body = (await response
+        .json()
+        .catch(() => null)) as RunsResponse | null;
       if (stopped) return;
       setLoading(false);
       if (!response.ok) {
         setError(body?.error ?? "Could not load runs.");
         return;
       }
-      const next = Array.isArray(body?.runs) ? (body.runs as RunRecord[]) : [];
+      const next = Array.isArray(body?.runs) ? body.runs : [];
       setRuns(next);
       setError("");
       if (next.some((run) => isActiveRun(run.status))) {
@@ -75,51 +96,65 @@ export function RunsPage() {
       stopped = true;
       window.clearTimeout(timer);
     };
-  }, [locked]);
+  }, []);
 
-  useEffect(() => {
-    if (!onboarded) return;
-    let cancelled = false;
-    fetch("/api/readiness")
-      .then(async (response) => {
-        const body = (await response.json().catch(() => null)) as {
-          ready?: boolean;
-          mock?: boolean;
-          error?: string;
-        } | null;
-        if (!response.ok) {
-          throw new Error(body?.error || "Could not check the baseline.");
-        }
-        return body;
-      })
-      .then((body) => {
-        if (cancelled || !body) return;
-        setReady(body.ready === true);
-        setUsingMock(body.mock === true);
-        setReadyMessage(body.error ?? "");
-      })
-      .catch((loadError) => {
-        if (cancelled) return;
-        setReady(false);
-        setReadyMessage(
-          loadError instanceof Error
-            ? loadError.message
-            : "Could not check the baseline.",
+  async function openStart() {
+    if (!onboarded || locked) return;
+    setChecking(true);
+    setError("");
+    try {
+      const response = await fetch("/api/readiness");
+      const body = (await response.json().catch(() => null)) as {
+        ready?: boolean;
+        mock?: boolean;
+        error?: string;
+      } | null;
+      if (!response.ok) {
+        throw new Error(body?.error || "Could not check the baseline.");
+      }
+      if (body?.ready !== true) {
+        notify.error(
+          body?.error ||
+            "This project needs a baseline before a run can start. Wait until PostHog has visitor data, or turn on mock data in Settings.",
+          {
+            action: {
+              label: "Settings",
+              onClick: () => router.push("/dashboard/settings"),
+            },
+          },
         );
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [onboarded]);
+        return;
+      }
+      if (body.mock === true) {
+        setOpen(true);
+        return;
+      }
+      await start("live");
+    } catch (loadError) {
+      notify.error(
+        loadError instanceof Error
+          ? loadError.message
+          : "Could not check the baseline.",
+        {
+          action: {
+            label: "Settings",
+            onClick: () => router.push("/dashboard/settings"),
+          },
+        },
+      );
+    } finally {
+      setChecking(false);
+    }
+  }
 
-  async function start() {
+  async function start(chosen: RunCase) {
     if (!onboarded) return;
     setPending(true);
     setError("");
     const response = await fetch("/api/runs", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ case: runCase }),
+      body: JSON.stringify({ case: chosen }),
     });
     const body = await response.json().catch(() => null);
     setPending(false);
@@ -148,11 +183,11 @@ export function RunsPage() {
             <Skeleton className="h-8 w-28" />
           ) : onboarded ? (
             <Button
-              disabled={loading || ready !== true || Boolean(locked || pending)}
-              onClick={() => setOpen(true)}
+              disabled={loading || Boolean(locked || pending || checking)}
+              onClick={() => void openStart()}
               className="cursor-pointer"
             >
-              Start run
+              {checking ? "Checking" : "Start run"}
             </Button>
           ) : null
         }
@@ -161,19 +196,15 @@ export function RunsPage() {
       {error || settingsError ? (
         <p className="text-sm text-destructive">{error || settingsError}</p>
       ) : null}
-      {onboarded && ready === false ? (
-        <p className="text-sm text-muted-foreground">
-          {readyMessage}{" "}
-          <Link className="text-foreground underline" href="/dashboard/settings">
-            Open Settings
-          </Link>
-        </p>
-      ) : null}
       {locked ? (
         <p className="text-sm text-muted-foreground">
-          {waiting
-            ? "A run is waiting for you to resolve a pull request. "
-            : "A run is already in progress. "}
+          {measuring
+            ? `A change is live. PostHog will be checked ${
+                measuring.checkAfter ? when(measuring.checkAfter) : "later"
+              }. `
+            : waiting
+              ? "A run is waiting for you to resolve a pull request. "
+              : "A run is already in progress. "}
           <Link
             className="text-foreground underline"
             href={`/dashboard/runs/${locked}`}
@@ -188,11 +219,9 @@ export function RunsPage() {
           <DialogHeader>
             <DialogTitle>Start run</DialogTitle>
             <DialogDescription>
-              {usingMock
-                ? starting
-                  ? "This run uses your latest saved mock numbers as the baseline, then creates new numbers for the outcome you choose."
-                  : "No mock numbers are saved yet. This run creates a baseline, then new numbers for the outcome you choose."
-                : "This run reads the last 7 days from PostHog as the baseline, then creates mock numbers for the outcome you choose."}
+              {starting
+                ? "This run uses your latest saved mock numbers as the baseline, then creates new numbers for the outcome you choose."
+                : "No mock numbers are saved yet. This run creates a baseline, then new numbers for the outcome you choose."}
             </DialogDescription>
           </DialogHeader>
           {starting ? (
@@ -222,7 +251,7 @@ export function RunsPage() {
           <Button
             className="cursor-pointer"
             disabled={pending}
-            onClick={() => void start()}
+            onClick={() => void start(runCase)}
           >
             {pending ? "Starting" : "Start"}
           </Button>
@@ -256,24 +285,16 @@ export function RunsPage() {
           <p className="text-sm text-muted-foreground">No runs yet.</p>
         )
       ) : (
-        <ol>
-          {runs.map((run) => (
-            <li key={run.id} className="border-b border-border py-3.5">
-              <Link
-                href={`/dashboard/runs/${run.id}`}
-                className="flex flex-col gap-1"
-              >
-                <span className="text-sm">{label(run.status)}</span>
-                <span className="text-xs text-muted-foreground">
-                  {run.case === "increased" ? "Improved" : "Worse"}
-                  {" · "}
-                  {run.repository}
-                  {run.createdAt ? ` · ${when(run.createdAt)}` : ""}
-                </span>
-              </Link>
-            </li>
+        <div className="grid gap-4">
+          {onboarded && !groups.some((group) => group.current) ? (
+            <p className="text-sm text-muted-foreground">
+              No runs for this project yet.
+            </p>
+          ) : null}
+          {groups.map((group) => (
+            <ProjectRuns key={group.projectId} group={group} />
           ))}
-        </ol>
+        </div>
       )}
     </main>
   );
@@ -305,24 +326,105 @@ function Choice({
   );
 }
 
+function ProjectRuns({ group }: { group: RunGroup }) {
+  const [page, setPage] = useState(1);
+  const paged = paginate(group.runs, {
+    page,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  return (
+    <section className="overflow-hidden rounded-xl border bg-card">
+      <header className="grid gap-2 border-b bg-muted px-4 py-3.5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="grid min-w-0 gap-1">
+            <h2 className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+              <GithubIcon size={14} className="text-muted-foreground" />
+              <span className="truncate">{group.repository}</span>
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              {[
+                group.branch,
+                folderLabel(group.sourceFolder || "."),
+                group.connectedAt ? `Connected ${when(group.connectedAt)}` : "",
+              ]
+                .filter(Boolean)
+                .join(" • ")}
+            </p>
+          </div>
+          <Badge variant={group.current ? "default" : "outline"}>
+            {group.current ? "Current" : "Disconnected"}
+          </Badge>
+        </div>
+        {group.current ? null : (
+          <p className="text-xs leading-relaxed text-foreground">
+            This project was disconnected. These runs cannot be continued.
+          </p>
+        )}
+      </header>
+      <ol>
+        {paged.items.map((run) => (
+          <li key={run.id} className="border-b border-border last:border-b-0">
+            <Link
+              href={`/dashboard/runs/${run.id}`}
+              className="flex flex-col gap-1 px-4 py-3.5 transition-colors hover:bg-muted/40"
+            >
+              <span className="text-sm">{label(run.status)}</span>
+              <span className="text-xs text-muted-foreground">
+                {outcomeLabel(run)}
+                {run.createdAt ? ` • ${when(run.createdAt)}` : ""}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ol>
+      <Pagination
+        page={paged.page}
+        pageSize={DEFAULT_PAGE_SIZE}
+        total={group.runs.length}
+        onPageChange={setPage}
+        label={`${group.repository} runs`}
+        className="border-t px-4 py-3"
+      />
+    </section>
+  );
+}
+
 function numbersText(numbers: RunNumbers) {
   return `Bounce ${Math.round(numbers.bounceRate * 100)}%. Scroll ${Math.round(numbers.scrollDepth * 100)}%. Time ${numbers.timeOnPage.toFixed(1)}s. Pricing visits ${numbers.pricingPageVisits}.`;
 }
 
 function RunsSkeleton() {
   return (
-    <div className="grid" aria-busy="true" aria-label="Loading runs">
-      {Array.from({ length: 4 }, (_, index) => (
-        <div
-          key={index}
-          className="flex items-center justify-between gap-4 border-b border-border py-3.5"
-        >
-          <Skeleton className="h-4 w-48" />
-          <Skeleton className="h-3 w-28" />
+    <div className="grid gap-4" aria-busy="true" aria-label="Loading runs">
+      {Array.from({ length: 2 }, (_, index) => (
+        <div key={index} className="overflow-hidden rounded-xl border">
+          <div className="grid gap-2 border-b bg-muted px-4 py-3.5">
+            <Skeleton className="h-4 w-56" />
+            <Skeleton className="h-3 w-40" />
+          </div>
+          {Array.from({ length: 2 }, (_, row) => (
+            <div
+              key={row}
+              className="flex items-center justify-between gap-4 border-b px-4 py-3.5 last:border-b-0"
+            >
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-3 w-28" />
+            </div>
+          ))}
         </div>
       ))}
     </div>
   );
+}
+
+function outcomeLabel(run: RunRecord) {
+  if (run.case === "live") {
+    return run.checkAfter
+      ? `PostHog • check ${when(run.checkAfter)}`
+      : "PostHog";
+  }
+  return run.case === "increased" ? "Improved" : "Worse";
 }
 
 function label(status: RunRecord["status"]) {
@@ -331,6 +433,7 @@ function label(status: RunRecord["status"]) {
   if (status === "kept") return "Kept";
   if (status === "undone") return "Undone";
   if (status === "blocked") return "Needs you";
+  if (status === "measuring") return "Measuring";
   return "Failed";
 }
 

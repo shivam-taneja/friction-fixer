@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { getServerUser } from "@/lib/auth/request-user";
+import {
+  CONNECT_TOGETHER,
+  getUserProfile,
+  setupComplete,
+} from "@/lib/db/users";
 import { githubInstallUrl } from "@/lib/github/config";
 import {
   createGithubState,
@@ -16,6 +21,11 @@ export async function GET(request: Request) {
 
   if (!user) {
     return NextResponse.redirect(new URL("/auth?redirect=/onboarding", origin));
+  }
+
+  const profile = await getUserProfile(user.userId);
+  if (setupComplete(profile)) {
+    return redirectToConnected(origin, CONNECT_TOGETHER);
   }
 
   try {

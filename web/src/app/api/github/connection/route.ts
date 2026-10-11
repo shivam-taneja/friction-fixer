@@ -9,6 +9,11 @@ import {
   deleteGithubInstallation,
   getGithubInstallation,
 } from "@/lib/db/github-installations";
+import {
+  DISCONNECT_TOGETHER,
+  getUserProfile,
+  setupComplete,
+} from "@/lib/db/users";
 import type { GithubConnection } from "@/lib/github/types";
 
 export const runtime = "nodejs";
@@ -59,6 +64,11 @@ export async function DELETE() {
       { error: "Sign in to continue." },
       { status: 401 },
     );
+  }
+
+  const profile = await getUserProfile(user.userId);
+  if (setupComplete(profile)) {
+    return NextResponse.json({ error: DISCONNECT_TOGETHER }, { status: 409 });
   }
 
   try {

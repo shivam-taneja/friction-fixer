@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ChartNoAxesCombined, Check } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { POSTHOG_MESSAGE } from "@/lib/posthog/config";
 import type { PosthogConnectionStatus } from "@/lib/db/schema/posthog-connection";
@@ -10,8 +11,12 @@ const resultKey = "ff-posthog-result";
 
 export function PosthogConnect({
   onConnectedChange,
+  readOnly = false,
+  embedded = false,
 }: {
   onConnectedChange?: (connected: boolean) => void;
+  readOnly?: boolean;
+  embedded?: boolean;
 }) {
   const [status, setStatus] = useState<PosthogConnectionStatus | null>(null);
   const [authorizing, setAuthorizing] = useState(false);
@@ -146,28 +151,46 @@ export function PosthogConnect({
   const connected = status?.connected === true;
 
   return (
-    <div className="grid gap-3">
-      <div className="flex items-center justify-between gap-3 rounded-lg border px-4 py-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-md border bg-muted">
-            <ChartNoAxesCombined size={18} />
-          </span>
-          <div className="min-w-0">
-            <strong className="block text-sm">PostHog</strong>
-            <small className="block truncate text-xs text-muted-foreground">
+    <div className={embedded ? "grid" : "grid gap-3"}>
+      <div
+        className={
+          embedded
+            ? "flex items-start justify-between gap-3 border-b px-4 py-3.5"
+            : "flex items-center justify-between gap-3 rounded-lg border px-4 py-3"
+        }
+      >
+        <div className={embedded ? "grid min-w-0 gap-1" : "flex min-w-0 items-center gap-3"}>
+          {embedded ? null : (
+            <span className="grid size-9 shrink-0 place-items-center rounded-md border bg-muted">
+              <ChartNoAxesCombined size={18} />
+            </span>
+          )}
+          <div className="grid min-w-0 gap-1">
+            <span className="text-sm">PostHog</span>
+            <span className="truncate text-xs text-muted-foreground">
               {connected
                 ? status.projectName
                 : status
-                  ? "Connect a project to read visitor data."
+                  ? readOnly
+                    ? "Not connected."
+                    : "Connect a project to read visitor data."
                   : "Checking the connection…"}
-            </small>
+            </span>
           </div>
         </div>
         {connected ? (
-          <span className="flex shrink-0 items-center gap-2 text-xs">
-            <Check size={14} />
-            Connected
-          </span>
+          embedded ? (
+            <Badge>Connected</Badge>
+          ) : (
+            <span className="flex shrink-0 items-center gap-2 text-xs">
+              <Check size={14} />
+              Connected
+            </span>
+          )
+        ) : readOnly ? (
+          embedded ? (
+            <Badge variant="outline">Not connected</Badge>
+          ) : null
         ) : (
           <Button
             type="button"
@@ -180,7 +203,7 @@ export function PosthogConnect({
           </Button>
         )}
       </div>
-      {connected ? (
+      {connected && !readOnly ? (
         <Button
           type="button"
           variant="ghost"
@@ -193,7 +216,11 @@ export function PosthogConnect({
       ) : null}
       {error ? (
         <p
-          className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          className={
+            embedded
+              ? "border-b px-4 py-3 text-sm text-destructive"
+              : "rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          }
           role="alert"
         >
           {error}

@@ -5,7 +5,9 @@ import {
   getGithubInstallation,
 } from "@/lib/db/github-installations";
 import { deleteUserProject, getProject } from "@/lib/db/projects";
+import { stopProjectRuns } from "@/lib/db/runs";
 import { OnboardingStatus } from "@/lib/db/schema/user";
+import { deletePosthogConnection } from "@/lib/db/posthog-connections";
 import { getUserProfile, setUseMockData } from "@/lib/db/users";
 import { deleteInstallation, GithubRequestError } from "@/lib/github/app";
 
@@ -39,7 +41,7 @@ export async function GET() {
 
   return NextResponse.json({
     status: OnboardingStatus.complete,
-    project,
+    project: { id: projectId, ...project },
     useMockData: profile.useMockData === true,
   });
 }
@@ -83,7 +85,11 @@ export async function DELETE(request: Request) {
       ? await getProject(projectId)
       : null;
 
-  if (!project || body.repository !== project.repository) {
+  if (
+    typeof projectId !== "string" ||
+    !project ||
+    body.repository !== project.repository
+  ) {
     return NextResponse.json(
       { error: "Type the repository name to confirm." },
       { status: 400 },
@@ -91,6 +97,8 @@ export async function DELETE(request: Request) {
   }
 
   try {
+    await stopProjectRuns(user.userId, projectId);
+    await deletePosthogConnection(user.userId);
     const installation = await getGithubInstallation(user.userId);
     if (installation) {
       await deleteInstallation(installation.installationId);

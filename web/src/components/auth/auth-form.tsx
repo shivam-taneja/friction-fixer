@@ -9,7 +9,6 @@ import {
   type AuthError,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
-import { cn } from "cn";
 import {
   useLastAuth,
   type AuthProviderName,
@@ -24,7 +23,7 @@ function LastUsedBadge() {
   return (
     <Badge
       variant="secondary"
-      className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 px-1.5 py-0 text-[10px] leading-4"
+      className="pointer-events-none absolute -top-2.5 right-3 z-10 px-1.5 py-0 text-[10px] leading-4 shadow-sm"
     >
       Last used
     </Badge>
@@ -101,37 +100,35 @@ export function AuthForm() {
   }
 
   return (
-    <div className="grid gap-3">
-      <Button
-        type="button"
-        variant="outline"
-        size="lg"
-        className={cn(
-          "relative h-11 w-full cursor-pointer",
-          lastUsed === "google" && "pr-20",
-        )}
-        disabled={pending !== null}
-        onClick={() => void signIn(new GoogleAuthProvider(), "google")}
-      >
-        <GoogleMark />
-        {pending === "google" ? "Continuing…" : "Continue with Google"}
+    <div className="grid gap-4">
+      <div className="relative">
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          className="h-11 w-full cursor-pointer"
+          disabled={pending !== null}
+          onClick={() => void signIn(new GoogleAuthProvider(), "google")}
+        >
+          <GoogleMark />
+          {pending === "google" ? "Continuing…" : "Continue with Google"}
+        </Button>
         {lastUsed === "google" ? <LastUsedBadge /> : null}
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        size="lg"
-        className={cn(
-          "relative h-11 w-full cursor-pointer",
-          lastUsed === "github" && "pr-20",
-        )}
-        disabled={pending !== null}
-        onClick={() => void signIn(new GithubAuthProvider(), "github")}
-      >
-        <GithubIcon className="size-4" />
-        {pending === "github" ? "Continuing…" : "Continue with GitHub"}
+      </div>
+      <div className="relative">
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          className="h-11 w-full cursor-pointer"
+          disabled={pending !== null}
+          onClick={() => void signIn(new GithubAuthProvider(), "github")}
+        >
+          <GithubIcon className="size-4" />
+          {pending === "github" ? "Continuing…" : "Continue with GitHub"}
+        </Button>
         {lastUsed === "github" ? <LastUsedBadge /> : null}
-      </Button>
+      </div>
       {error && (
         <p
           className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive"

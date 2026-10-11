@@ -12,20 +12,21 @@ TOKEN_URL = "https://oauth.posthog.com/oauth/token/"
 CLIENT_ID = "https://friction-fixer.shivamtaneja.com/api/posthog/client"
 QUERY = """
 SELECT
-  countIf(pageviews >= 1) AS sessions,
-  countIf(pageviews = 1) AS bounced,
-  avgIf(duration, pageviews >= 1) AS avg_seconds,
-  avgIf(scroll, pageviews >= 1 AND scroll IS NOT NULL) AS avg_scroll,
-  sum(pageviews) AS pageviews
+  count(if(session_pageviews >= 1, 1, NULL)) AS sessions,
+  count(if(session_pageviews = 1, 1, NULL)) AS bounced,
+  avg(if(session_pageviews >= 1, duration, NULL)) AS avg_seconds,
+  avg(if(session_pageviews >= 1 AND isNotNull(scroll), scroll, NULL)) AS avg_scroll,
+  sum(session_pageviews) AS pageviews
 FROM (
   SELECT
     properties.$session_id AS sid,
-    countIf(event = '$pageview') AS pageviews,
+    sum(if(event = '$pageview', 1, 0)) AS session_pageviews,
     dateDiff('second', min(timestamp), max(timestamp)) AS duration,
-    avgIf(
+    avg(if(
+      event = '$pageleave',
       toFloat(properties.$prev_pageview_max_scroll_percentage),
-      event = '$pageleave'
-    ) AS scroll
+      NULL
+    )) AS scroll
   FROM events
   WHERE timestamp > now() - INTERVAL 7 DAY
     AND notEmpty(toString(properties.$session_id))

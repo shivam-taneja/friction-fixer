@@ -25,6 +25,7 @@ class RunLog:
         self._run().update({"status": "running", "startedAt": _now(), "error": ""})
 
     def step(self, step_id: str, title: str, detail: str, extra: dict | None = None) -> None:
+        self._refuse_if_stopped()
         print(f"--- {title} ---\n{detail}")
         payload: dict = {
             f"steps.{step_id}": {"title": title, "detail": detail, "at": _now()},
@@ -56,7 +57,13 @@ class RunLog:
         self._run().update({"status": "running", "error": ""})
         return data
 
+    def mark_measuring(self) -> None:
+        """The change is live. A later check reads PostHog. The lock stays."""
+        self._refuse_if_stopped()
+        self._run().update({"status": "measuring", "error": ""})
+
     def finish(self, status: str) -> None:
+        self._refuse_if_stopped()
         self._run().update({"status": status, "finishedAt": _now(), "error": ""})
         self._clear_lock()
 
@@ -65,7 +72,8 @@ class RunLog:
         try:
             current = self._run().get()
             status = (current.to_dict() or {}).get("status") if current.exists else None
-            if status in {"kept", "undone"}:
+            if status in {"kept", "undone", "failed"}:
+                self._clear_lock()
                 return
             self._run().update(
                 {
@@ -85,6 +93,16 @@ class RunLog:
 
     def _run(self):
         return self.client.collection("runs").document(self.run_id)
+
+    def _refuse_if_stopped(self) -> None:
+        snap = self._run().get()
+        data = snap.to_dict() if snap.exists else None
+        if not data or data.get("status") != "failed":
+            return
+        message = data.get("error")
+        if isinstance(message, str) and message.strip():
+            raise RuntimeError(message.strip())
+        raise RuntimeError("This run was stopped.")
 
     def _clear_lock(self) -> None:
         user_ref = self.client.collection("users").document(self.user_id)

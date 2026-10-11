@@ -1,14 +1,11 @@
 "use client";
 
-import { ChevronsUpDown, Rocket } from "lucide-react";
+import { ChevronsUpDown } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -18,7 +15,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { LogoutButton } from "../auth/logout-button";
-import Link from "next/link";
 
 function UserAvatar({ email, avatar }: { email: string; avatar: string }) {
   const initials = email.slice(0, 2).toUpperCase() || "?";
@@ -70,7 +66,7 @@ export function NavUser({
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <UserAvatar email={user.email} avatar={user.avatar} />
@@ -92,7 +88,7 @@ export function NavUser({
                 <Rocket />
                 Upgrade to Pro
               </DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
 
             <DropdownMenuGroup>
               <DropdownMenuGroup className="cursor-pointer">

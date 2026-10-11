@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { DM_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/auth/auth-provider";
+import { Toaster } from "@/components/ui/toast";
 import { rootMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body>
         <AuthProvider>{children}</AuthProvider>
+        <Toaster />
         <Analytics />
       </body>
     </html>
