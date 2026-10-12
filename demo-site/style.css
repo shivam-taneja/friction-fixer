@@ -68,3 +68,212 @@ main {
   color: #555;
   font-style: normal;
 }
+
+/* ── Pricing page ─────────────────────────────────────────── */
+
+.pricing-main {
+  max-width: 62rem;
+  margin: 4rem auto;
+  padding: 0 1.25rem;
+}
+
+.pricing-main h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.pricing-intro {
+  font-size: 1.05rem;
+  color: #444;
+  margin: 0 0 2.5rem;
+  max-width: 38rem;
+  line-height: 1.65;
+}
+
+/* Plan grid */
+
+.plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+  margin-bottom: 3rem;
+}
+
+.plan-card {
+  position: relative;
+  border: 1px solid #d4d4d4;
+  border-radius: 6px;
+  padding: 2rem 1.75rem 1.75rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.plan-card--recommended {
+  border-color: #1a5c2e;
+  border-width: 2px;
+  box-shadow: 0 4px 18px rgba(26, 92, 46, 0.12);
+}
+
+/* Badge */
+
+.plan-badge {
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a5c2e;
+  color: #fff;
+  font-size: 0.75rem;
+  font-family: Georgia, serif;
+  font-weight: bold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.85rem;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* Plan header */
+
+.plan-header {
+  margin-bottom: 1.25rem;
+}
+
+.plan-name {
+  font-size: 1.3rem;
+  margin: 0 0 0.5rem;
+}
+
+.plan-price {
+  margin-bottom: 0.5rem;
+}
+
+.plan-amount {
+  font-size: 2.4rem;
+  font-weight: bold;
+  line-height: 1;
+  color: #1a5c2e;
+}
+
+.plan-period {
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.plan-tagline {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Feature list */
+
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.75rem;
+  flex: 1;
+  border-top: 1px solid #e8e8e8;
+  padding-top: 1rem;
+}
+
+.plan-features li {
+  padding: 0.35rem 0 0.35rem 1.6rem;
+  position: relative;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.plan-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #1a5c2e;
+  font-weight: bold;
+}
+
+/* CTA inside card */
+
+.plan-cta {
+  display: block;
+  text-align: center;
+  font-size: 1rem;
+  padding: 0.8rem 1rem;
+  margin-top: auto;
+}
+
+/* Reassurance quote */
+
+.pricing-reassurance {
+  margin: 0 0 3rem;
+  padding: 1.1rem 1.4rem;
+  border-left: 3px solid #bbb;
+  background: #f9f9f9;
+  max-width: 38rem;
+}
+
+.pricing-reassurance p {
+  margin: 0 0 0.45rem;
+  font-style: italic;
+  line-height: 1.65;
+  font-size: 1rem;
+}
+
+.pricing-reassurance cite {
+  font-size: 0.85rem;
+  color: #555;
+  font-style: normal;
+}
+
+/* FAQ */
+
+.pricing-faq {
+  max-width: 38rem;
+  margin-bottom: 3rem;
+}
+
+.pricing-faq h2 {
+  font-size: 1.35rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+}
+
+.faq-item {
+  margin-bottom: 1.5rem;
+}
+
+.faq-item h3 {
+  font-size: 1rem;
+  margin: 0 0 0.35rem;
+}
+
+.faq-item p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.65;
+}
+
+/* Back link */
+
+.pricing-back {
+  margin-top: 1rem;
+}
+
+.pricing-back a {
+  color: #1a5c2e;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-bottom: 1px solid #a8d5b5;
+}
+
+.pricing-back a:hover,
+.pricing-back a:focus {
+  border-bottom-color: #1a5c2e;
+}
