@@ -6,14 +6,105 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main>
-      <h1>Pricing</h1>
-      <ul>
-        <li>Starter, $19 a month</li>
-        <li>Shop, $49 a month</li>
-        <li>Counter, $99 a month</li>
-      </ul>
-      <a href="index.html">Back</a>
+    <main class="pricing-main">
+      <h1>Simple, flat pricing</h1>
+      <p class="pricing-intro">No hidden fees. No long-term contracts. Pick the plan that fits your shop and change it any time.</p>
+
+      <div class="plan-grid">
+
+        <!-- Starter -->
+        <div class="plan-card">
+          <div class="plan-header">
+            <h2 class="plan-name">Starter</h2>
+            <div class="plan-price"><span class="plan-amount">$19</span><span class="plan-period">&thinsp;/ month</span></div>
+            <p class="plan-tagline">Everything you need to get off the ground.</p>
+          </div>
+          <ul class="plan-features">
+            <li>Up to 100 orders per month</li>
+            <li>1 staff account</li>
+            <li>Order dashboard &amp; history</li>
+            <li>Email notifications</li>
+            <li>CSV export</li>
+            <li>Email support (48 h response)</li>
+          </ul>
+          <a class="button plan-cta" href="#">Get started with Starter</a>
+        </div>
+
+        <!-- Shop (recommended) -->
+        <div class="plan-card plan-card--recommended">
+          <div class="plan-badge">Most popular</div>
+          <div class="plan-header">
+            <h2 class="plan-name">Shop</h2>
+            <div class="plan-price"><span class="plan-amount">$49</span><span class="plan-period">&thinsp;/ month</span></div>
+            <p class="plan-tagline">The right fit for a growing shop.</p>
+          </div>
+          <ul class="plan-features">
+            <li>Unlimited orders</li>
+            <li>5 staff accounts</li>
+            <li>Order dashboard &amp; history</li>
+            <li>Email &amp; SMS notifications</li>
+            <li>CSV &amp; PDF export</li>
+            <li>Customer purchase history</li>
+            <li>Inventory low-stock alerts</li>
+            <li>Priority email support (24 h response)</li>
+          </ul>
+          <a class="button plan-cta" href="#">Get started with Shop</a>
+        </div>
+
+        <!-- Counter -->
+        <div class="plan-card">
+          <div class="plan-header">
+            <h2 class="plan-name">Counter</h2>
+            <div class="plan-price"><span class="plan-amount">$99</span><span class="plan-period">&thinsp;/ month</span></div>
+            <p class="plan-tagline">Full power for a busy, multi-staff operation.</p>
+          </div>
+          <ul class="plan-features">
+            <li>Unlimited orders</li>
+            <li>Unlimited staff accounts</li>
+            <li>Order dashboard &amp; history</li>
+            <li>Email, SMS &amp; webhook notifications</li>
+            <li>CSV, PDF &amp; API export</li>
+            <li>Customer purchase history</li>
+            <li>Inventory low-stock alerts</li>
+            <li>Advanced reporting &amp; analytics</li>
+            <li>Custom order statuses</li>
+            <li>Dedicated account manager</li>
+          </ul>
+          <a class="button plan-cta" href="#">Get started with Counter</a>
+        </div>
+
+      </div>
+
+      <div class="pricing-reassurance">
+        <p>&#8220;We switched from a patchwork of spreadsheets and texts. Northwind paid for itself in the first month.&#8221;</p>
+        <cite>&#8212; Daniel K., owner of Harborside Provisions</cite>
+      </div>
+
+      <div class="pricing-faq">
+        <h2>Common questions</h2>
+
+        <div class="faq-item">
+          <h3>Can I change plans later?</h3>
+          <p>Yes. Upgrade or downgrade at any time from your account settings. Changes take effect at the start of your next billing cycle.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Is there a free trial?</h3>
+          <p>Every plan comes with a 14-day free trial. No credit card required to start.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>What counts as an order?</h3>
+          <p>Any new order created in Northwind, whether placed by a customer online or entered manually by your staff.</p>
+        </div>
+
+        <div class="faq-item">
+          <h3>Do you charge transaction fees?</h3>
+          <p>Never. You pay the flat monthly rate and nothing else. Payment processing fees from your payment provider are separate and unrelated to Northwind.</p>
+        </div>
+      </div>
+
+      <p class="pricing-back"><a href="index.html">&larr; Back to home</a></p>
     </main>
   </body>
 </html>
