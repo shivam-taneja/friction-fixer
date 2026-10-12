@@ -1,0 +1,31 @@
+Okay, so from my office, I was telling my colleagues that I'm working in an hackathon, and one of the lead of my project, like the counterpart for my project, he told me that he is not an expert, but he knows somebody who can help me out regarding this project. So basically, he made a group chat, and he said hey, the person, hope you are well, I would like to introduce me from my team. I particip-me participated in the hackathon this weekend on his free time, and he was working on a AI solution, which could potentially help improve website experience. I was asking, basically, me was asking about Google Analytics and some personal advice. I'm not an expert but I thought maybe you or someone from your team could advise me. So, what message should I tell him, and should I tell him the brief right now itself, or I should wait for him? I think I should tell the brief. So, could you tell me the high-level brief as to what exactly is simple language as possible can be done for this?
+
+---
+
+bro dont make it sounds like a ad, make it natural and keep in mind these guys are the v high level leads, and also with postHog say that planning to add integrations to other platforms and for github say that will create more control, but it also has human in the loop if there is a conflict and wont move fwd. happy to discuss more etc etc
+
+---
+
+```chat_selection
+agent_id: b53fec36-1c4e-4bfa-bb1b-128d65d0bbc5
+selected_text:
+Over the weekend I was working on something for a pretty common problem: people land on a page, scroll a little, and leave, and someone still has to read the numbers, guess what to change, ship it, and wait to see if it helped.
+```
+ hate this
+
+---
+
+```chat_selection
+agent_id: b53fec36-1c4e-4bfa-bb1b-128d65d0bbc5
+selected_text:
+Over the weekend I tried to see if an agent could look at a site’s visitor data, make one change, and then check whether that change was worth keeping. It opens a pull request for the change. If fewer people leave after it goes live, it keeps it. If not, it reverts it.
+```
+ no broooo.... fuck my life.
+
+---
+
+Bro, can we please have it like, hey, thanks for the introduction. I built a tool over this weekend called Fiction Fixer, and then say the idea is that it's a platform that has multiple agents running together to fix and improve your website. Primarily the main users of this websites or this tool would be XYZ. This is how I wanna fucking structure it. And at the end I wanna say, would be good to get your thoughts, happy to share more. Thanks. That's it. And then the GitHub in between and stuff like that, and I'm planning to add other platforms as well. Don't fucking make it sound AI or shit, make it natural, dawg.
+
+---
+
+Who the fuck will tell what the project is doing? Are you fucking stupid, bro? The idea is a platform with multiple agents running together to fix and improve a website. How, man? What the fuck is wrong with you? And it's mainly for small teams. Who the fuck told you to add that thing? Ask me if you don't know first, you stupid bitch.
