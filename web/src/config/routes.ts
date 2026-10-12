@@ -8,6 +8,7 @@ export const PUBLIC_PATHS = [
   "/auth",
   "/privacy",
   "/terms",
+  "/pricing",
   "/api/login",
   "/api/logout",
 ];

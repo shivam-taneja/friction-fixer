@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, CircleCheck } from "lucide-react";
+import { CircleAlert, CircleCheck, X } from "lucide-react";
 import { toast as sonner, Toaster as Sonner, type ExternalToast } from "sonner";
 
 const toastClass =
@@ -13,9 +13,11 @@ export function Toaster() {
       gap={8}
       offset={16}
       visibleToasts={3}
+      closeButton
       icons={{
         error: <CircleAlert className="size-4 shrink-0 text-destructive" />,
         success: <CircleCheck className="size-4 shrink-0 text-success" />,
+        close: <X className="size-3.5" />,
       }}
       toastOptions={{
         unstyled: true,
@@ -27,6 +29,8 @@ export function Toaster() {
           description:
             "text-left text-xs leading-5 whitespace-normal text-muted-foreground",
           icon: "mt-0.5",
+          closeButton:
+            "order-last mt-0.5 ml-auto shrink-0 cursor-pointer rounded-md border-0 bg-transparent p-0.5 text-muted-foreground hover:bg-secondary hover:text-foreground",
           error: "border-destructive/30",
           success: "border-success/30",
           actionButton:

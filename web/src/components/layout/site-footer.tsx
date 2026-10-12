@@ -14,6 +14,12 @@ export function SiteFooter() {
       <Brand className="text-base max-sm:text-base" />
       <nav aria-label="Legal" className="flex gap-4 text-[11px]">
         <Link
+          href="/pricing"
+          className="text-muted-foreground no-underline hover:text-foreground"
+        >
+          Pricing
+        </Link>
+        <Link
           href="/privacy"
           className="text-muted-foreground no-underline hover:text-foreground"
         >

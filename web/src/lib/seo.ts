@@ -124,3 +124,15 @@ export const termsMetadata: Metadata = {
   ...socialMetadata(termsTitle, termsDescription, "/terms"),
   robots: { index: true, follow: true },
 };
+
+const pricingTitle = "Pricing — Friction Fixer";
+const pricingDescription =
+  "Start free with one run, or use Pro at $29 a month for four runs. Team and custom plans are not on sale yet.";
+
+export const pricingMetadata: Metadata = {
+  title: pricingTitle,
+  description: pricingDescription,
+  alternates: { canonical: "/pricing" },
+  ...socialMetadata(pricingTitle, pricingDescription, "/pricing"),
+  robots: { index: true, follow: true },
+};

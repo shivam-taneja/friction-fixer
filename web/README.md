@@ -61,4 +61,6 @@ GitHub and PostHog are connected during onboarding and removed together from Set
 
 Settings also has the mock toggle and the check wait. Errors from Start run use the `notify` toast wrapper. Overview and Changes are unused screens. Their sidebar links stay commented out.
 
-cfo.ai is not this app. Pricing work stays out of `web/`. The handoff is in the root [README](../README.md#cfoai). The decisions a new session must keep are in that same file under **Already decided**.
+`/pricing` shows the Free, Pro, top-up, Team, and custom plans. Checkout is not wired. A signed-out visitor who clicks a plan goes to `/auth`. A signed-in visitor gets a Coming soon toast. Do not charge anyone from this page until Dodo Payments is connected.
+
+cfo.ai is not this app. The plan behind these prices is written there. The handoff is in the root [README](../README.md#cfoai). The decisions a new session must keep are in that same file under **Already decided**.

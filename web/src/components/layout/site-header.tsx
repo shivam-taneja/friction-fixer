@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AuthCta } from "@/components/auth/auth-cta";
 import { Brand } from "@/components/layout/brand";
 import { pageContainerClass } from "@/components/layout/page-container";
@@ -19,15 +20,18 @@ export function SiteHeader({ signedIn }: { signedIn: boolean }) {
         className="flex items-center gap-8.5 text-[13px] max-md:gap-5"
         aria-label="Main navigation"
       >
-        <a className={navLinkClass} href="#how-it-works">
+        <Link className={navLinkClass} href="/#how-it-works">
           How it works
-        </a>
-        <a className={navLinkClass} href="#built-for-you">
+        </Link>
+        <Link className={navLinkClass} href="/#built-for-you">
           Why Friction Fixer
-        </a>
-        <a className={navLinkClass} href="#faq">
+        </Link>
+        <Link className={navLinkClass} href="/pricing">
+          Pricing
+        </Link>
+        <Link className={navLinkClass} href="/#faq">
           FAQs
-        </a>
+        </Link>
         <AuthCta
           signedIn={signedIn}
           signedOutLabel="Meet your agent"
