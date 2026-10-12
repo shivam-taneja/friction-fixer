@@ -1,0 +1,49 @@
+can u tell me what is the exact thing the cron job would look at to see if the execution is scheudled to be run rn or not? like what exact variable name? cause i have scheudled one for 7 days which i want to change to next hr but i need the variable name before i do that. just point that out for me thanks!
+
+---
+
+it's currently this
+2026-10-18T19:54:59.142499+00:00
+
+---
+
+my cron ran for this, when is the next run?
+
+Run
+16
+Trigger
+Duration
+Run
+Cron job run
+
+Trigger
+Scheduled
+Duration
+31.6s
+Run
+41min ago
+
+Run
+Cron job run
+
+Trigger
+Scheduled
+Duration
+26.3s
+Run
+1h ago
+
+Run
+Cron job run
+
+Trigger
+Scheduled
+Duration
+24.1s
+Run
+2h ago
+
+Run
+Cron job run
+
+i have to record the demo at 7 pm, so i wnat to test the cron logic running again for a run whcih is at hold since we are measuring it rn....
