@@ -1,0 +1,197 @@
+/code-product-motion can u build a promo video for this project. i've completed v1 of this and i want to put it on X and share with everyone! if u need anything from me ask me before u begin!
+
+---
+
+1. i want to show the success logic, that after we connected our site the agent ran and we see the progress moving (use mock) and the PR was merged and change was live and we see that more people are coming now to the platform. 
+2. yes the website and also built by my x handle which is codesbyshivam
+3. i dont have track rn, but if u wnat i can get one from pixabay.
+
+also before i forget add everything in motion folder, i have it in .gitignore
+
+---
+
+alright, so give me the twitter message for this and also tell me what bg music should i add? should i add a voice over? can u give me the script? i'll get it generated online. also what tool to use ?
+
+---
+
+give me better caption please
+
+---
+
+give me better text for the post please
+
+---
+
+```chat_selection
+agent_id: ecd0e20d-146b-450e-81a0-d1a97cb38aa9
+selected_text:
+I built an agent that edits your site and only keeps the edit if more people stay.
+
+v1 of Friction Fixer: friction-fixer.shivamtaneja.com
+```
+ 
+```chat_selection
+agent_id: ecd0e20d-146b-450e-81a0-d1a97cb38aa9
+selected_text:
+An agent shipped a change to a site, watched who showed up, and kept it.
+
+That’s Friction Fixer. v1 is live.
+
+friction-fixer.shivamtaneja.com
+```
+ combine these and give me final one
+
+---
+
+i should add the # for the hack? and mention them also. so find a natural way to add it
+
+---
+
+alright soo for submission of this project they have shared this in discord
+
+@everyone - Instructions before shooting your submission demo video
+
+We were looking at your traces while you were building your agents. We have a feature that lets you look at your critical incidents, and you need to show how it helped indentify and solve these incidents.
+
+I've attached a demo video on how you can use this feature: https://drive.google.com/file/d/REDACTED/view?usp=sharing
+
+Meanwhile, for your overall demo video submission, in ONE video, you should talk about:
+
+the problem your agent solves
+how cfo.ai and entire were part of the project
+how neatlogs was used to identify and resolve the incidents your agent ran into
+
+keep your videos ready, submissions start today, 12th October 7pm IST! 🎊
+
+---
+
+```chat_selection
+agent_id: ecd0e20d-146b-450e-81a0-d1a97cb38aa9
+selected_text:
+neatlogs on this project, with Critical incidents open and one incident you actually fixed: app.neatlogs.com/home?…
+The trace from the broken run, then the trace from the run after the fix.
+```
+ not sure if i have this in my project.... and it does say i dont have any incidents... so what does that mean?
+
+---
+
+https://app.neatlogs.com/traces?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3 - so i have many tracess in this but no incidents. are is it mandatory that there should be incidents? or it's fine?
+
+---
+
+```chat_selection
+agent_id: ecd0e20d-146b-450e-81a0-d1a97cb38aa9
+selected_text:
+If you have a failed run and a later run after you fixed it, show those two traces.
+```
+ wdym??
+
+---
+
+i see this
+
+---
+
+alright... soo about the demo video, tell me how should i record it? like the thing is that the posthog is connected to my portfolio (shivamtaneja.com) but the github repo im connecting is this project repo and demo-site. so ig it's fine right? i can say in the demo that since we would need to have posthog data so im using my existing site which has stats already in place - https://www.shivamtaneja.com/stats and it'll help to update this demo site project. does that work?
+
+---
+
+alright, so maybe i can do one thing. which is that in the demo i can show exisitng run i ran with my portfolio showing that how it works with live/actual data... and like idk but mock doenst feel good tbh... ideally it should use real site no?
+
+---
+
+can we do one thing that we can push data to posthog? like for temp case just to increase the count or even have some data, only that part i'll pretend. is that possible? that way i can show for my friction site itself. like will integrate for it's web and thus we'll have proper flow... ?? what say? or no? that's not possible?
+
+---
+
+ok so imma make a script like first part of the video would be facecam, so should i make a proper script? or what. can u help me. if u need anythign from me ask me!
+
+---
+
+for the intro i want to say the problem, like what is the problem people are facing and start with that. like u created ur saas tool, and u integrated ur analytics platform. that's the problem i faced with my portfolio and i wanted continuous integartion to fix this, thus friction fixer was born
+
+---
+
+```chat_selection
+agent_id: ecd0e20d-146b-450e-81a0-d1a97cb38aa9
+selected_text:
+t reads how visitors behave, opens one pull request, and keeps the change only if the bounce rate falls by at least 5 points. If it does not, the agent undoes it.
+```
+ change this to instead of guessing what to change where to change, we take a look at the actual data and make a plan out of that, execute it and check back later to see the results. if it improved we keep it, otherwise we undo it and try again. no guess work. 
+
+now let's show u how it actually works
+
+---
+
+so for first part of the video i'll have this, 
+
+You build a product, you ship it, and you connect analytics.
+Now you have a lot of data, but not sure what to do with it. 
+
+Someone still has to read those numbers, guess what to change, edit the page, and come back later to see if it worked. That loop never keeps running on its own.
+
+This was the case with my portfolio. The stats were there. But I wanted a continuous loop that turns them into a fix, ships it, and checks whether people stayed or not.
+
+And That’s why I built Friction Fixer. Instead of guessing what to change and where, it looks at the actual data, makes a plan, executes it, and comes to checks back later. 
+
+If the result improved, it keeps the change. If it did not, it undoes it and tries again. No guesswork required. 
+
+Now let’s take a look how it works: 
+
+this works right? and i'll edit the video later then to show the actual demo, from onboarding. i'll do the voice over for that later on not rn
+
+---
+
+got this shared on discord
+
+neatHack submissions open today at 7 PM IST!
+
+You've built something. Now it's almost time to show it off.
+
+⏰ Submission window: 7:00–11:55 PM IST
+
+Here's what you need to do:
+
+1️⃣ Quote-tweet the official @neatlogs launch post on X.
+
+We'll share the link at 7 PM IST.
+
+Your quote-tweet must include tags for @neatlogs, @EntireHQ, and @arithecfo
+
+2️⃣ Complete the submission form.
+
+We'll share that link at 7 PM too.
+
+⚠️ IMPORTANT: Both steps are mandatory. You MUST quote-tweet the official launch post and tag all three accounts. This is the only way our systems can detect your submission. The form alone doesn't count.
+
+⭐ Want bonus points? Make sure your demo video clearly explains the problem you're solving and how your solution works.
+
+🔥 We’ll engage with the first 50 quote-tweets, so get everything ready now!
+
+See you at 7 PM. 🚀 
+
+more on how to make a good demo video + submission on the website: https://x.com/neatlogs/status/2109620501274620160?s=20
+from this video here are the high level
+The submission form steps:
+Step 1: Post/quote-tweet your demo video on X (attach the video, include the required tags, keep the official post attached).
+Then continue to fill team details, project info, GitHub repo, founder question, how you used the tools (cfo.ai, Entire, neatlogs), bonus points (checkpoints, entire-graph, open-source builds), and what you traced/debugged/improved with neatlogs.
+
+soo for the intro it's fine right? the one we have created, then we'll discuss about the main core/how will i explain the project to them, tell them how it works
+
+---
+
+what goal should i select? should i also mention about the mock data? and should i clean my acct before doing a recording or use the same acct is fine? clean should be better right?
+
+---
+
+no i was thinking that i can schedule the run for 1 hr. that way if i record the starting part rn. i can still show the results later on after 1 hr is over... wont that work?
+
+---
+
+or even one thing i can do... for temp i can change the min duration. i'll make it 15 mins, or 10 mins even just for the demo and mention that what do u suggest??
+
+---
+
+alright, soo now tell me the flow, like what all i should touch /go over while recording the demo. i'll do the voice over later on. give me just the pointers. that i create acct, and we get into onboarding.... and there we can select my posthog acct and then github/repos... then go to settings change the duration right? and then start run and that's the first part correct? and then i'll hover over the time to show the current time. later on i'll show that it's been 1 hr and the run was completed. 
+
+should i also show the entire commits? or no? and neatlog trace i would ofc show that this was the time when we started and this is now after 1 hr... right?
