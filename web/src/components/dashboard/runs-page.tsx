@@ -19,6 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatLocalTime } from "@/lib/format-local-time";
 import { folderLabel } from "@/lib/github/framework";
 import {
   activeRunId,
@@ -201,9 +202,9 @@ export function RunsPage() {
       {locked ? (
         <p className="text-sm text-muted-foreground">
           {measuring
-            ? `A change is live. PostHog will be checked ${
-                measuring.checkAfter ? when(measuring.checkAfter) : "later"
-              }. `
+            ? measuring.checkAfter
+              ? `A change is live. PostHog will be checked after ${formatLocalTime(measuring.checkAfter)}. `
+              : "A change is live. PostHog will be checked later. "
             : waiting
               ? "A run is waiting for you to resolve a pull request. "
               : "A run is already in progress. "}
@@ -423,7 +424,7 @@ function RunsSkeleton() {
 function outcomeLabel(run: RunRecord) {
   if (run.case === "live") {
     return run.status === "measuring" && run.checkAfter
-      ? `PostHog • check ${when(run.checkAfter)}`
+      ? `PostHog • check ${formatLocalTime(run.checkAfter)}`
       : "PostHog";
   }
   return run.case === "increased" ? "Improved" : "Worse";

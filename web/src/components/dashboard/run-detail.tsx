@@ -13,6 +13,7 @@ import {
   type RunRecord,
   type RunStep,
 } from "@/lib/db/schema/run";
+import { formatLocalTime, localCheckDetail } from "@/lib/format-local-time";
 import { cn } from "@/lib/utils";
 
 export function RunDetail({ id }: { id: string }) {
@@ -163,7 +164,7 @@ export function RunDetail({ id }: { id: string }) {
                 </div>
                 {step?.detail ? (
                   <p className="mt-1.5 text-xs whitespace-pre-wrap text-muted-foreground">
-                    {step.detail}
+                    {localCheckDetail(step.detail, run?.checkAfter ?? null)}
                   </p>
                 ) : null}
               </div>
@@ -207,7 +208,7 @@ export function RunDetail({ id }: { id: string }) {
           {run?.status === "measuring" && run.checkAfter ? (
             <p className="text-sm text-muted-foreground">
               The baseline is saved. PostHog will be checked after{" "}
-              {new Date(run.checkAfter).toLocaleString()}.
+              {formatLocalTime(run.checkAfter)}.
             </p>
           ) : null}
           {run?.status === "blocked" ? (
