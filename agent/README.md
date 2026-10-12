@@ -56,7 +56,7 @@ It needs the Firebase, GitHub App, and Daytona variables. It does not need `AGEN
 
 Each run clones the project's repository into a Daytona sandbox and edits that clone. The Render process does not commit inside its own checkout. A new run is refused while two or more sandboxes are open. `DAYTONA_API_KEY` is required.
 
-After the round, `neatlogs.flush` sends the trace. One round is one trace named `friction-fix-round`. Those traces are on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3), which is not a public share of one trace.
+After the round, `neatlogs.flush` sends the trace. One round is one trace named `friction-fix-round`. Those traces are on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3). That URL is the project home. A public link is a share of one trace.
 
 `agent/.env` holds `NEATLOGS_API_KEY`, `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, `DAYTONA_API_KEY`, `LLM_PROVIDER`, that provider's API key (`LITELLM_API_KEY` or `GROQ_API_KEY`), `LLM_MODEL`, `AGENT_SECRET`, `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY`. The GitHub and Firebase values match the website. Copy it from `agent/.env.example`. It is never committed. Do not print it.
 

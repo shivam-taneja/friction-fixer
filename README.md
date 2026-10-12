@@ -65,7 +65,7 @@ A new session should keep these. They were chosen on purpose.
 - PostHog's OAuth client id is `https://friction-fixer.shivamtaneja.com/api/posthog/client`. That URL has to be the deployed site. Localhost is only the redirect.
 - The agent is a Render web service. Build `pip install -r agent/requirements.txt`, start `python -m agent.server`, Python 3.13, health check `/`. Root directory stays empty. The live service is [friction-fixer.onrender.com](https://friction-fixer.onrender.com).
 - The live check is a separate Render cron job, same build command, command `python -m agent.check`, region Singapore. It needs `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`, `GITHUB_APP_ID`, `GITHUB_APP_PRIVATE_KEY`, and `DAYTONA_API_KEY` from the agent service. It does not need `AGENT_SECRET`, the LLM keys, or `PYTHON_VERSION` unless a build fails on the wrong Python. Leave `PYTHON_VERSION` unset so it matches the web service. The cheapest instance is enough. The cron does not inherit the web service's environment.
-- Each round is one neatlogs trace, workflow `friction-fix-round`. The agent sends it to `https://ingest.neatlogs.com`. You read traces on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3). That URL is the project home, not a public share of one trace. A public link is a share you turn on for that trace in the dashboard. The code does not publish one.
+- Each round is one neatlogs trace, workflow `friction-fix-round`. The agent sends it to `https://ingest.neatlogs.com`. Traces are on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3). That URL is the project home. A public link is a share of one trace. The code does not publish one.
 - Daytona is where the edit happens. Each run clones that user's repository into a sandbox, changes the source folder there, and pushes the pull request from that clone. Render only runs the agent process. A new run is refused while two sandboxes are already open.
 - Entire records the Cursor sessions that built this repo. It is not called by the agent loop. Every checkpoint is listed on the [commits page](https://entire.io/gh/shivam-taneja/friction-fixer/commits). After `git push`, a checkpoint opens at `https://entire.io/gh/shivam-taneja/friction-fixer/commit/<commit-sha>` when that commit has an `Entire-Checkpoint` trailer.
 
@@ -151,19 +151,20 @@ copy agent\.env.example agent\.env
 
 ## Evidence
 
-- neatlogs traces, before vs after improving the agent: open the trace on the [project home](https://app.neatlogs.com/home?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3), turn on public sharing, and paste that link. The project home is not a public share of one trace.
-- A run where the agent's change failed and it undid it: the pull request URL, plus the neatlogs trace for that `run_id`
-- Website results, before vs after (mock data): _numbers_
+- neatlogs traces: [traces page](https://app.neatlogs.com/traces?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3)
+- Failed run, 11 Oct 2026, 10:23 PM IST. The builder stopped with "Failed to create branch: worktree contains unstaged changes." [Trace](https://app.neatlogs.com/traces/d4b403f52944e659e8e361789850bf0f?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3)
+- Live run from the demo: [trace](https://app.neatlogs.com/traces/f2ea4bb55e9a0cebdc1f8fc976c2587b?orgId=8ac25f73-a91e-48fa-b5d2-807fcfcec81c&projectId=8d1337ef-31f4-4b33-9770-92d681f9a1b3)
+- Undo pull request: https://github.com/shivam-taneja/friction-fixer/pull/10
 - Entire checkpoints: [commits page](https://entire.io/gh/shivam-taneja/friction-fixer/commits)
-- cfo.ai business plan: https://cfo.ai/s/kqtkp_FbM8GeTmas
-- Demo video: _link_
-- Posts shared while building (#neatHack): _links_
+- cfo.ai business plan: https://cfo.ai/s/-4awsVQMI2SYSj-n
+- Demo video: https://x.com/codesbyshivam/status/2109685055551619370
+- #neatHack post: https://x.com/codesbyshivam/status/2109685055551619370
 
 ## cfo.ai
 
 This is a separate piece of work. An agent doing the business plan should not change `agent/` or `web/` unless a broken product fact in this file has to be corrected.
 
-cfo.ai is where the pricing, cost, and revenue plan for Friction Fixer is written. The plan does not live in this repository. The public share is https://cfo.ai/s/kqtkp_FbM8GeTmas. It opens the cost inputs, packaging verdict, and check timing pages. Keep that URL when those pages change. A new page belongs in that same share.
+cfo.ai is where the pricing, cost, and revenue plan for Friction Fixer is written. The plan does not live in this repository. The public share is https://cfo.ai/s/-4awsVQMI2SYSj-n. It opens the plan for three verified website-edit trials and whether one of them becomes a paying Pro customer. Keep that URL when those pages change. A new page belongs in that same share.
 
 The plan has to match the product as it works now:
 
