@@ -155,7 +155,7 @@ copy agent\.env.example agent\.env
 - A run where the agent's change failed and it undid it: the pull request URL, plus the neatlogs trace for that `run_id`
 - Website results, before vs after (mock data): _numbers_
 - Entire checkpoints: [commits page](https://entire.io/gh/shivam-taneja/friction-fixer/commits)
-- cfo.ai business plan: _link when the plan exists_
+- cfo.ai business plan: https://cfo.ai/s/kqtkp_FbM8GeTmas
 - Demo video: _link_
 - Posts shared while building (#neatHack): _links_
 
@@ -163,7 +163,7 @@ copy agent\.env.example agent\.env
 
 This is a separate piece of work. An agent doing the business plan should not change `agent/` or `web/` unless a broken product fact in this file has to be corrected.
 
-cfo.ai is where the pricing, cost, and revenue plan for Friction Fixer is written. The plan does not live in this repository. When a plan URL exists, replace the evidence line above. Do not invent that URL.
+cfo.ai is where the pricing, cost, and revenue plan for Friction Fixer is written. The plan does not live in this repository. The public share is https://cfo.ai/s/kqtkp_FbM8GeTmas. It opens the cost inputs, packaging verdict, and check timing pages. Keep that URL when those pages change. A new page belongs in that same share.
 
 The plan has to match the product as it works now:
 
