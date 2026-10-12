@@ -1,0 +1,36 @@
+{
+  "cli_version": "0.11.4",
+  "checkpoint_id": "01M4R312H4VHP7ZQE70KQAZK9E",
+  "session_id": "9d91cc99-be2f-482a-9451-9383d5dd0682",
+  "strategy": "manual-commit",
+  "created_at": "2026-10-12T12:57:30.103766Z",
+  "branch": "main",
+  "checkpoints_count": 12,
+  "save_step_count": 1,
+  "files_touched": [
+    "web/package.json",
+    "web/pnpm-lock.yaml",
+    "web/src/components/dashboard/run-detail.tsx"
+  ],
+  "agent": "Cursor",
+  "model": "default",
+  "turn_id": "7528d9534e60",
+  "compact_transcript_start": 0,
+  "session_metrics": {
+    "turn_count": 166,
+    "context_tokens": 242930,
+    "context_window_size": 256000
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-10-12T12:57:30.003158Z",
+    "agent_lines": 11,
+    "agent_removed": 0,
+    "human_added": 26,
+    "human_modified": 2,
+    "human_removed": 0,
+    "total_committed": 39,
+    "total_lines_changed": 43,
+    "agent_percentage": 25.581395348837212,
+    "metric_version": 2
+  }
+}
