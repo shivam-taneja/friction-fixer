@@ -1,10 +1,14 @@
 """Finish live runs whose PostHog check date has passed.
 
 Run this on a schedule: python -m agent.check
+
+Each claimed run is one neatlogs trace named friction-fix-round.
+KEEP and UNDO both sit under that trace.
 """
 
 from datetime import datetime, timedelta, timezone
 
+import neatlogs
 from google.cloud import firestore
 from google.cloud.firestore_v1.base_query import FieldFilter
 
@@ -77,6 +81,12 @@ def _check_run(client, run_id: str) -> None:
         )
         return
 
+    _finish_check(run_id, user_id, claimed)
+
+
+@neatlogs.span(kind="WORKFLOW", name="friction-fix-round")
+def _finish_check(run_id: str, user_id: str, claimed: dict) -> None:
+    """Record this PostHog check as its own round trace, then KEEP or UNDO."""
     log = RunLog(run_id, user_id)
     print(f"Checking {run_id}")
     try:

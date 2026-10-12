@@ -52,7 +52,7 @@ The check job is a separate process:
 python -m agent.check
 ```
 
-It needs the Firebase, GitHub App, and Daytona variables. It does not need `AGENT_SECRET` or the LLM keys. A missing `NEATLOGS_API_KEY` turns trace export off. The job claims a due run by setting it to `running` before the PostHog read, so two overlapping runs do not finish it twice. If the process dies, a `running` live run whose `checkingAt` is at least 45 minutes old can be claimed again. If PostHog has no sessions in the window, or the request fails, the run goes back to `measuring` and keeps `checkAfter`.
+It needs the Firebase, GitHub App, and Daytona variables. It does not need `AGENT_SECRET` or the LLM keys. Each claimed run opens the same `friction-fix-round` trace as a new run, with the reviewer span inside it, for both KEEP and UNDO. A missing `NEATLOGS_API_KEY` turns trace export off. The job claims a due run by setting it to `running` before the PostHog read, so two overlapping runs do not finish it twice. If the process dies, a `running` live run whose `checkingAt` is at least 45 minutes old can be claimed again. If PostHog has no sessions in the window, or the request fails, the run goes back to `measuring` and keeps `checkAfter`.
 
 Each run clones the project's repository into a Daytona sandbox and edits that clone. The Render process does not commit inside its own checkout. A new run is refused while two or more sandboxes are open. `DAYTONA_API_KEY` is required.
 
